@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>270 West Consulting — Homepage Redesign</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300..700;1,300..700&family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #1a1a1a; color: #f4f1ec; font-family: 'Inter', system-ui, sans-serif; }
+  button { font-family: inherit; }
+  a { color: inherit; }
+  details summary::-webkit-details-marker { display: none; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="shared.jsx"></script>
+<script type="text/babel" src="direction-a.jsx"></script>
+<script type="text/babel" src="direction-a-mobile.jsx"></script>
+<script type="text/babel" src="inner-pages.jsx"></script>
+<script type="text/babel" src="inner-pages-extra.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+const { useState } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "showInnerPages": true,
+  "showMobile": true
+}/*EDITMODE-END*/;
+
+function Prototype() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  return (
+    <>
+      <DesignCanvas
+        title="270 West Consulting — Homepage System"
+        subtitle="Direction A · Editorial Navigator · Desktop + Mobile + Inner pages"
+        background="#1a1a1a"
+      >
+        <DCSection id="homepage" title="Homepage" subtitle="Refined desktop + mobile. Collaborative tone — works alongside VAC, never against. Embedded eligibility check at section 06.">
+          <DCArtboard id="dirA" label="Homepage — Desktop (1440)" width={1440} height={4900}>
+            <DirectionA />
+          </DCArtboard>
+          <DCArtboard id="dirAMobile" label="Homepage — Mobile (390)" width={390} height={3700}>
+            <DirectionAMobile />
+          </DCArtboard>
+        </DCSection>
+
+        {tweaks.showInnerPages && (
+          <DCSection id="inner" title="Inner pages" subtitle="How It Works · About · Resources · Contact. Shared header/footer, consistent voice.">
+            <DCArtboard id="howItWorks" label="How It Works" width={1440} height={3900}>
+              <HowItWorksPage />
+            </DCArtboard>
+            <DCArtboard id="about" label="About" width={1440} height={3000}>
+              <AboutPage />
+            </DCArtboard>
+            <DCArtboard id="resources" label="Resources" width={1440} height={2900}>
+              <ResourcesPage />
+            </DCArtboard>
+            <DCArtboard id="contact" label="Contact" width={1440} height={1900}>
+              <ContactPage />
+            </DCArtboard>
+            <DCArtboard id="services" label="Services" width={1440} height={3200}>
+              <window.ServicesPage />
+            </DCArtboard>
+            <DCArtboard id="faq" label="FAQ" width={1440} height={2400}>
+              <window.FAQPage />
+            </DCArtboard>
+            <DCArtboard id="article" label="Resource Article (template)" width={1440} height={3400}>
+              <window.ResourceArticlePage />
+            </DCArtboard>
+          </DCSection>
+        )}
+
+        <DCSection id="legal" title="Legal" subtitle="Privacy, Terms, Accessibility — working drafts. Review with counsel before publishing.">
+          <DCArtboard id="privacy" label="Privacy Policy" width={1440} height={1900}>
+            <window.LegalPage kind="privacy" />
+          </DCArtboard>
+          <DCArtboard id="terms" label="Terms of Service" width={1440} height={1900}>
+            <window.LegalPage kind="terms" />
+          </DCArtboard>
+          <DCArtboard id="accessibility" label="Accessibility Statement" width={1440} height={1800}>
+            <window.LegalPage kind="accessibility" />
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="Sections to show">
+          <TweakToggle label="Show inner pages" value={tweaks.showInnerPages} onChange={v => setTweak("showInnerPages", v)} />
+        </TweakSection>
+        <TweakSection title="Notes">
+          <div style={{ fontSize: 12, lineHeight: 1.55, color: "#9ca3af" }}>
+            Tone is collaborative — 270 West works alongside VAC, never against. Headline locked: "Your sacrifice. Our commitment."
+            <br/><br/>
+            Click any artboard to focus full-screen. The eligibility quiz at section 06 is functional.
+          </div>
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Prototype />);
+</script>
+</body>
+</html>
