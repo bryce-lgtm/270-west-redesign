@@ -1,3 +1,17 @@
+/* v4 — Sans-led. Remap Fraunces to Inter for the clinical/minimal feel matching the design. */
+@font-face {
+  font-family: 'Fraunces';
+  src: local('Inter');
+  font-weight: 100 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Fraunces';
+  src: local('Inter');
+  font-weight: 100 900;
+  font-style: italic;
+}
+
 :root {
   --bg: #F4F1EC;
   --bg2: #ebe6dd;
@@ -29,7 +43,7 @@ details summary { list-style: none; }
 .site-header .logo { display: flex; align-items: baseline; gap: 14px; text-decoration: none; color: var(--ink); }
 .site-header .logo-name { font-family: var(--font-serif); font-size: 26px; font-weight: 500; letter-spacing: -0.01em; line-height: 1; }
 .site-header .logo-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--muted); text-transform: uppercase; }
-.site-header nav { display: flex; gap: 36px; align-items: center; font-size: 14px; }
+.site-header nav { display: flex; gap: 28px; align-items: center; font-size: 14px; }
 .site-header nav a { color: var(--ink); text-decoration: none; font-weight: 450; border-bottom: 1px solid transparent; padding-bottom: 4px; }
 .site-header nav a.active { border-bottom-color: var(--accent); }
 .site-header .nav-cta {
@@ -596,4 +610,101 @@ details:not([open]) .faq-icon::after { content: '+'; }
   .consult-days { grid-template-columns: repeat(4,1fr); }
   .consult-widget { padding: 24px; }
   .consult-h3 { font-size: 24px; }
+}
+
+/* ── FOOTER TAGLINE BAND ── */
+.footer-tagline-band {
+  position: relative;
+  display: grid; grid-template-columns: 1.5fr auto; align-items: center;
+  padding-bottom: 56px; margin-bottom: 32px;
+  border-bottom: 1px solid rgba(122,138,106,0.2);
+}
+.footer-tagline-kicker {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--olive); margin-bottom: 14px;
+}
+.footer-tagline {
+  font-size: 56px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.0;
+  color: var(--bg); max-width: 800px;
+}
+.footer-tagline em { font-style: italic; color: var(--olive); }
+.footer-pillars {
+  margin-top: 24px; display: flex; gap: 28px;
+  font-size: 12px; font-family: var(--font-mono); letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--olive); flex-wrap: wrap;
+}
+
+/* ── FOOTER 5-COL GRID ── */
+.footer-grid-5 {
+  position: relative;
+  display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; gap: 32px;
+  font-size: 13px; color: #a9b3c0;
+}
+
+/* ── HERO NEW ── */
+.hero-badge {
+  position: absolute; bottom: 24px; right: 24px;
+  background: var(--bg); padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-badge-label { font-size: 11px; font-family: var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+.hero-badge-value { font-size: 13px; font-weight: 600; letter-spacing: -0.005em; color: var(--ink); }
+
+/* ── LEAD MAGNET CARDS ── */
+.lead-magnets { padding: 20px 80px 80px; }
+.lead-magnets-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+/* ── JOURNEY SECTION ── */
+.journey-steps-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 14px; align-items: stretch;
+}
+.journey-step {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+  padding: 24px; background: var(--bg); border: 1px solid var(--rule);
+}
+.journey-step-icon {
+  width: 64px; height: 64px; background: var(--bg2); border: 1px solid var(--rule);
+  display: flex; align-items: center; justify-content: center; color: var(--accent);
+}
+.journey-arrow { align-self: center; color: var(--accent); font-family: var(--font-mono); font-size: 20px; }
+
+/* ── SERVICES PREVIEW CARDS ── */
+.svc-preview-card {
+  background: rgba(255,255,255,0.04); padding: 28px; color: var(--bg);
+  text-decoration: none; border: 1px solid rgba(122,138,106,0.2);
+  display: flex; flex-direction: column; justify-content: space-between; min-height: 200px;
+}
+.svc-preview-card:hover { background: rgba(255,255,255,0.08); }
+.svc-preview-more { margin-top: 24px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--olive); }
+
+/* ── TESTIMONIALS NEW ── */
+.testimonials-new-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; }
+.testimonial-figure { margin: 0; background: var(--bg2); padding: 28px; border: 1px solid var(--rule); }
+
+/* ── ELIGIBILITY PAGE ── */
+.eligibility-page-layout { padding: 80px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
+.eligibility-page-sticky { position: sticky; top: 100px; }
+
+/* ── CONSULT PAGE ── */
+.consult-page-layout { padding: 80px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
+.consult-page-sticky { position: sticky; top: 100px; }
+
+/* ── ADDITIONAL MOBILE NEW ── */
+@media (max-width: 900px) {
+  .footer-tagline { font-size: 28px; }
+  .footer-tagline-band { grid-template-columns: 1fr; }
+  .footer-tagline-band > div:last-child { display: none; }
+  .footer-pillars { gap: 12px 20px; }
+  .footer-grid-5 { grid-template-columns: 1fr 1fr; gap: 32px 24px; }
+  .lead-magnets { padding: 20px 20px 56px; }
+  .lead-magnets-grid { grid-template-columns: 1fr; }
+  .journey-steps-grid { grid-template-columns: 1fr; }
+  .journey-arrow { display: none; }
+  .testimonials-new-grid { grid-template-columns: 1fr; }
+  .eligibility-page-layout { grid-template-columns: 1fr; padding: 40px 20px; }
+  .eligibility-page-sticky { position: static; }
+  .consult-page-layout { grid-template-columns: 1fr; padding: 40px 20px; }
+  .consult-page-sticky { position: static; }
 }
