@@ -1,3 +1,34 @@
+// ── Inline icons (SVG, not emoji) ──
+const LOCK_ICON = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:5px;opacity:0.8" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+// Red compass-point marker (echoes the campaign ad creative)
+const COMPASS_MARKER = '<svg width="32" height="32" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><path d="M50 3 L57 43 L97 50 L57 57 L50 97 L43 57 L3 50 L43 43 Z"/></svg>';
+
+// ── Landscape photo injector (data-photo) ──
+// Plain photo, or ad-style "scene" with overlay + headline + compass marker + tagline.
+function initPhotos() {
+  document.querySelectorAll('[data-photo]').forEach(el => {
+    const d = el.dataset;
+    const alt = (d.alt || '').replace(/"/g, '&quot;');
+    el.style.aspectRatio = d.aspect || '16/9';
+    const img = `<img src="img/${d.photo}.jpg" alt="${alt}" loading="lazy" decoding="async" style="object-position:${d.pos || 'center'}">`;
+    const isScene = el.hasAttribute('data-scene') || d.headline || el.hasAttribute('data-tagline') || el.hasAttribute('data-marker') || d.tl || d.tr;
+    if (!isScene) { el.classList.add('photo'); el.innerHTML = img; return; }
+
+    el.classList.add('photo-scene', 'photo-scene-hover');
+    let html = img + '<div class="photo-scene-overlay"></div>';
+    if (d.tl) html += `<div class="photo-scene-corner tl">${d.tl}</div>`;
+    if (d.tr) html += `<div class="photo-scene-corner tr">${d.tr}</div>`;
+    if (d.headline || el.hasAttribute('data-marker')) {
+      html += '<div class="photo-scene-body">';
+      if (el.hasAttribute('data-marker')) html += `<div class="photo-scene-marker">${COMPASS_MARKER}</div>`;
+      if (d.headline) html += `<div class="photo-scene-h">${d.headline}</div>`;
+      html += '</div>';
+    }
+    if (el.hasAttribute('data-tagline')) html += '<div class="photo-scene-tagline">In service of your story.</div>';
+    el.innerHTML = html;
+  });
+}
+
 // ── Compass Rose SVG ──
 function compassRoseSVG(size, stroke, sw, bearing) {
   stroke = stroke || 'currentColor';
@@ -83,6 +114,64 @@ function initMobileMenu() {
   }
 }
 
+// ── Header shadow on scroll ──
+function initHeaderScroll() {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
+  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+}
+
+// ── Scroll reveal (flash-free, reduced-motion safe) ──
+function initScrollReveal() {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || !('IntersectionObserver' in window)) return;
+
+  // Target meaningful blocks without editing markup on every page.
+  const selectors = [
+    '.hero-grid > *', '.stats-bar .stat-item', '.section-pad > *',
+    '.steps-grid .step-item', '.testimonials-grid .testimonial-card',
+    '.services-2col .service-card', '.resources-featured > *', '.library-topic',
+    '.values-grid .value-item', '.team-grid .team-card', '.svc-outcomes .svc-outcome',
+    '.svc-detail-situations .svc-detail-situation', '.about-esg-items .about-esg-item',
+    '.faq-group', '.hiw-step-row', '.service-row', '.cta-grid > *',
+    '.quiz-grid > *', '.consult-grid > *', '.about-why > *', '.about-founder-grid > *',
+    '.partners-row .partner-card', '.page-hero > *'
+  ];
+  const vh = window.innerHeight;
+  const candidates = [];
+  selectors.forEach(sel => document.querySelectorAll(sel).forEach(el => candidates.push(el)));
+
+  // Only hide elements that start below the fold — prevents any above-the-fold flash.
+  const toReveal = [];
+  candidates.forEach(el => {
+    if (el.getBoundingClientRect().top > vh * 0.85) {
+      el.setAttribute('data-reveal', '');
+      toReveal.push(el);
+    }
+  });
+
+  // Stagger siblings within the same parent for a crafted cascade.
+  const counters = new Map();
+  toReveal.forEach(el => {
+    const p = el.parentElement;
+    const i = counters.get(p) || 0;
+    counters.set(p, i + 1);
+    el.style.transitionDelay = Math.min(i, 4) * 70 + 'ms';
+  });
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+  toReveal.forEach(el => io.observe(el));
+}
+
 // ── Eligibility Quiz ──
 const QUIZ_QUESTIONS = [
   { id:'served', q:'Have you served in the Canadian Armed Forces?', options:['Regular Force','Reserve Force','RCMP','No'] },
@@ -143,7 +232,7 @@ function initQuiz(containerId) {
           <div class="quiz-field"><div class="quiz-field-label">Phone</div><input type="tel" id="qf-phone" value="${contact.phone}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
         </div>
         <button class="quiz-start-btn" onclick="quizGo(${N+2})">Get my results →</button>
-        <div class="quiz-privacy">🔒 Confidential. We never share your info.</div>`;
+        <div class="quiz-privacy">${LOCK_ICON} Confidential. We never share your info.</div>`;
     } else {
       const name = contact.name || 'you';
       body = `
@@ -260,7 +349,7 @@ function initConsultWidget(containerId) {
           <div class="consult-field"><div class="consult-field-label">What would you like to focus on?</div><input type="text" id="ci-topic" value="${info.topic}" oninput="consultInfo('topic',this.value)" placeholder="First claim, appeal, reassessment..."/></div>
         </div>
         <button class="consult-confirm" onclick="consultConfirm()">Confirm booking →</button>
-        <div class="consult-privacy">🔒 Confidential. No obligation. Free of charge.</div>
+        <div class="consult-privacy">${LOCK_ICON} Confidential. No obligation. Free of charge.</div>
       </div>`;
 
     } else {
@@ -288,6 +377,7 @@ function initConsultWidget(containerId) {
 // ── Init all ──
 document.addEventListener('DOMContentLoaded', function() {
   initMobileMenu();
+  initHeaderScroll();
 
   // Inject compass rose where placeholder exists
   document.querySelectorAll('[data-compass]').forEach(el => {
@@ -308,5 +398,9 @@ document.addEventListener('DOMContentLoaded', function() {
     );
   });
 
+  initPhotos();
   initQuiz();
+
+  // Run reveal after other DOMContentLoaded handlers have injected widgets/placeholders.
+  requestAnimationFrame(() => requestAnimationFrame(initScrollReveal));
 });
