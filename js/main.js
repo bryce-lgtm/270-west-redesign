@@ -1,3 +1,60 @@
+// Red compass-point marker (echoes the campaign ad creative)
+const COMPASS_MARKER = '<svg width="32" height="32" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><path d="M50 3 L57 43 L97 50 L57 57 L50 97 L43 57 L3 50 L43 43 Z"/></svg>';
+
+// ── Landscape photo injector (data-photo) ──
+function initPhotos() {
+  document.querySelectorAll('[data-photo]').forEach(el => {
+    const d = el.dataset;
+    const alt = (d.alt || '').replace(/"/g, '&quot;');
+    el.style.aspectRatio = d.aspect || '16/9';
+    const img = `<img src="img/${d.photo}.jpg" alt="${alt}" loading="lazy" decoding="async" style="object-position:${d.pos || 'center'}">`;
+    const isScene = el.hasAttribute('data-scene') || d.headline || el.hasAttribute('data-tagline') || el.hasAttribute('data-marker') || d.tl || d.tr;
+    if (!isScene) { el.classList.add('photo'); el.innerHTML = img; return; }
+    el.classList.add('photo-scene', 'photo-scene-hover');
+    let html = img + '<div class="photo-scene-overlay"></div>';
+    if (d.tl) html += `<div class="photo-scene-corner tl">${d.tl}</div>`;
+    if (d.tr) html += `<div class="photo-scene-corner tr">${d.tr}</div>`;
+    if (d.headline || el.hasAttribute('data-marker')) {
+      html += '<div class="photo-scene-body">';
+      if (el.hasAttribute('data-marker')) html += `<div class="photo-scene-marker">${COMPASS_MARKER}</div>`;
+      if (d.headline) html += `<div class="photo-scene-h">${d.headline}</div>`;
+      html += '</div>';
+    }
+    if (el.hasAttribute('data-tagline')) html += '<div class="photo-scene-tagline">In service of your story.</div>';
+    el.innerHTML = html;
+  });
+}
+
+// ── Header shadow on scroll ──
+function initHeaderScroll() {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
+  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+}
+
+// ── Scroll reveal (flash-free, reduced-motion safe) ──
+function initScrollReveal() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  const selectors = [
+    '.section-pad > *', '.testimonials-grid > *', '.steps-grid > *',
+    '.services-2col > *', '.resources-featured > *', '.values-grid > *',
+    '.team-grid > *', '.svc-outcomes > *', '.faq-group', '.hiw-step-row',
+    '.service-row', '.cta-grid > *', '.page-hero > *'
+  ];
+  const vh = window.innerHeight, candidates = [];
+  selectors.forEach(sel => document.querySelectorAll(sel).forEach(el => candidates.push(el)));
+  const toReveal = [];
+  candidates.forEach(el => { if (el.getBoundingClientRect().top > vh * 0.85) { el.setAttribute('data-reveal', ''); toReveal.push(el); } });
+  const counters = new Map();
+  toReveal.forEach(el => { const p = el.parentElement; const i = counters.get(p) || 0; counters.set(p, i + 1); el.style.transitionDelay = Math.min(i, 4) * 70 + 'ms'; });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+  toReveal.forEach(el => io.observe(el));
+}
+
 // ── Compass Rose SVG ──
 function compassRoseSVG(size, stroke, sw, bearing) {
   stroke = stroke || 'currentColor';
@@ -321,6 +378,7 @@ function initConsultWidget(containerId) {
 // ── Init all ──
 document.addEventListener('DOMContentLoaded', function() {
   initMobileMenu();
+  initHeaderScroll();
 
   // Inject site logos
   document.querySelectorAll('[data-logo-svg]').forEach((el, i) => {
@@ -346,5 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
     );
   });
 
+  initPhotos();
   initQuiz();
+  requestAnimationFrame(() => requestAnimationFrame(initScrollReveal));
 });
