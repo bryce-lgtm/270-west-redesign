@@ -126,23 +126,30 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
 }
 .nav-dropdown:hover > button, .nav-dropdown.open > button { color: var(--accent); }
 .nav-dropdown:hover > button::after, .nav-dropdown.open > button::after { transform: scaleX(1); }
-.nav-dropdown-chevron { display: inline-block; width: 8px; height: 8px; flex-shrink: 0; transition: transform var(--dur) var(--ease); }
-.nav-dropdown.open .nav-dropdown-chevron { transform: rotate(180deg); }
+.nav-dropdown-chevron { display: block; width: 8px; height: 8px; flex-shrink: 0; transition: transform var(--dur) var(--ease); overflow: visible; }
+.nav-dropdown.open .nav-dropdown-chevron, .nav-dropdown:hover .nav-dropdown-chevron { transform: rotate(180deg); }
 .nav-dropdown-menu {
-  position: absolute; top: calc(100% + 18px); left: -20px;
+  position: absolute; top: calc(100% + 16px); left: -20px;
   background: var(--bg); border: 1px solid var(--rule); box-shadow: var(--shadow-md);
-  min-width: 220px; z-index: 200;
-  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  min-width: 210px; z-index: 200;
+  opacity: 0; visibility: hidden; transform: translateY(-4px);
   transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility var(--dur);
+  pointer-events: none;
 }
 .nav-dropdown:hover .nav-dropdown-menu, .nav-dropdown.open .nav-dropdown-menu {
-  opacity: 1; visibility: visible; transform: translateY(0);
+  opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto;
 }
-.nav-dropdown-menu a {
-  display: flex; align-items: baseline; gap: 12px;
-  padding: 14px 20px; color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 450;
-  border-bottom: 1px solid var(--rule); transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+/* Reset nav link styles inside dropdown */
+.nav-dropdown-menu a,
+.nav-dropdown-menu a:not(.nav-cta) {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 20px; color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 450;
+  border-bottom: 1px solid var(--rule);
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+  position: static; /* override nav a position:relative */
 }
+.nav-dropdown-menu a::after,
+.nav-dropdown-menu a:not(.nav-cta)::after { display: none !important; }
 .nav-dropdown-menu a:last-child { border-bottom: none; }
 .nav-dropdown-menu a:hover { background: var(--bg2); color: var(--accent); }
 .nav-dropdown-menu-num { font-family: var(--font-mono); font-size: 10px; color: var(--olive); letter-spacing: 0.08em; flex-shrink: 0; }
