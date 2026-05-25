@@ -140,6 +140,36 @@ function initMobileMenu() {
   }
 }
 
+// ── Nav Dropdown ──
+function initNavDropdown() {
+  document.querySelectorAll('.nav-dropdown').forEach(dd => {
+    const btn = dd.querySelector('button');
+    if (!btn) return;
+    // Toggle on click (for keyboard / touch)
+    btn.addEventListener('click', e => {
+      const open = dd.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+    });
+    // Close when focus leaves
+    dd.addEventListener('focusout', e => {
+      if (!dd.contains(e.relatedTarget)) {
+        dd.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+  // Close all dropdowns on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.nav-dropdown')) {
+      document.querySelectorAll('.nav-dropdown.open').forEach(dd => {
+        dd.classList.remove('open');
+        const btn = dd.querySelector('button');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+}
+
 // ── Eligibility Quiz ──
 const QUIZ_QUESTIONS = [
   { id:'served', q:'Have you served in the Canadian Armed Forces?', options:['Regular Force','Reserve Force','RCMP','No'] },
@@ -378,6 +408,7 @@ function initConsultWidget(containerId) {
 // ── Init all ──
 document.addEventListener('DOMContentLoaded', function() {
   initMobileMenu();
+  initNavDropdown();
   initHeaderScroll();
 
   // Inject site logos
