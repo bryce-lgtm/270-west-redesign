@@ -176,11 +176,44 @@ function initQuiz(containerId) {
   render();
 }
 
-// ── Maple Leaf SVG ──
+// ── Maple Leaf SVG (11-point Canadian maple leaf) ──
 function mapLeafSVG(size, fill) {
   fill = fill || 'currentColor';
   return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" fill="${fill}" aria-hidden="true">
-    <path d="M50 5 L54 22 L60 22 L57 30 L74 24 L70 38 L88 36 L73 46 L84 60 L66 56 L63 70 L57 66 L54 78 L50 70 L46 78 L43 66 L37 70 L34 56 L16 60 L27 46 L12 36 L30 38 L26 24 L43 30 L40 22 L46 22 Z"/>
+    <path d="M50,5 L56,28 L72,19 L64,37 L85,35 L71,49 L85,61 L65,59 L61,78 L54,82 L54,93 L46,93 L46,82 L39,78 L35,59 L15,61 L29,49 L15,35 L36,37 L28,19 L44,28 Z"/>
+  </svg>`;
+}
+
+// ── Site Logo SVG (compass rose badge) ──
+function siteLogoSVG(idSuffix) {
+  const id = 'lta-' + (idSuffix || '0');
+  return `<svg viewBox="-54 -54 108 108" width="40" height="40" fill="none" aria-hidden="true" style="flex-shrink:0;display:block">
+    <circle r="52" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+    <circle r="43" fill="none" stroke="var(--ink)" stroke-width="0.5" opacity="0.35"/>
+    <line x1="0" y1="-44" x2="0" y2="-50" stroke="var(--ink)" stroke-width="1.5"/>
+    <line x1="0" y1="44" x2="0" y2="50" stroke="var(--ink)" stroke-width="1"/>
+    <line x1="44" y1="0" x2="50" y2="0" stroke="var(--ink)" stroke-width="1"/>
+    <line x1="-44" y1="0" x2="-50" y2="0" stroke="var(--ink)" stroke-width="1"/>
+    <g opacity="0.4">
+      <line x1="31" y1="-31" x2="34" y2="-34" stroke="var(--ink)" stroke-width="0.7"/>
+      <line x1="31" y1="31" x2="34" y2="34" stroke="var(--ink)" stroke-width="0.7"/>
+      <line x1="-31" y1="31" x2="-34" y2="34" stroke="var(--ink)" stroke-width="0.7"/>
+      <line x1="-31" y1="-31" x2="-34" y2="-34" stroke="var(--ink)" stroke-width="0.7"/>
+    </g>
+    <circle r="24" fill="none" stroke="var(--ink)" stroke-width="0.6" opacity="0.25"/>
+    <path d="M0,-24 L2.5,0 L0,-24 L-2.5,0Z" fill="var(--ink)" stroke="none"/>
+    <path d="M0,24 L2.5,0 L0,24 L-2.5,0Z" fill="var(--ink)" stroke="none" opacity="0.2"/>
+    <path d="M24,0 L0,2.5 L24,0 L0,-2.5Z" fill="var(--ink)" stroke="none" opacity="0.45"/>
+    <path d="M-24,0 L0,2.5 L-24,0 L0,-2.5Z" fill="var(--accent)" stroke="none"/>
+    <line x1="0" y1="0" x2="-36" y2="0" stroke="var(--accent)" stroke-width="1.2" opacity="0.7"/>
+    <polygon points="-36,0 -30,-3 -30,3" fill="var(--accent)" stroke="none"/>
+    <circle r="2" fill="var(--ink)" stroke="none"/>
+    <defs>
+      <path id="${id}" d="M 0,-38 A 38,38 0 1,1 -0.001,-38"/>
+    </defs>
+    <text font-size="6" font-family="ui-monospace,monospace" fill="var(--ink)" stroke="none" letter-spacing="1.8" opacity="0.8">
+      <textPath href="#${id}" startOffset="5%">270 WEST CONSULTING · CANADA ·</textPath>
+    </text>
   </svg>`;
 }
 
@@ -288,6 +321,11 @@ function initConsultWidget(containerId) {
 // ── Init all ──
 document.addEventListener('DOMContentLoaded', function() {
   initMobileMenu();
+
+  // Inject site logos
+  document.querySelectorAll('[data-logo-svg]').forEach((el, i) => {
+    el.innerHTML = siteLogoSVG('x' + i);
+  });
 
   // Inject compass rose where placeholder exists
   document.querySelectorAll('[data-compass]').forEach(el => {
