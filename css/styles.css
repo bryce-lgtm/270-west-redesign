@@ -136,6 +136,10 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
   transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility var(--dur);
   pointer-events: none;
 }
+/* Invisible bridge fills the gap so mouse movement doesn't break hover */
+.nav-dropdown-menu::before {
+  content: ""; position: absolute; top: -16px; left: 0; right: 0; height: 16px;
+}
 .nav-dropdown:hover .nav-dropdown-menu, .nav-dropdown.open .nav-dropdown-menu {
   opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto;
 }
@@ -153,6 +157,7 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
 .nav-dropdown-menu a:last-child { border-bottom: none; }
 .nav-dropdown-menu a:hover { background: var(--bg2); color: var(--accent); }
 .nav-dropdown-menu-num { font-family: var(--font-mono); font-size: 10px; color: var(--olive); letter-spacing: 0.08em; flex-shrink: 0; }
+.nav-dropdown-menu-all { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent) !important; border-bottom: 1px solid var(--rule) !important; }
 .site-header .nav-cta {
   background: var(--ink); color: var(--bg); padding: 12px 22px;
   text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
