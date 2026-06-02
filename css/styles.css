@@ -1,17 +1,3 @@
-/* v4 — Sans-led. Remap Fraunces to Inter for the clinical/minimal feel matching the design. */
-@font-face {
-  font-family: 'Fraunces';
-  src: local('Inter');
-  font-weight: 100 900;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Fraunces';
-  src: local('Inter');
-  font-weight: 100 900;
-  font-style: italic;
-}
-
 :root {
   --bg: #F4F1EC;
   --bg2: #ebe6dd;
@@ -20,7 +6,7 @@
   --rule: #d8d2c4;
   --accent: #A5391D;
   --olive: #7A8A6A;
-  --font-serif: 'Fraunces', Georgia, serif;
+  --font-serif: 'Inter', system-ui, sans-serif;
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
 
@@ -105,6 +91,35 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
 .site-header .logo:hover { opacity: 0.7; }
 .site-header .logo-mark { height: 44px; width: 44px; flex-shrink: 0; transition: height var(--dur) var(--ease), width var(--dur) var(--ease); }
 .site-header.is-scrolled .logo-mark { height: 38px; width: 38px; }
+
+@keyframes shrink-header {
+  to {
+    box-shadow: var(--shadow-sm);
+    padding-top: 15px;
+    padding-bottom: 15px;
+    background: rgba(244, 241, 236, 0.92);
+  }
+}
+@keyframes shrink-logo {
+  to {
+    height: 38px;
+    width: 38px;
+  }
+}
+@supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+  .site-header {
+    animation: shrink-header auto linear both;
+    animation-timeline: scroll(block root);
+    animation-range: 0px 8px;
+    transition: none;
+  }
+  .site-header .logo-mark {
+    animation: shrink-logo auto linear both;
+    animation-timeline: scroll(block root);
+    animation-range: 0px 8px;
+    transition: none;
+  }
+}
 .site-header .logo-name { font-family: var(--font-sans); font-size: 18px; font-weight: 600; letter-spacing: -0.01em; line-height: 1; }
 .site-header .logo-tag { display: none; }
 .site-header nav { display: flex; gap: 28px; align-items: center; font-size: 14px; }
@@ -341,7 +356,8 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
 .quiz-nav { display: flex; justify-content: space-between; font-size: 12px; color: #8A95A6; font-family: var(--font-mono); letter-spacing: 0.06em; }
 .quiz-back { background: none; border: none; color: #8A95A6; cursor: pointer; font-family: inherit; letter-spacing: inherit; font-size: inherit; padding: 0; }
 .quiz-fields { display: grid; gap: 10px; margin-bottom: 20px; }
-.quiz-field { border-bottom: 1px solid #22324a; padding: 8px 0; }
+.quiz-field { border-bottom: 1px solid #22324a; padding: 8px 0; transition: border-bottom-color var(--dur) var(--ease); }
+.quiz-field:focus-within { border-bottom-color: var(--accent); }
 .quiz-field-label { font-size: 10px; color: #8A95A6; font-family: var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
 .quiz-field input { background: transparent; border: none; outline: none; color: var(--bg); font-size: 16px; font-family: inherit; width: 100%; padding: 4px 0; }
 .quiz-result-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
@@ -457,7 +473,8 @@ details:not([open]) .faq-icon::after { content: '+'; }
 
 /* ── CONTACT FORM ── */
 .contact-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: start; }
-.contact-form-field { border-bottom: 1px solid var(--rule); padding: 20px 0; }
+.contact-form-field { border-bottom: 1px solid var(--rule); padding: 20px 0; transition: border-bottom-color var(--dur) var(--ease); }
+.contact-form-field:focus-within { border-bottom-color: var(--accent); }
 .contact-form-field:first-child { border-top: 1px solid var(--rule); }
 .contact-form-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
 .contact-form-input { font-size: 17px; color: var(--muted); font-family: var(--font-sans); }
@@ -681,7 +698,8 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .consult-continue:not(.disabled) { background: var(--accent); color: #fff; cursor: pointer; }
 .consult-back { background: none; border: none; color: var(--muted); cursor: pointer; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; padding: 0; margin-bottom: 16px; display: block; }
 .consult-fields { display: grid; gap: 0; margin-bottom: 20px; }
-.consult-field { border-bottom: 1px solid var(--rule); padding: 12px 0; }
+.consult-field { border-bottom: 1px solid var(--rule); padding: 12px 0; transition: border-bottom-color var(--dur) var(--ease); }
+.consult-field:focus-within { border-bottom-color: var(--accent); }
 .consult-field.consult-field-first { border-top: 1px solid var(--rule); }
 .consult-field-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 .consult-field input { background: transparent; border: none; outline: none; color: var(--ink); font-size: 15px; font-family: inherit; width: 100%; padding: 4px 0; }

@@ -27,6 +27,9 @@ function initPhotos() {
 
 // ── Header shadow on scroll ──
 function initHeaderScroll() {
+  if (CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')) {
+    return;
+  }
   const header = document.querySelector('.site-header');
   if (!header) return;
   const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
@@ -225,9 +228,18 @@ function initQuiz(containerId) {
         <div class="quiz-h3">You may qualify for additional benefits.</div>
         <div class="quiz-lead">Where should we send your tailored next step? We'll reach out within one business day.</div>
         <div class="quiz-fields">
-          <div class="quiz-field"><div class="quiz-field-label">Full name</div><input type="text" id="qf-name" value="${contact.name}" oninput="quizContact('name',this.value)" placeholder="Your name"/></div>
-          <div class="quiz-field"><div class="quiz-field-label">Email</div><input type="email" id="qf-email" value="${contact.email}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
-          <div class="quiz-field"><div class="quiz-field-label">Phone</div><input type="tel" id="qf-phone" value="${contact.phone}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
+          <div class="quiz-field">
+            <label class="quiz-field-label" for="qf-name">Full name</label>
+            <input type="text" id="qf-name" value="${contact.name}" oninput="quizContact('name',this.value)" placeholder="Your name" autocomplete="name" required />
+          </div>
+          <div class="quiz-field">
+            <label class="quiz-field-label" for="qf-email">Email</label>
+            <input type="email" id="qf-email" value="${contact.email}" oninput="quizContact('email',this.value)" placeholder="you@example.ca" autocomplete="email" required />
+          </div>
+          <div class="quiz-field">
+            <label class="quiz-field-label" for="qf-phone">Phone</label>
+            <input type="tel" id="qf-phone" value="${contact.phone}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142" autocomplete="tel" inputmode="tel" />
+          </div>
         </div>
         <button class="quiz-start-btn" onclick="quizGo(${N+2})">Get my results →</button>
         <div class="quiz-privacy">🔒 Confidential. We never share your info.</div>`;
@@ -374,10 +386,22 @@ function initConsultWidget(containerId) {
         <h3 class="consult-h3">Hold your spot.</h3>
         <p class="consult-lead"><strong>${slot.date} · ${time} AT</strong> — we'll send a calendar invite and call link.</p>
         <div class="consult-fields">
-          <div class="consult-field consult-field-first"><div class="consult-field-label">Full name</div><input type="text" id="ci-name" value="${info.name}" oninput="consultInfo('name',this.value)" placeholder="Your name"/></div>
-          <div class="consult-field"><div class="consult-field-label">Email</div><input type="email" id="ci-email" value="${info.email}" oninput="consultInfo('email',this.value)" placeholder="you@example.ca"/></div>
-          <div class="consult-field"><div class="consult-field-label">Phone (optional)</div><input type="tel" id="ci-phone" value="${info.phone}" oninput="consultInfo('phone',this.value)" placeholder="(902) 555-0142"/></div>
-          <div class="consult-field"><div class="consult-field-label">What would you like to focus on?</div><input type="text" id="ci-topic" value="${info.topic}" oninput="consultInfo('topic',this.value)" placeholder="First claim, appeal, reassessment..."/></div>
+          <div class="consult-field consult-field-first">
+            <label class="consult-field-label" for="ci-name">Full name</label>
+            <input type="text" id="ci-name" value="${info.name}" oninput="consultInfo('name',this.value)" placeholder="Your name" autocomplete="name" required />
+          </div>
+          <div class="consult-field">
+            <label class="consult-field-label" for="ci-email">Email</label>
+            <input type="email" id="ci-email" value="${info.email}" oninput="consultInfo('email',this.value)" placeholder="you@example.ca" autocomplete="email" required />
+          </div>
+          <div class="consult-field">
+            <label class="consult-field-label" for="ci-phone">Phone (optional)</label>
+            <input type="tel" id="ci-phone" value="${info.phone}" oninput="consultInfo('phone',this.value)" placeholder="(902) 555-0142" autocomplete="tel" inputmode="tel" />
+          </div>
+          <div class="consult-field">
+            <label class="consult-field-label" for="ci-topic">What would you like to focus on?</label>
+            <input type="text" id="ci-topic" value="${info.topic}" oninput="consultInfo('topic',this.value)" placeholder="First claim, appeal, reassessment..."/>
+          </div>
         </div>
         <button class="consult-confirm" onclick="consultConfirm()">Confirm booking →</button>
         <div class="consult-privacy">🔒 Confidential. No obligation. Free of charge.</div>
