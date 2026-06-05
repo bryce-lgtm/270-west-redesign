@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400;1,9..144,500&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="preload" as="image" href="img/shoreline.jpg" fetchpriority="high"/>
-<link rel="stylesheet" href="css/styles.css"/>
+<link rel="stylesheet" href="css/styles.css?v=v5"/>
 </head>
 <body>
 
@@ -56,22 +56,25 @@
   </div>
 </section>
 
-<!-- PROMISE STRIP -->
-<section class="promise-strip">
-  <div class="promise-main">
-    <div class="promise-check" aria-hidden="true">
-      <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="12"/><path d="M10 16 L14 20 L22 12"/></svg>
+<!-- FEE STRIP -->
+<section class="services-fee-strip">
+  <div class="services-fee-badge">
+    <div class="services-fee-check">
+      <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="16" cy="16" r="12"></circle>
+        <path d="M10 16 L14 20 L22 12"></path>
+      </svg>
     </div>
     <div>
-      <div class="promise-h">No successful claim? No&nbsp;fee.</div>
+      <div class="services-fee-h">No successful claim? No fee.</div>
+      <div class="services-fee-sub">Fees only payable if your claim is successful. Free first consultation, every time.</div>
     </div>
   </div>
-  <div class="promise-benefits">
-    <ul class="benefit-chips">
-      <li>Independent of VAC</li>
-      <li>BBB Accredited</li>
-      <li>Confidential</li>
-    </ul>
+  <div class="services-fee-pills">
+    <span>◆ No upfront fees</span>
+    <span>◆ Privacy</span>
+    <span>◆ Respect</span>
+    <span>◆ Support</span>
   </div>
 </section>
 
@@ -128,7 +131,7 @@
   <div id="svc-grid" class="map-grid"></div>
   <div class="svc-preview-inner">
     <div class="svc-preview-head">
-      <h2 class="display-lg" style="color:var(--bg)">Wherever you are,<br>we have a way forward.</h2>
+      <h2 class="display-lg" style="color:var(--bg);text-wrap:balance;font-size:clamp(30px,4.2vw,52px)">Wherever you are in your journey.</h2>
       <p class="svc-preview-intro">From a first application to appeals and reviews, we meet you where you are in the process.</p>
     </div>
     <div class="svc-preview-grid">
@@ -152,31 +155,58 @@
   </div>
 </section>
 
-<!-- WHO WE ARE -->
-<section class="section-pad who-section">
-  <div class="who-grid">
-    <div class="who-photo">
-      <div data-photo="hills-road" data-aspect="7/8" data-pos="center" data-alt="Mountain ridge emerging through morning fog"></div>
-      <div class="who-quote">“It’s <em>more than a claim</em>. It’s your story.”</div>
+<!-- COMMUNITY & ESG (snapshot of the About page) -->
+<section class="section-pad esg-snapshot">
+  <div class="journey-head">
+    <h2 class="display-lg">Rooted in the<br>communities we serve.</h2>
+    <p class="journey-intro">A Canadian-owned business that takes its place in the veteran community seriously — through partnerships, sponsorships, and a growing approach to environmental and social responsibility.</p>
+  </div>
+  <div class="about-esg-items">
+    <div class="about-esg-item">
+      <div class="about-esg-tag">Community</div>
+      <h3 class="about-esg-h">Events we sponsor</h3>
+      <p class="about-esg-p">Veteran-focused community events year-round — Remembrance Day initiatives, Legion fundraisers, and family-day gatherings.</p>
     </div>
-    <div>
-      <h2 class="display-lg" style="margin-bottom:24px">Veterans deserve<br>a teammate.</h2>
-      <p class="who-body">Too many veterans give up on benefits they’ve earned. We sit beside you — patient, plain-spoken, and fully independent of VAC.</p>
-      <div class="who-tokens">
-        <div><div class="who-token-h">Independent</div><div class="who-token-p">No upsells, no pressure.</div></div>
-        <div><div class="who-token-h">Transparent</div><div class="who-token-p">Clear pricing, clear process.</div></div>
-        <div><div class="who-token-h">Patient</div><div class="who-token-p">We move at your pace.</div></div>
-      </div>
+    <div class="about-esg-item">
+      <div class="about-esg-tag">Environmental</div>
+      <h3 class="about-esg-h">Lower-footprint operations</h3>
+      <p class="about-esg-p">Digital-first where it helps — reducing print and travel, while keeping paper and in-person open for those who prefer it.</p>
+    </div>
+    <div class="about-esg-item">
+      <div class="about-esg-tag">Social</div>
+      <h3 class="about-esg-h">Equitable access</h3>
+      <p class="about-esg-p">Working toward sliding-scale access, service in English &amp; French, and accessibility across our website and process.</p>
     </div>
   </div>
+  <div class="esg-logos">
+    <div class="esg-logos-label">Events &amp; organizations we’re proud to support</div>
+    <div class="partners-row">
+      <div class="partner-card">Royal Canadian Legion</div>
+      <div class="partner-card">Remembrance Day</div>
+      <div class="partner-card">Veteran Wellness</div>
+      <div class="partner-card">Family Day Events</div>
+      <div class="partner-card">Your event here</div>
+    </div>
+  </div>
+  <a href="about.html" class="esg-snapshot-link">Read our full approach to community &amp; responsibility →</a>
 </section>
 
-<!-- EDITORIAL BANNER (campaign crosshair motif) -->
+<!-- EDITORIAL BANNER (campaign crosshair motif) — stats over image -->
 <section class="banner-section">
-  <div class="photo-band" data-photo="mountain-valley" data-aspect="5/2" data-pos="center 55%"
-       data-marker data-cross-y="40%"
-       data-headline="Your service earned benefits. <em>Our services help secure them.</em>"
-       data-tagline data-alt="Canadian wilderness at golden hour"></div>
+  <div class="photo-band photo-scene photo-scene-hover photo-scene--cross" style="aspect-ratio:5/2;--cross-y:36%">
+    <img src="img/mountain-valley.jpg" alt="Canadian wilderness at golden hour" loading="lazy" decoding="async" style="object-position:center 55%"/>
+    <div class="photo-scene-overlay"></div>
+    <div class="photo-scene-cross"><span class="v"></span><span class="h"></span></div>
+    <div class="photo-scene-body">
+      <div class="photo-scene-marker"><svg width="30" height="32" viewBox="540 400 3720 4030" fill="currentColor" aria-hidden="true"><path d="m2490 4430-45-863a95 95 0 0 1 111-98l859 151-116-320a65 65 0 0 1 20-73l941-762-212-99a65 65 0 0 1-34-79l186-572-542 115a65 65 0 0 1-73-38l-105-247-423 454a65 65 0 0 1-111-57l204-1052-327 189a65 65 0 0 1-91-27l-332-652-332 652a65 65 0 0 1-91 27l-327-189 204 1052a65 65 0 0 1-111 57l-423-454-105 247a65 65 0 0 1-73 38l-542-115 186 572a65 65 0 0 1-34 79l-212 99 941 762a65 65 0 0 1 20 73l-116 320 859-151a95 95 0 0 1 111 98l-45 863z"/></svg></div>
+    </div>
+    <div class="banner-stats-bar">
+      <div class="banner-stat"><span class="banner-stat-num">1,200+</span><span class="banner-stat-label">Veterans helped</span></div>
+      <div class="banner-stat"><span class="banner-stat-num">380+</span><span class="banner-stat-label">Successful appeals</span></div>
+      <div class="banner-stat"><span class="banner-stat-num">540+</span><span class="banner-stat-label">Ratings approved</span></div>
+      <div class="banner-stat"><span class="banner-stat-num">$14M+</span><span class="banner-stat-label">Benefits secured</span></div>
+    </div>
+  </div>
 </section>
 
 <!-- TESTIMONIALS -->
@@ -222,7 +252,6 @@
   <div class="cta-grid">
     <div>
       <h2 class="display-xl" style="color:var(--bg)">Your service.<br>Our commitment.</h2>
-      <p class="serif-tagline" style="font-size:clamp(20px,2vw,26px);margin-top:18px">In service of your story.</p>
     </div>
     <div>
       <p class="cta-p">You don’t have to do it alone. Start free — either way.</p>
@@ -287,7 +316,7 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>In service of your story.</span></div>
 </footer>
 
-<script src="js/main.js"></script>
+<script src="js/main.js?v=v5"></script>
 <script>
   // Decoration dialed way back: faint texture only in the two dark sections + footer.
   document.addEventListener('DOMContentLoaded', function() {

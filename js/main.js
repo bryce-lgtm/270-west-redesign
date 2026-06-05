@@ -248,9 +248,8 @@ function initQuiz(containerId) {
 // ── Maple Leaf SVG ──
 function mapLeafSVG(size, fill) {
   fill = fill || 'currentColor';
-  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" fill="${fill}" aria-hidden="true">
-    <path d="M50 5 L54 22 L60 22 L57 30 L74 24 L70 38 L88 36 L73 46 L84 60 L66 56 L63 70 L57 66 L54 78 L50 70 L46 78 L43 66 L37 70 L34 56 L16 60 L27 46 L12 36 L30 38 L26 24 L43 30 L40 22 L46 22 Z"/>
-  </svg>`;
+  // Official Canadian flag maple-leaf geometry (matches MAPLE_PATH / img/maple-leaf.svg).
+  return `<svg viewBox="540 400 3720 4030" width="${size}" height="${size}" fill="${fill}" aria-hidden="true" style="display:block"><path d="${MAPLE_PATH}"/></svg>`;
 }
 
 // ── Dot Pattern SVG ──
