@@ -1,5 +1,7 @@
-// Red compass-point marker (echoes the campaign ad creative)
-const COMPASS_MARKER = '<svg width="32" height="32" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><path d="M50 3 L57 43 L97 50 L57 57 L50 97 L43 57 L3 50 L43 43 Z"/></svg>';
+// Maple-leaf registration mark — official Canadian flag leaf geometry (public domain).
+// Sits at the crosshair intersection (echoes the campaign ad creative).
+const MAPLE_PATH = 'm2490 4430-45-863a95 95 0 0 1 111-98l859 151-116-320a65 65 0 0 1 20-73l941-762-212-99a65 65 0 0 1-34-79l186-572-542 115a65 65 0 0 1-73-38l-105-247-423 454a65 65 0 0 1-111-57l204-1052-327 189a65 65 0 0 1-91-27l-332-652-332 652a65 65 0 0 1-91 27l-327-189 204 1052a65 65 0 0 1-111 57l-423-454-105 247a65 65 0 0 1-73 38l-542-115 186 572a65 65 0 0 1-34 79l-212 99 941 762a65 65 0 0 1 20 73l-116 320 859-151a95 95 0 0 1 111 98l-45 863z';
+const MAPLE_MARKER = '<svg width="30" height="32" viewBox="540 400 3720 4030" fill="currentColor" aria-hidden="true"><path d="' + MAPLE_PATH + '"/></svg>';
 
 // ── Landscape photo injector (data-photo) ──
 function initPhotos() {
@@ -7,16 +9,26 @@ function initPhotos() {
     const d = el.dataset;
     const alt = (d.alt || '').replace(/"/g, '&quot;');
     el.style.aspectRatio = d.aspect || '16/9';
-    const img = `<img src="img/${d.photo}.jpg" alt="${alt}" loading="lazy" decoding="async" style="object-position:${d.pos || 'center'}">`;
+    // LCP candidate (hero): high priority, never lazy. Everything else: lazy.
+    const loadAttrs = el.hasAttribute('data-priority')
+      ? 'fetchpriority="high" decoding="async"'
+      : 'loading="lazy" decoding="async"';
+    const img = `<img src="img/${d.photo}.jpg" alt="${alt}" ${loadAttrs} style="object-position:${d.pos || 'center'}">`;
     const isScene = el.hasAttribute('data-scene') || d.headline || el.hasAttribute('data-tagline') || el.hasAttribute('data-marker') || d.tl || d.tr;
     if (!isScene) { el.classList.add('photo'); el.innerHTML = img; return; }
     el.classList.add('photo-scene', 'photo-scene-hover');
+    if (d.crossY) el.style.setProperty('--cross-y', d.crossY);
     let html = img + '<div class="photo-scene-overlay"></div>';
+    // Crosshair registration lines (campaign motif) — present whenever a marker is shown
+    if (el.hasAttribute('data-marker')) {
+      el.classList.add('photo-scene--cross');
+      html += '<div class="photo-scene-cross"><span class="v"></span><span class="h"></span></div>';
+    }
     if (d.tl) html += `<div class="photo-scene-corner tl">${d.tl}</div>`;
     if (d.tr) html += `<div class="photo-scene-corner tr">${d.tr}</div>`;
     if (d.headline || el.hasAttribute('data-marker')) {
       html += '<div class="photo-scene-body">';
-      if (el.hasAttribute('data-marker')) html += `<div class="photo-scene-marker">${COMPASS_MARKER}</div>`;
+      if (el.hasAttribute('data-marker')) html += `<div class="photo-scene-marker">${MAPLE_MARKER}</div>`;
       if (d.headline) html += `<div class="photo-scene-h">${d.headline}</div>`;
       html += '</div>';
     }
@@ -38,7 +50,7 @@ function initHeaderScroll() {
 function initScrollReveal() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
   const selectors = [
-    '.section-pad > *', '.testimonials-grid > *', '.steps-grid > *',
+    '.section-pad > *', '.testimonials-grid > *', '.tcard-grid > *', '.steps-grid > *',
     '.services-2col > *', '.resources-featured > *', '.values-grid > *',
     '.team-grid > *', '.svc-outcomes > *', '.faq-group', '.hiw-step-row',
     '.service-row', '.cta-grid > *', '.page-hero > *'
@@ -236,9 +248,8 @@ function initQuiz(containerId) {
 // ── Maple Leaf SVG ──
 function mapLeafSVG(size, fill) {
   fill = fill || 'currentColor';
-  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" fill="${fill}" aria-hidden="true">
-    <path d="M50 5 L54 22 L60 22 L57 30 L74 24 L70 38 L88 36 L73 46 L84 60 L66 56 L63 70 L57 66 L54 78 L50 70 L46 78 L43 66 L37 70 L34 56 L16 60 L27 46 L12 36 L30 38 L26 24 L43 30 L40 22 L46 22 Z"/>
-  </svg>`;
+  // Official Canadian flag maple-leaf geometry (matches MAPLE_PATH / img/maple-leaf.svg).
+  return `<svg viewBox="540 400 3720 4030" width="${size}" height="${size}" fill="${fill}" aria-hidden="true" style="display:block"><path d="${MAPLE_PATH}"/></svg>`;
 }
 
 // ── Dot Pattern SVG ──

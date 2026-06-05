@@ -7,15 +7,15 @@
 <meta name="description" content="Free, plain-language guides and checklists for navigating Veterans Affairs Canada programs, paperwork, and timelines."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300..700;1,300..700&family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400;1,9..144,500&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/styles.css?v=v5"/>
 </head>
 <body>
 
 <header class="site-header">
-  <a href="index.html" class="logo">
+  <a href="index.html" class="logo" aria-label="270 West Consulting — home">
+    <img src="img/logo.png" alt="" class="logo-mark" width="44" height="44"/>
     <span class="logo-name">270<span class="accent-deg">°</span>West</span>
-    <span class="logo-tag">Consulting · Canada</span>
   </a>
   <nav>
     <a href="services.html">Services</a>
@@ -49,7 +49,7 @@
   <h2 style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin:0 0 24px;font-weight:500">Start here</h2>
   <div class="resources-featured">
     <a href="article.html" class="resource-card-main">
-      <div data-photo="sea-rocks" data-aspect="16/10" data-pos="center" data-alt="Misty lake at dawn"></div>
+      <div data-photo="mountain-valley" data-aspect="16/10" data-pos="center" data-alt="Canadian wilderness at dawn"></div>
       <div class="resource-card-main-body">
         <div class="resource-card-main-tag">Featured guide · 18 min read</div>
         <h3 class="resource-card-main-h">A plain-language guide to VAC's main benefits programs</h3>
@@ -153,14 +153,13 @@
   <div id="footer-topo" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></div>
   <div class="footer-tagline-band" style="position:relative">
     <div>
-      <div class="footer-tagline-kicker">Our tagline</div>
       <div class="footer-tagline">In service of <em>your story.</em></div>
       <div class="footer-pillars">
         <span>◆ Privacy</span><span>◆ Respect</span><span>◆ Support</span><span style="color:var(--accent)">◆ No successful claim? No fee.</span>
       </div>
     </div>
     <div style="color:var(--olive);opacity:0.5;line-height:0">
-      <svg viewBox="0 0 100 100" width="140" height="140" fill="currentColor" aria-hidden="true"><path d="M50 5 L54 22 L60 22 L57 30 L74 24 L70 38 L88 36 L73 46 L84 60 L66 56 L63 70 L57 66 L54 78 L50 70 L46 78 L43 66 L37 70 L34 56 L16 60 L27 46 L12 36 L30 38 L26 24 L43 30 L40 22 L46 22 Z"/></svg>
+      <svg viewBox="540 400 3720 4030" width="140" height="140" fill="currentColor" aria-hidden="true"><path d="m2490 4430-45-863a95 95 0 0 1 111-98l859 151-116-320a65 65 0 0 1 20-73l941-762-212-99a65 65 0 0 1-34-79l186-572-542 115a65 65 0 0 1-73-38l-105-247-423 454a65 65 0 0 1-111-57l204-1052-327 189a65 65 0 0 1-91-27l-332-652-332 652a65 65 0 0 1-91 27l-327-189 204 1052a65 65 0 0 1-111 57l-423-454-105 247a65 65 0 0 1-73 38l-542-115 186 572a65 65 0 0 1-34 79l-212 99 941 762a65 65 0 0 1 20 73l-116 320 859-151a95 95 0 0 1 111 98l-45 863z"/></svg>
     </div>
   </div>
   <div class="footer-grid-5">
@@ -202,7 +201,7 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>In service of your story.</span></div>
 </footer>
 
-<script src="js/main.js"></script>
+<script src="js/main.js?v=v5"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('footer-topo').innerHTML = topoLinesSVG('#7A8A6A', 0.12);
