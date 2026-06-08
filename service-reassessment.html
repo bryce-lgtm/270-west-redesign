@@ -18,7 +18,15 @@
     <span class="logo-name">270<span class="accent-deg">°</span>West</span>
   </a>
   <nav>
-    <a href="services.html">Services</a>
+    <div class="nav-dropdown">
+      <a href="services.html" class="nav-dropdown-parent" aria-haspopup="true">Services <svg class="nav-dropdown-chevron" viewBox="0 0 10 6" width="9" height="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></a>
+      <div class="nav-dropdown-menu">
+        <a href="service-claims.html">Claims</a>
+        <a href="service-appeals.html">Appeals</a>
+        <a href="service-reassessment.html">Reassessment</a>
+        <a href="service-support.html">Support</a>
+      </div>
+    </div>
     <a href="how-it-works.html">How It Works</a>
     <a href="about.html">About</a>
     <a href="resources.html">Resources</a>
@@ -29,6 +37,10 @@
 </header>
 <nav class="mobile-nav">
   <a href="services.html">Services</a>
+  <a href="service-claims.html" class="mobile-subnav">Claims</a>
+  <a href="service-appeals.html" class="mobile-subnav">Appeals</a>
+  <a href="service-reassessment.html" class="mobile-subnav">Reassessment</a>
+  <a href="service-support.html" class="mobile-subnav">Support</a>
   <a href="how-it-works.html">How It Works</a>
   <a href="about.html">About</a>
   <a href="resources.html">Resources</a>
@@ -52,7 +64,7 @@
 <!-- 01 — COMMON SITUATIONS -->
 <section style="padding:80px 80px 60px">
   <div style="display:grid;grid-template-columns:1fr 2fr;gap:80px;align-items:start;margin-bottom:40px">
-    <div class="mono-label">01 — Common situations</div>
+    <div class="mono-label">Common situations</div>
     <div>
       <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.1;letter-spacing:-0.02em;margin:0 0 16px;max-width:720px">When veterans come to us for reassessments</h2>
       <p style="font-size:17px;line-height:1.6;color:var(--muted);margin:0;max-width:680px">Reassessments are common — your health changes over time, and your rating should reflect that.</p>
@@ -81,7 +93,7 @@
 <section class="dark-section" style="padding:80px;position:relative;overflow:hidden">
   <div id="approach-grid" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></div>
   <div style="position:relative;display:grid;grid-template-columns:1fr 2fr;gap:80px">
-    <div class="mono-label" style="color:var(--olive)">02 — Our approach</div>
+    <div class="mono-label" style="color:var(--olive)">Our approach</div>
     <div>
       <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.1;letter-spacing:-0.02em;margin:0 0 28px;max-width:720px">How we help with VAC reassessments</h2>
       <p style="font-size:18px;line-height:1.6;color:#d6d1c8;margin:0 0 36px;max-width:680px">Reassessments succeed when the change in your condition is clearly documented and clearly connected to your existing service-related diagnosis. That's where we focus.</p>
@@ -114,7 +126,7 @@
 <!-- 03 — OUTCOMES -->
 <section style="padding:100px 80px">
   <div style="display:grid;grid-template-columns:1fr 2fr;gap:80px;align-items:start;margin-bottom:56px">
-    <div class="mono-label">03 — What good outcomes look like</div>
+    <div class="mono-label">What good outcomes look like</div>
     <div>
       <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.1;letter-spacing:-0.02em;margin:0 0 16px;max-width:720px">What a good reassessment looks like</h2>
       <p style="font-size:17px;line-height:1.6;color:var(--muted);margin:0;max-width:680px">We can't promise specific results — VAC's decisions are theirs. What we can promise is the clearest, most complete file possible.</p>

@@ -18,7 +18,15 @@
     <span class="logo-name">270<span class="accent-deg">°</span>West</span>
   </a>
   <nav>
-    <a href="services.html">Services</a>
+    <div class="nav-dropdown">
+      <a href="services.html" class="nav-dropdown-parent" aria-haspopup="true">Services <svg class="nav-dropdown-chevron" viewBox="0 0 10 6" width="9" height="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></a>
+      <div class="nav-dropdown-menu">
+        <a href="service-claims.html">Claims</a>
+        <a href="service-appeals.html">Appeals</a>
+        <a href="service-reassessment.html">Reassessment</a>
+        <a href="service-support.html">Support</a>
+      </div>
+    </div>
     <a href="how-it-works.html">How It Works</a>
     <a href="about.html">About</a>
     <a href="resources.html">Resources</a>
@@ -29,6 +37,10 @@
 </header>
 <nav class="mobile-nav">
   <a href="services.html">Services</a>
+  <a href="service-claims.html" class="mobile-subnav">Claims</a>
+  <a href="service-appeals.html" class="mobile-subnav">Appeals</a>
+  <a href="service-reassessment.html" class="mobile-subnav">Reassessment</a>
+  <a href="service-support.html" class="mobile-subnav">Support</a>
   <a href="how-it-works.html">How It Works</a>
   <a href="about.html">About</a>
   <a href="resources.html">Resources</a>
@@ -47,7 +59,7 @@
 <!-- 01 — WHY WE EXIST -->
 <section class="about-why">
   <div>
-    <div class="mono-label">01 — Why we exist</div>
+    <div class="mono-label">Why we exist</div>
     <div class="about-maple-card">
       <div id="about-dots" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></div>
       <div class="about-maple-center">
@@ -67,7 +79,7 @@
 <!-- 02 — FOUNDER VOICE -->
 <section class="about-founder">
   <div class="about-founder-grid">
-    <div class="about-founder-label">02 — A note from our founder</div>
+    <div class="about-founder-label">A note from our founder</div>
     <div style="max-width:820px">
       <div class="about-founder-quotemark">"</div>
       <p class="about-founder-q">I started 270 West because I watched too many veterans give up on benefits they'd earned — not because they didn't qualify, but because no one was sitting beside them to help.</p>
@@ -84,7 +96,7 @@
 <!-- 03 — THE TEAM -->
 <section class="section-pad">
   <div style="display:grid;grid-template-columns:1fr 2fr;gap:80px;margin-bottom:56px">
-    <div class="mono-label">03 — The team</div>
+    <div class="mono-label">The team</div>
     <div>
       <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.1;letter-spacing:-0.02em;margin:0 0 16px;max-width:720px">People who listen first</h2>
       <p style="font-size:17px;line-height:1.6;color:var(--muted);margin:0;max-width:680px">A small Canadian team — advisors, former service members, and client-care leads — operating out of Halifax and serving veterans across the country.</p>
@@ -114,7 +126,7 @@
 <!-- 04 — VALUES -->
 <section class="section-pad" style="background:var(--bg2);border-top:1px solid var(--rule)">
   <div style="display:grid;grid-template-columns:1fr 2fr;gap:64px;margin-bottom:56px">
-    <div class="mono-label">04 — What we stand for</div>
+    <div class="mono-label">What we stand for</div>
     <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.1;letter-spacing:-0.02em;margin:0;max-width:720px">Four principles that guide every conversation</h2>
   </div>
   <div class="values-grid">
@@ -144,7 +156,7 @@
 <!-- 05 — COMMUNITY & RESPONSIBILITY -->
 <section class="section-pad">
   <div style="display:grid;grid-template-columns:1fr 2fr;gap:80px;align-items:start;margin-bottom:56px">
-    <div class="mono-label">05 — Community &amp; responsibility</div>
+    <div class="mono-label">Community &amp; responsibility</div>
     <div>
       <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.1;letter-spacing:-0.02em;margin:0 0 20px;max-width:800px">Rooted in the communities we serve.</h2>
       <p style="font-size:18px;line-height:1.6;color:var(--muted);margin:0;max-width:700px">We're a Canadian-owned business that takes its place in the veteran community seriously — through partnerships, sponsorships, and a growing approach to environmental and social responsibility.</p>
@@ -152,7 +164,7 @@
   </div>
   <div class="about-esg-items">
     <div class="about-esg-item">
-      <div class="about-esg-tag">01 — Community</div>
+      <div class="about-esg-tag">Community</div>
       <h3 class="about-esg-h">Events we sponsor</h3>
       <p class="about-esg-p">We sponsor Canadian veteran-focused community events year-round — from Remembrance Day initiatives to local Legion fundraisers and family-day gatherings.</p>
       <div class="about-esg-bullets">
@@ -162,7 +174,7 @@
       </div>
     </div>
     <div class="about-esg-item">
-      <div class="about-esg-tag">02 — Environmental</div>
+      <div class="about-esg-tag">Environmental</div>
       <h3 class="about-esg-h">Lower-footprint operations</h3>
       <p class="about-esg-p">Where we can, we work digitally first — reducing print and travel where it makes sense, while keeping every option open for veterans who prefer paper or in-person.</p>
       <div class="about-esg-bullets">
@@ -172,7 +184,7 @@
       </div>
     </div>
     <div class="about-esg-item">
-      <div class="about-esg-tag">03 — Social</div>
+      <div class="about-esg-tag">Social</div>
       <h3 class="about-esg-h">Equitable access</h3>
       <p class="about-esg-p">We're building toward sliding-scale access for veterans facing financial barriers, language-inclusive service in English and French, and accessibility across our website and process.</p>
       <div class="about-esg-bullets">
