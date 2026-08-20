@@ -5,19 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>270 West Consulting — VAC Claims Support for Canadian Veterans</title>
 <meta name="description" content="270 West Consulting helps Canadian veterans navigate Veterans Affairs Canada benefits — with patient guidance, plain language, and a teammate at your side."/>
+<link rel="icon" href="img/compass-circle.svg" type="image/svg+xml"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400;1,9..144,500&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<link rel="preload" as="image" href="img/shoreline.jpg" fetchpriority="high"/>
-<link rel="stylesheet" href="css/styles.css?v=v5"/>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter+Tight:ital,wght@0,300..700;1,300..600&family=League+Spartan:wght@300..700&display=swap" rel="stylesheet"/>
+<link rel="preload" as="image" href="img/hills-road.jpg" fetchpriority="high"/>
+<link rel="stylesheet" href="css/styles.css?v=v6"/>
 </head>
 <body>
 
 <header class="site-header">
-  <a href="index.html" class="logo" aria-label="270 West Consulting — home">
-    <img src="img/logo.png" alt="" class="logo-mark" width="44" height="44"/>
-    <span class="logo-name">270<span class="accent-deg">°</span>West</span>
-  </a>
+  <a href="index.html" class="logo" aria-label="270 West Veteran Services — home"><img src="img/compass-light.svg" alt="" class="logo-mark" width="42" height="35"/><span class="logo-lockup"><span class="logo-name">270<span class="logo-name-west">West</span></span><span class="logo-rule" aria-hidden="true"></span><span class="logo-tag">Veteran Services</span></span></a>
   <nav>
     <div class="nav-dropdown">
       <a href="services.html" class="nav-dropdown-parent" aria-haspopup="true">Services <svg class="nav-dropdown-chevron" viewBox="0 0 10 6" width="9" height="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></a>
@@ -46,25 +44,35 @@
   <a href="about.html">About</a>
   <a href="resources.html">Resources</a>
   <a href="contact.html">Contact</a>
-  <a href="eligibility.html" style="color:var(--accent);font-weight:600">Check Eligibility →</a>
+  <a href="eligibility.html" class="mobile-nav-cta">Check Eligibility →</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero hero-home">
+  <div class="hero-compass" aria-hidden="true"></div>
   <div class="hero-grid">
     <div class="hero-copy">
-      <h1 class="display-xl">Your service deserves<br>every benefit.</h1>
+      <h1 class="display-xl">Your Service Deserves<br>Every Benefit.</h1>
       <p class="hero-lead" style="margin-top:26px">We help Canadian veterans secure the Veterans Affairs Canada benefits and support they’ve earned — patiently, in plain language, with a teammate at your side.</p>
       <div class="hero-ctas">
         <a href="consult.html" class="btn-accent">Book a free consult →</a>
         <a href="eligibility.html" class="btn-ink">Check eligibility</a>
       </div>
     </div>
-    <div class="hero-photo">
-      <div data-photo="shoreline" data-priority data-aspect="4/5" data-pos="center 60%"
-           data-marker data-tagline data-cross-y="34%"
-           data-alt="Quiet Canadian lake at first light"></div>
-    </div>
+    <figure class="hero-quote">
+      <img src="img/hills-road.jpg" alt="A Canadian Armed Forces veteran outdoors above a forested valley" fetchpriority="high" decoding="async" style="object-position:center 50%"/>
+      <div class="hero-quote-scrim"></div>
+      <figcaption class="hero-quote-body">
+        <svg class="hero-quote-mark" width="56" height="42" viewBox="0 0 56 42" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M1 41V14C1 6.8 6.8 1 14 1h9v20h-9v20H1zM33 41V14c0-7.2 5.8-13 13-13h9v20h-9v20H33z"/>
+        </svg>
+        <blockquote class="hero-quote-q">I came with no expectations. I left knowing something was finally being done.</blockquote>
+        <div class="hero-quote-cite">
+          <span class="hero-quote-name">Capt. Sarah Macdonald (Ret’d)</span>
+          <span class="hero-quote-role">Canadian Armed Forces Veteran</span>
+        </div>
+      </figcaption>
+    </figure>
   </div>
 </section>
 
@@ -83,10 +91,10 @@
     </div>
   </div>
   <div class="services-fee-pills">
-    <span>◆ No upfront fees</span>
-    <span>◆ Privacy</span>
-    <span>◆ Respect</span>
-    <span>◆ Support</span>
+    <span>• No upfront fees</span>
+    <span>• Privacy</span>
+    <span>• Respect</span>
+    <span>• Support</span>
   </div>
 </section>
 
@@ -210,7 +218,7 @@
     <div class="photo-scene-overlay"></div>
     <div class="photo-scene-cross"><span class="v"></span><span class="h"></span></div>
     <div class="photo-scene-body">
-      <div class="photo-scene-marker"><svg width="30" height="32" viewBox="540 400 3720 4030" fill="currentColor" aria-hidden="true"><path d="m2490 4430-45-863a95 95 0 0 1 111-98l859 151-116-320a65 65 0 0 1 20-73l941-762-212-99a65 65 0 0 1-34-79l186-572-542 115a65 65 0 0 1-73-38l-105-247-423 454a65 65 0 0 1-111-57l204-1052-327 189a65 65 0 0 1-91-27l-332-652-332 652a65 65 0 0 1-91 27l-327-189 204 1052a65 65 0 0 1-111 57l-423-454-105 247a65 65 0 0 1-73 38l-542-115 186 572a65 65 0 0 1-34 79l-212 99 941 762a65 65 0 0 1 20 73l-116 320 859-151a95 95 0 0 1 111 98l-45 863z"/></svg></div>
+      <div class="photo-scene-marker"><svg width="34" height="28" viewBox="0 0 352.72 291.31" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M176.13 0 143.57 116.33 78.72 78.77 116.27 143.59 0 176.13 116.47 208.72 79.77 272.1 171.75 225.33 167.85 291.31 184.41 291.31 180.51 225.37 272.49 272.08 234.94 207.27 352.72 176.26 235.61 143.48 273.09 78.77 208.62 116.11ZM146.16 139.62 171.75 48.19 171.75 165.47ZM214.57 137.35 211.06 124.82 249.01 102.84 226.98 140.89ZM102.8 102.84 140.84 124.88 137.29 137.34 124.83 140.89ZM212.64 146.16 304.07 171.75 186.79 171.75ZM48.23 180.52 171.5 180.52 169.66 214.5ZM188.38 219.53 226.16 209.59 250.06 250.87ZM125.19 211.16 160.71 221.1 102.2 250.85Z"/></svg></div>
     </div>
     <div class="banner-stats-bar">
       <div class="banner-stat"><span class="banner-stat-num">1,200+</span><span class="banner-stat-label">Veterans helped</span></div>
@@ -285,13 +293,13 @@
         <span>Privacy</span><span>Respect</span><span>Support</span><span class="footer-pillar-accent">No successful claim? No fee.</span>
       </div>
     </div>
-    <div class="footer-maple" aria-hidden="true">
-      <svg viewBox="540 400 3720 4030" width="116" height="124" fill="currentColor"><path d="m2490 4430-45-863a95 95 0 0 1 111-98l859 151-116-320a65 65 0 0 1 20-73l941-762-212-99a65 65 0 0 1-34-79l186-572-542 115a65 65 0 0 1-73-38l-105-247-423 454a65 65 0 0 1-111-57l204-1052-327 189a65 65 0 0 1-91-27l-332-652-332 652a65 65 0 0 1-91 27l-327-189 204 1052a65 65 0 0 1-111 57l-423-454-105 247a65 65 0 0 1-73 38l-542-115 186 572a65 65 0 0 1-34 79l-212 99 941 762a65 65 0 0 1 20 73l-116 320 859-151a95 95 0 0 1 111 98l-45 863z"/></svg>
+    <div class="footer-compass" aria-hidden="true">
+      <svg viewBox="0 0 352.72 291.31" width="116" height="96" fill="currentColor"><path fill-rule="evenodd" d="M176.13 0 143.57 116.33 78.72 78.77 116.27 143.59 0 176.13 116.47 208.72 79.77 272.1 171.75 225.33 167.85 291.31 184.41 291.31 180.51 225.37 272.49 272.08 234.94 207.27 352.72 176.26 235.61 143.48 273.09 78.77 208.62 116.11ZM146.16 139.62 171.75 48.19 171.75 165.47ZM214.57 137.35 211.06 124.82 249.01 102.84 226.98 140.89ZM102.8 102.84 140.84 124.88 137.29 137.34 124.83 140.89ZM212.64 146.16 304.07 171.75 186.79 171.75ZM48.23 180.52 171.5 180.52 169.66 214.5ZM188.38 219.53 226.16 209.59 250.06 250.87ZM125.19 211.16 160.71 221.1 102.2 250.85Z"/></svg>
     </div>
   </div>
   <div class="footer-grid-5">
     <div>
-      <div class="footer-brand">270<span class="accent-deg">°</span>West Consulting</div>
+      <div class="footer-lockup"><img src="img/compass-light.svg" alt="" width="34" height="29"/><div><div class="footer-brand">270 West</div><div class="footer-brand-tag">Veteran Services</div></div></div>
       <div style="line-height:1.6">Helping Canadian veterans secure the benefits they’ve earned.<br>Made in Canada · BBB Accredited</div>
     </div>
     <div>
@@ -327,13 +335,13 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>In service of your story.</span></div>
 </footer>
 
-<script src="js/main.js?v=v5"></script>
+<script src="js/main.js?v=v6"></script>
 <script>
   // Decoration dialed way back: faint texture only in the two dark sections + footer.
   document.addEventListener('DOMContentLoaded', function() {
-    var svc = document.getElementById('svc-grid'); if (svc) svc.innerHTML = mapGridSVG('#7A8A6A', 0.05, 48);
-    var cta = document.getElementById('cta-grid'); if (cta) cta.innerHTML = mapGridSVG('#7A8A6A', 0.04, 48);
-    var ft = document.getElementById('footer-topo'); if (ft) ft.innerHTML = topoLinesSVG('#7A8A6A', 0.07);
+    var svc = document.getElementById('svc-grid'); if (svc) svc.innerHTML = mapGridSVG('#A1B6C2', 0.05, 48);
+    var cta = document.getElementById('cta-grid'); if (cta) cta.innerHTML = mapGridSVG('#A1B6C2', 0.04, 48);
+    var ft = document.getElementById('footer-topo'); if (ft) ft.innerHTML = topoLinesSVG('#A1B6C2', 0.07);
   });
 </script>
 </body>
