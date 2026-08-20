@@ -1,7 +1,7 @@
-// Maple-leaf registration mark — official Canadian flag leaf geometry (public domain).
-// Sits at the crosshair intersection (echoes the campaign ad creative).
-const MAPLE_PATH = 'm2490 4430-45-863a95 95 0 0 1 111-98l859 151-116-320a65 65 0 0 1 20-73l941-762-212-99a65 65 0 0 1-34-79l186-572-542 115a65 65 0 0 1-73-38l-105-247-423 454a65 65 0 0 1-111-57l204-1052-327 189a65 65 0 0 1-91-27l-332-652-332 652a65 65 0 0 1-91 27l-327-189 204 1052a65 65 0 0 1-111 57l-423-454-105 247a65 65 0 0 1-73 38l-542-115 186 572a65 65 0 0 1-34 79l-212 99 941 762a65 65 0 0 1 20 73l-116 320 859-151a95 95 0 0 1 111 98l-45 863z';
-const MAPLE_MARKER = '<svg width="30" height="32" viewBox="540 400 3720 4030" fill="currentColor" aria-hidden="true"><path d="' + MAPLE_PATH + '"/></svg>';
+// Compass-rose registration mark — the Phase II brand mark, traced from the
+// identity deck. Sits at the crosshair intersection.
+const COMPASS_PATH = 'M176.13 0 143.57 116.33 78.72 78.77 116.27 143.59 0 176.13 116.47 208.72 79.77 272.1 171.75 225.33 167.85 291.31 184.41 291.31 180.51 225.37 272.49 272.08 234.94 207.27 352.72 176.26 235.61 143.48 273.09 78.77 208.62 116.11ZM146.16 139.62 171.75 48.19 171.75 165.47ZM214.57 137.35 211.06 124.82 249.01 102.84 226.98 140.89ZM102.8 102.84 140.84 124.88 137.29 137.34 124.83 140.89ZM212.64 146.16 304.07 171.75 186.79 171.75ZM48.23 180.52 171.5 180.52 169.66 214.5ZM188.38 219.53 226.16 209.59 250.06 250.87ZM125.19 211.16 160.71 221.1 102.2 250.85Z';
+const COMPASS_MARKER = '<svg width="34" height="28" viewBox="0 0 352.72 291.31" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="' + COMPASS_PATH + '"/></svg>';
 
 // ── Landscape photo injector (data-photo) ──
 function initPhotos() {
@@ -28,7 +28,7 @@ function initPhotos() {
     if (d.tr) html += `<div class="photo-scene-corner tr">${d.tr}</div>`;
     if (d.headline || el.hasAttribute('data-marker')) {
       html += '<div class="photo-scene-body">';
-      if (el.hasAttribute('data-marker')) html += `<div class="photo-scene-marker">${MAPLE_MARKER}</div>`;
+      if (el.hasAttribute('data-marker')) html += `<div class="photo-scene-marker">${COMPASS_MARKER}</div>`;
       if (d.headline) html += `<div class="photo-scene-h">${d.headline}</div>`;
       html += '</div>';
     }
@@ -96,16 +96,16 @@ function compassRoseSVG(size, stroke, sw, bearing) {
     <line x1="0" y1="0" x2="92" y2="0" stroke-width="${sw * 1.5}"/>
     <polygon points="92,0 84,-4 84,4" fill="${stroke}" stroke="none"/>
   </g>
-  <text x="0" y="-62" text-anchor="middle" font-size="9" fill="${stroke}" stroke="none" font-family="ui-monospace,monospace" letter-spacing="1">N</text>
-  <text x="62" y="3" text-anchor="middle" font-size="9" fill="${stroke}" stroke="none" font-family="ui-monospace,monospace">E</text>
-  <text x="0" y="68" text-anchor="middle" font-size="9" fill="${stroke}" stroke="none" font-family="ui-monospace,monospace">S</text>
-  <text x="-62" y="3" text-anchor="middle" font-size="9" fill="${stroke}" stroke="none" font-family="ui-monospace,monospace">W</text>
+  <text x="0" y="-62" text-anchor="middle" font-size="9" fill="${stroke}" stroke="none" font-family="'Inter Tight',system-ui,sans-serif" letter-spacing="1">N</text>
+  <text x="62" y="3" text-anchor="middle" font-size="9" fill="${stroke}" stroke="none" font-family="'Inter Tight',system-ui,sans-serif">E</text>
+  <text x="0" y="68" text-anchor="middle" font-size="9" fill="${stroke}" stroke="none" font-family="'Inter Tight',system-ui,sans-serif">S</text>
+  <text x="-62" y="3" text-anchor="middle" font-size="9" fill="${stroke}" stroke="none" font-family="'Inter Tight',system-ui,sans-serif">W</text>
 </svg>`;
 }
 
 // ── Topo Lines SVG ──
 function topoLinesSVG(stroke, opacity) {
-  stroke = stroke || '#7A8A6A';
+  stroke = stroke || '#A1B6C2';
   opacity = opacity !== undefined ? opacity : 0.12;
   const paths = [200,240,280,320,360,400,440,480,520].map(y =>
     `<path d="M -50 ${y} Q 200 ${y-60}, 400 ${y+20} T 850 ${y-20}"/>`
@@ -117,7 +117,7 @@ function topoLinesSVG(stroke, opacity) {
 
 // ── Map Grid SVG ──
 function mapGridSVG(stroke, opacity, size) {
-  stroke = stroke || '#7A8A6A';
+  stroke = stroke || '#A1B6C2';
   opacity = opacity !== undefined ? opacity : 0.06;
   size = size || 32;
   return `<svg class="map-grid" aria-hidden="true">
@@ -245,16 +245,17 @@ function initQuiz(containerId) {
   render();
 }
 
-// ── Maple Leaf SVG ──
-function mapLeafSVG(size, fill) {
+// ── Compass Rose brand mark SVG ──
+function brandMarkSVG(size, fill) {
   fill = fill || 'currentColor';
-  // Official Canadian flag maple-leaf geometry (matches MAPLE_PATH / img/maple-leaf.svg).
-  return `<svg viewBox="540 400 3720 4030" width="${size}" height="${size}" fill="${fill}" aria-hidden="true" style="display:block"><path d="${MAPLE_PATH}"/></svg>`;
+  // Traced from the Phase II identity deck (img/compass.svg).
+  const h = Math.round(size * 291.31 / 352.72);
+  return `<svg viewBox="0 0 352.72 291.31" width="${size}" height="${h}" fill="${fill}" aria-hidden="true" style="display:block"><path fill-rule="evenodd" d="${COMPASS_PATH}"/></svg>`;
 }
 
 // ── Dot Pattern SVG ──
 function dotPatternSVG(stroke, opacity, size) {
-  stroke = stroke || '#7A8A6A';
+  stroke = stroke || '#A1B6C2';
   opacity = opacity !== undefined ? opacity : 0.18;
   size = size || 24;
   const half = size / 2;
@@ -361,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Inject compass rose where placeholder exists
   document.querySelectorAll('[data-compass]').forEach(el => {
     const size = el.dataset.size || 340;
-    const stroke = el.dataset.stroke || '#7A8A6A';
+    const stroke = el.dataset.stroke || '#A1B6C2';
     const sw = el.dataset.sw || 1;
     el.innerHTML = compassRoseSVG(size, stroke, sw, 270);
   });
