@@ -1090,9 +1090,9 @@ details:not([open]) .faq-icon::after { content: '+'; }
 }
 .hero-home .hero-grid {
   position: relative; z-index: 1;
-  grid-template-columns: 1fr 1.12fr; gap: 56px; align-items: center;
+  grid-template-columns: 1fr 0.7fr; gap: 64px; align-items: center;
 }
-.hero-quote { aspect-ratio: 4 / 3; }
+.hero-quote { aspect-ratio: 4 / 5; }
 .hero-home .hero-lead { font-size: 18px; line-height: 1.62; color: var(--muted); max-width: 500px; }
 .hero-home .display-xl { color: var(--ink); text-wrap: balance; }
 
@@ -1101,16 +1101,16 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .hero-quote img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero-quote-scrim {
   position: absolute; inset: 0;
-  background: linear-gradient(100deg, rgba(8,30,32,0.70) 0%, rgba(8,30,32,0.46) 50%, rgba(8,30,32,0.06) 82%, rgba(8,30,32,0) 100%);
+  background: linear-gradient(to top, rgba(8,30,32,0.90) 0%, rgba(8,30,32,0.72) 26%, rgba(8,30,32,0.28) 55%, rgba(8,30,32,0.02) 82%, rgba(8,30,32,0) 100%);
 }
-.hero-quote-body { position: absolute; left: 34px; right: 34px; top: 50%; transform: translateY(-50%); color: #fff; z-index: 2; }
+.hero-quote-body { position: absolute; left: 28px; right: 28px; bottom: 28px; color: #fff; z-index: 2; }
 .hero-quote-mark { display: block; margin-bottom: 14px; color: rgba(255,255,255,0.72); }
 .hero-quote-q {
-  font-family: var(--font-serif); font-size: clamp(19px, 1.7vw, 25px);
+  font-family: var(--font-serif); font-size: clamp(18px, 1.45vw, 22px);
   font-weight: 400; line-height: 1.34; margin: 0; max-width: 15em;
   text-shadow: 0 2px 16px rgba(8,30,32,0.45);
 }
-.hero-quote-cite { margin-top: 26px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.55); max-width: 20em; }
+.hero-quote-cite { margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.55); max-width: 20em; }
 .hero-quote-name {
   display: block; font-size: 13.5px; font-weight: 700;
   letter-spacing: 0.045em; text-transform: uppercase;
@@ -1199,7 +1199,14 @@ details:not([open]) .faq-icon::after { content: '+'; }
   .hero-home { padding: 40px 20px 36px; }
   .hero-compass { width: 165%; left: -34%; opacity: 0.5; }
   .hero-home .hero-grid { grid-template-columns: 1fr; gap: 32px; }
-  .hero-quote { aspect-ratio: 4 / 3.4; }
+  /* Narrow cards leave the quote sitting on her face — below 900px the photo
+     and the quote separate, the quote onto the deep teal. */
+  .hero-quote { aspect-ratio: auto; display: grid; background: var(--ink); }
+  .hero-quote img { position: relative; height: auto; aspect-ratio: 4 / 3.2; }
+  .hero-quote-scrim { display: none; }
+  .hero-quote-body { position: static; padding: 24px 22px 26px; }
+  .hero-quote-q { text-shadow: none; }
+  .hero-quote-cite { border-top-color: rgba(255,255,255,0.4); }
   .hero-quote-body { left: 22px; right: 22px; }
   .services-fee-strip { padding: 18px 20px; }
 }
@@ -1223,6 +1230,52 @@ details:not([open]) .faq-icon::after { content: '+'; }
   text-transform: none; letter-spacing: 0; line-height: 1.14;
 }
 .photo-scene-marker svg { width: 52px; height: 43px; }
+
+/* ── FEATURED VETERAN STORY ──
+   The Meta post composition brought onto the page: quote left on the pale
+   blue, portrait right, bleeding to the band's edge. The .tcard grid above
+   is left intact — it comes back the moment there's a third portrait. */
+.tfeature {
+  margin: 0; display: grid; grid-template-columns: 1fr 0.6fr;
+  align-items: stretch; background: var(--blue); color: var(--ink);
+  position: relative; overflow: hidden; box-shadow: var(--shadow-md);
+}
+.tfeature::before {
+  content: ""; position: absolute; left: -8%; top: 50%; transform: translateY(-50%);
+  width: 62%; aspect-ratio: 352.72 / 291.31;
+  background: url("../img/compass-light.svg") no-repeat center / contain;
+  opacity: 0.2; pointer-events: none;
+}
+.tfeature-body {
+  position: relative; z-index: 1;
+  padding: 56px 52px; display: flex; flex-direction: column; justify-content: center;
+}
+.tfeature-mark { color: var(--ink); opacity: 0.55; margin-bottom: 22px; }
+.tfeature-quote {
+  margin: 0; font-family: var(--font-serif); font-weight: 400;
+  font-size: clamp(24px, 2.5vw, 36px); line-height: 1.26; letter-spacing: 0;
+  max-width: 16em;
+}
+.tfeature-cite { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(26,58,63,0.45); max-width: 16em; }
+.tfeature-name {
+  display: block; font-family: var(--font-sans); font-weight: 700;
+  font-size: 14px; letter-spacing: 0.05em; text-transform: uppercase;
+}
+.tfeature-role {
+  display: block; margin-top: 4px; font-size: 13px; font-style: italic;
+  letter-spacing: 0.05em; text-transform: uppercase; color: rgba(26,58,63,0.8);
+}
+.tfeature-photo { position: relative; min-height: 560px; }
+.tfeature-photo img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 32%;
+}
+@media (max-width: 900px) {
+  .tfeature { grid-template-columns: 1fr; }
+  .tfeature-body { padding: 32px 24px; order: 2; }
+  .tfeature-photo { order: 1; min-height: 380px; }
+  .tfeature::before { width: 130%; left: -22%; }
+}
 
 /* Bare inline-styled headings (a few page templates set size only) also
    belong to the serif voice; an inline font-family still wins. */
