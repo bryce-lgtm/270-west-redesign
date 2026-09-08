@@ -1,1 +1,10 @@
-/* Bridge: adapts Elementor's wrapper markup to the prototype stylesheet. Filled in Task 9. */
+/* ── Elementor bridge ──────────────────────────────────────────────────────
+   Adapts Elementor's wrapper markup to the prototype stylesheet. Filled in Task 9.
+   Spike findings (Elementor 4.2.4, 2026-09-08):
+   - Container CSS-class control is `css_classes`; widget control is `_css_classes`.
+   - Optimized markup is on: no .elementor-widget-container wrapper; widget wrapper is
+     <div class="elementor-element w-* elementor-widget elementor-widget-<type>"> with the
+     inner element (h2.elementor-heading-title / <p> / a.elementor-button / img) directly inside.
+   - Containers render as <section|div|a class="elementor-element e-con-full <classes> e-flex e-con">.
+   - Global colour/typography schemes are disabled, so per-element CSS only carries --display:flex.
+   - Stylesheet order: elementor-frontend → kit post-6.css → styles.css → bridge → post-<page>.css. */
