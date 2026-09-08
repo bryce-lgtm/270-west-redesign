@@ -65,3 +65,13 @@ add_filter( 'style_loader_tag', function ( $tag, $handle, $href ) {
 	}
 	return '<style id="' . esc_attr( $handle ) . '-css">@import url("' . esc_url( $href ) . '") layer(elementor);</style>' . "\n";
 }, 10, 3 );
+
+// <title>: prototype uses an em dash separator, and inner-page titles that already name the
+// company ("About 270 West Consulting — …") must not get the site name appended again.
+add_filter( 'document_title_separator', fn() => '—' );
+add_filter( 'document_title_parts', function ( $parts ) {
+	if ( is_singular() && ! empty( $parts['title'] ) && ! empty( $parts['site'] ) && false !== stripos( $parts['title'], $parts['site'] ) ) {
+		unset( $parts['site'] );
+	}
+	return $parts;
+} );

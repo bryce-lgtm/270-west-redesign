@@ -20,7 +20,7 @@
 
 /* 1. Containers: plain block boxes by default; prototype classes supply layout. */
 :where(.e-con.w-con) {
-  display: block; position: static; width: auto; max-width: none; min-height: 0; height: auto;
+  display: block; position: static; width: auto; max-width: none; min-width: auto; min-height: auto; height: auto;
   padding: 0; margin: 0; gap: 0; overflow: visible; text-align: start;
   flex-direction: row; flex-wrap: nowrap; justify-content: normal; align-items: normal; align-content: normal;
   flex: 0 1 auto; align-self: auto; order: 0;
@@ -28,7 +28,7 @@
 
 /* 2. Widget wrappers: transparent boxes carrying the prototype class. */
 :where(.w-heading, .w-text, .w-rich, .w-btn, .w-image, .w-html) {
-  position: static; width: auto; max-width: none; margin: 0; padding: 0;
+  position: static; width: auto; max-width: none; min-width: auto; min-height: auto; margin: 0; padding: 0;
 }
 
 /* 3. Classed headings/text: the inner element inherits everything from the wrapper. */

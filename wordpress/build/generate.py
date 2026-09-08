@@ -116,7 +116,9 @@ class Converter:
 
     def classes(self, node, marker):
         cls = [marker] + node.classes
-        if not node.classes and marker in ('w-heading', 'w-text'):
+        # "Bare" = no class and no inline style: the wrapper vanishes and the inner element is styled by
+        # UA defaults + descendant rules. An inline style needs a box to land on, so it is not bare.
+        if not node.classes and not node.attrs.get('style') and marker in ('w-heading', 'w-text'):
             cls += ['w-bare', f'w-{node.tag}']
         style = node.attrs.get('style')
         if style:
