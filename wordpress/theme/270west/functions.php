@@ -48,3 +48,8 @@ add_action( 'wp_head', function () {
 	echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
 	echo '<link rel="icon" href="' . esc_url( W270_ASSETS . '/img/compass-circle.svg' ) . '" type="image/svg+xml">' . "\n";
 }, 1 );
+
+// Hello's header/footer experiment styles its own dynamic header; ours is the prototype markup.
+add_action( 'wp_enqueue_scripts', function () {
+	wp_dequeue_style( 'hello-elementor-header-footer' );
+}, 100 );
