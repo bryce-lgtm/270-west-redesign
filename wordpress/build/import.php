@@ -100,6 +100,119 @@ function w270_import_settings() {
 	echo "settings: ok\n";
 }
 
+function w270_media_id( $name ) {
+	$ids = get_posts( [ 'post_type' => 'attachment', 'post_status' => 'inherit', 'meta_key' => '_270w_source', 'meta_value' => $name, 'fields' => 'ids', 'numberposts' => 1 ] );
+	return $ids ? (int) $ids[0] : 0;
+}
+
+function w270_import_media() {
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+	require_once ABSPATH . 'wp-admin/includes/media.php';
+	foreach ( glob( W270_IMG . '/*.{jpg,jpeg,png}', GLOB_BRACE ) as $file ) {
+		$name = basename( $file );
+		if ( w270_media_id( $name ) ) { echo "media {$name}: exists\n"; continue; }
+		$tmp = wp_tempnam( $name );
+		copy( $file, $tmp );
+		$id = media_handle_sideload( [ 'name' => $name, 'tmp_name' => $tmp ], 0 );
+		if ( is_wp_error( $id ) ) { echo "media {$name}: ERROR " . $id->get_error_message() . "\n"; $GLOBALS['w270_failed'] = true; continue; }
+		update_post_meta( $id, '_270w_source', $name );
+		echo "media {$name}: #{$id}\n";
+	}
+}
+
+/** Replace generator markers: __W270_ASSETS__ in strings, {"__media__": file} in image settings, site paths in link settings. */
+function w270_resolve( array $elements, string $assets ) {
+	foreach ( $elements as &$el ) {
+		foreach ( $el['settings'] as $k => &$v ) {
+			if ( is_string( $v ) ) {
+				$v = str_replace( '__W270_ASSETS__', $assets, $v );
+			} elseif ( is_array( $v ) && isset( $v['__media__'] ) ) {
+				$id = w270_media_id( $v['__media__'] );
+				if ( ! $id ) { throw new RuntimeException( "media not imported: {$v['__media__']}" ); }
+				if ( ! empty( $v['alt'] ) && ! get_post_meta( $id, '_wp_attachment_image_alt', true ) ) {
+					update_post_meta( $id, '_wp_attachment_image_alt', $v['alt'] );
+				}
+				$v = [ 'id' => $id, 'url' => wp_get_attachment_url( $id ) ];
+			} elseif ( is_array( $v ) && isset( $v['url'] ) && is_string( $v['url'] ) && str_starts_with( $v['url'], '/' ) ) {
+				$v['url'] = home_url( $v['url'] );
+			}
+		}
+		unset( $v );
+		if ( ! empty( $el['elements'] ) ) { $el['elements'] = w270_resolve( $el['elements'], $assets ); }
+	}
+	return $elements;
+}
+
+function w270_import_pages( $only = null ) {
+	$assets = get_stylesheet_directory_uri() . '/assets';
+	foreach ( array_keys( w270_page_paths() ) as $slug ) {
+		if ( $only && $only !== $slug ) { continue; }
+		try {
+			$file = W270_OUT . "/{$slug}.json";
+			if ( ! file_exists( $file ) ) { throw new RuntimeException( "missing {$file} (run generate.py)" ); }
+			$def = json_decode( file_get_contents( $file ), true, 512, JSON_THROW_ON_ERROR );
+			$parent_id = 0;
+			if ( $def['parent'] ) {
+				$parent = w270_page_by_slug( $def['parent'] );
+				if ( ! $parent ) { throw new RuntimeException( "parent {$def['parent']} not imported yet" ); }
+				$parent_id = $parent->ID;
+			}
+			$existing = w270_page_by_slug( $slug );
+			$post = [
+				'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $def['title'], 'post_name' => $slug,
+				'post_parent' => $parent_id, 'post_excerpt' => $def['excerpt'], 'post_content' => '',
+			];
+			$pid = $existing ? wp_update_post( $post + [ 'ID' => $existing->ID ], true ) : wp_insert_post( $post, true );
+			if ( is_wp_error( $pid ) ) { throw new RuntimeException( $pid->get_error_message() ); }
+			$elements = w270_resolve( $def['elements'], $assets );
+			update_post_meta( $pid, '_elementor_edit_mode', 'builder' );
+			update_post_meta( $pid, '_elementor_template_type', 'wp-page' );
+			update_post_meta( $pid, '_elementor_version', ELEMENTOR_VERSION );
+			update_post_meta( $pid, '_elementor_data', wp_slash( wp_json_encode( $elements, JSON_UNESCAPED_UNICODE ) ) );
+			update_post_meta( $pid, '_elementor_page_settings', $def['page_settings'] );
+			delete_post_meta( $pid, '_elementor_css' );
+			echo "page {$slug}: #{$pid} " . get_permalink( $pid ) . "\n";
+		} catch ( Throwable $e ) {
+			echo "page {$slug}: ERROR " . $e->getMessage() . "\n";
+			$GLOBALS['w270_failed'] = true;
+		}
+	}
+}
+
+function w270_import_kit() {
+	$kit  = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
+	$typo = fn( $id, $title, $family, $weight, $style = 'normal' ) => [
+		'_id' => $id, 'title' => $title, 'typography_typography' => 'custom',
+		'typography_font_family' => $family, 'typography_font_weight' => $weight, 'typography_font_style' => $style,
+	];
+	$kit->update_settings( [
+		'system_colors' => [
+			[ '_id' => 'primary', 'title' => 'Primary', 'color' => '#1A3A3F' ],
+			[ '_id' => 'secondary', 'title' => 'Secondary', 'color' => '#4E757B' ],
+			[ '_id' => 'text', 'title' => 'Text', 'color' => '#1A3A3F' ],
+			[ '_id' => 'accent', 'title' => 'Accent', 'color' => '#A32222' ],
+		],
+		'custom_colors' => [
+			[ '_id' => 'w270blu', 'title' => 'Pale blue', 'color' => '#A1B6C2' ],
+			[ '_id' => 'w270tan', 'title' => 'Taupe', 'color' => '#ADA799' ],
+			[ '_id' => 'w270snd', 'title' => 'Light warm grey', 'color' => '#DFE1DE' ],
+			[ '_id' => 'w270bkg', 'title' => 'Page background', 'color' => '#F2F1EE' ],
+		],
+		'system_typography' => [
+			$typo( 'primary', 'Primary', 'League Spartan', '600' ),
+			$typo( 'secondary', 'Secondary', 'Crimson Text', '400' ),
+			$typo( 'text', 'Text', 'Inter Tight', '400' ),
+			$typo( 'accent', 'Accent', 'Inter Tight', '600' ),
+		],
+		'custom_typography' => [ $typo( 'w270srf', 'Editorial serif italic', 'Crimson Text', '400', 'italic' ) ],
+		'container_width' => [ 'unit' => 'px', 'size' => 1400, 'sizes' => [] ],
+		'container_padding' => [ 'unit' => 'px', 'top' => '0', 'right' => '0', 'bottom' => '0', 'left' => '0', 'isLinked' => true ],
+		'space_between_widgets' => [ 'unit' => 'px', 'size' => 0, 'column' => '0', 'row' => '0', 'isLinked' => true ],
+	] );
+	echo "kit: ok\n";
+}
+
 function w270_main( $argv ) {
 	$flags = array_fill_keys( array_map( fn( $a ) => explode( '=', ltrim( $a, '-' ) )[0], array_slice( $argv, 1 ) ), true );
 	$only  = null;

@@ -13,7 +13,8 @@ function initPhotos() {
     const loadAttrs = el.hasAttribute('data-priority')
       ? 'fetchpriority="high" decoding="async"'
       : 'loading="lazy" decoding="async"';
-    const img = `<img src="img/${d.photo}.jpg" alt="${alt}" ${loadAttrs} style="object-position:${d.pos || 'center'}">`;
+    const base = (window.W270 && window.W270.assets) ? window.W270.assets + '/img/' : 'img/';
+    const img = `<img src="${base}${d.photo}.jpg" alt="${alt}" ${loadAttrs} style="object-position:${d.pos || 'center'}">`;
     const isScene = el.hasAttribute('data-scene') || d.headline || el.hasAttribute('data-tagline') || el.hasAttribute('data-marker') || d.tl || d.tr;
     if (!isScene) { el.classList.add('photo'); el.innerHTML = img; return; }
     el.classList.add('photo-scene', 'photo-scene-hover');
@@ -34,6 +35,19 @@ function initPhotos() {
     }
     if (el.hasAttribute('data-tagline')) html += '<div class="photo-scene-tagline">In service of your story.</div>';
     el.innerHTML = html;
+  });
+}
+
+// ── Decorative SVG injection (data-decor) ──
+// <div data-decor="topoLinesSVG" data-decor-args='["#A1B6C2",0.12]'></div> calls topoLinesSVG('#A1B6C2', 0.12).
+// Replaces the per-page inline scripts; the WordPress generator emits these attributes.
+function initDecor() {
+  document.querySelectorAll('[data-decor]').forEach(el => {
+    const fn = window[el.dataset.decor];
+    if (typeof fn !== 'function') return;
+    let args = [];
+    try { args = JSON.parse(el.dataset.decorArgs || '[]'); } catch (e) { args = []; }
+    el.innerHTML = fn.apply(null, args);
   });
 }
 
@@ -277,7 +291,8 @@ const CONSULT_SLOTS = [
 
 function initConsultWidget(containerId) {
   const container = document.getElementById(containerId || 'consult-widget');
-  if (!container) return;
+  if (!container || container.dataset.inited) return;
+  container.dataset.inited = '1';
   let dayIdx = 0, time = null, stage = 'pick';
   let info = { name: '', email: '', phone: '', topic: '' };
 
@@ -378,7 +393,9 @@ document.addEventListener('DOMContentLoaded', function() {
     );
   });
 
+  initDecor();
   initPhotos();
   initQuiz();
+  if (document.getElementById('consult-widget')) initConsultWidget('consult-widget');
   requestAnimationFrame(() => requestAnimationFrame(initScrollReveal));
 });
