@@ -71,6 +71,16 @@ class GenerateTests(unittest.TestCase):
         c = first('<div class="x">Loose <svg></svg></div>')
         self.assertEqual([e['widgetType'] for e in c['elements']], ['text-editor', 'html'])
         self.assertEqual(c['elements'][0]['settings']['editor'], 'Loose')
+        self.assertEqual(c['elements'][0]['settings']['_css_classes'], 'w-text w-bare w-raw')
+
+    def test_bare_elements_get_markers_and_blockquote_keeps_class_on_wrapper(self):
+        p = first('<p>Plain paragraph</p>')
+        self.assertEqual(p['settings']['_css_classes'], 'w-text w-bare w-p')
+        h = first('<h3>Plain heading</h3>')
+        self.assertEqual(h['settings']['_css_classes'], 'w-heading w-bare w-h3')
+        q = first('<blockquote class="hero-quote-q">I came.</blockquote>')
+        self.assertEqual(q['settings']['editor'], 'I came.')
+        self.assertEqual(q['settings']['_css_classes'], 'w-text hero-quote-q')
 
     def test_figure_maps_to_div_container_and_keeps_id(self):
         c = first('<figure class="hero-quote" id="fq"><img src="img/a.jpg" alt=""/><figcaption class="c">Q</figcaption></figure>')
@@ -103,8 +113,8 @@ class GenerateTests(unittest.TestCase):
         c = reg.cls('object-position:center 30%', kind='img')
         self.assertEqual(a, b)
         self.assertNotEqual(a, c)
-        self.assertIn(f'.{a}{{margin-top:26px}}', reg.css())
-        self.assertIn(f'.{c} img{{object-position:center 30%}}', reg.css())
+        self.assertIn(f'.{a}.{a}.{a}.{a}{{margin-top:26px}}', reg.css())
+        self.assertIn(f'.{c}.{c}.{c} img{{object-position:center 30%}}', reg.css())
 
 if __name__ == '__main__':
     unittest.main()

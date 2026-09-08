@@ -53,3 +53,15 @@ add_action( 'wp_head', function () {
 add_action( 'wp_enqueue_scripts', function () {
 	wp_dequeue_style( 'hello-elementor-header-footer' );
 }, 100 );
+
+/**
+ * Load Elementor's base stylesheets (frontend, widget, atomic base) inside the `elementor` cascade
+ * layer, so the prototype stylesheet wins on every property it declares regardless of specificity.
+ * Per-element CSS (elementor-post-*) and Google Fonts stay unlayered so editor styling still applies.
+ */
+add_filter( 'style_loader_tag', function ( $tag, $handle, $href ) {
+	if ( is_admin() || ! preg_match( '/^(elementor-frontend|elementor-icons|widget-|base-|e-|swiper)/', $handle ) ) {
+		return $tag;
+	}
+	return '<style id="' . esc_attr( $handle ) . '-css">@import url("' . esc_url( $href ) . '") layer(elementor);</style>' . "\n";
+}, 10, 3 );
