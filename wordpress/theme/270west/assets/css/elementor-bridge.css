@@ -1,0 +1,68 @@
+/* ── Elementor bridge ──────────────────────────────────────────────────────
+   Adapts Elementor's wrapper markup to the prototype stylesheet. Filled in Task 9.
+   Spike findings (Elementor 4.2.4, 2026-09-08):
+   - Container CSS-class control is `css_classes`; widget control is `_css_classes`.
+   - Optimized markup is on: no .elementor-widget-container wrapper; widget wrapper is
+     <div class="elementor-element w-* elementor-widget elementor-widget-<type>"> with the
+     inner element (h2.elementor-heading-title / <p> / a.elementor-button / img) directly inside.
+   - Containers render as <section|div|a class="elementor-element e-con-full <classes> e-flex e-con">.
+   - Global colour/typography schemes are disabled, so per-element CSS only carries --display:flex.
+   - Stylesheet order: elementor-frontend → kit post-6.css → styles.css → bridge → post-<page>.css. */
+
+/* Marker classes emitted by generate.py:
+     .e-con.w-con                  prototype block-level wrapper/section (class on the container itself)
+     .elementor-widget.w-heading / .w-text / .w-rich / .w-btn / .w-image / .w-html
+     .w-noclass + .w-h2/.w-p     the prototype element had no class (bridge restates :not([class]) rules)
+     .w-bare (+ .w-raw)          no class and no inline style: wrapper vanishes, inner element is styled
+   How it works: functions.php loads Elementor's base CSS inside @layer elementor, so any unlayered rule
+   (prototype styles.css, this file) wins regardless of specificity. Defaults below use :where() (zero
+   specificity) so every prototype rule beats them; `revert` restores user-agent values. */
+@layer elementor;
+
+/* 1. Containers: plain block boxes by default; prototype classes supply layout. */
+:where(.e-con.w-con) {
+  display: block; position: static; width: auto; max-width: none; min-width: auto; min-height: auto; height: auto;
+  padding: 0; margin: 0; gap: 0; overflow: visible; text-align: start;
+  flex-direction: row; flex-wrap: nowrap; justify-content: normal; align-items: normal; align-content: normal;
+  flex: 0 1 auto; align-self: auto; order: 0;
+}
+
+/* 2. Widget wrappers: transparent boxes carrying the prototype class. */
+:where(.w-heading, .w-text, .w-rich, .w-btn, .w-image, .w-html) {
+  position: static; width: auto; max-width: none; min-width: auto; min-height: auto; margin: 0; padding: 0;
+}
+
+/* 3. Classed headings/text: the inner element inherits everything from the wrapper. */
+:where(.w-heading:not(.w-bare) > .elementor-heading-title, .w-text:not(.w-bare) > p) {
+  font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; line-height: inherit;
+  text-align: inherit; text-shadow: inherit; text-wrap: inherit; margin: 0; padding: 0; max-width: none;
+}
+
+/* 4. Bare elements: wrapper vanishes; inner element gets UA defaults + prototype descendant rules. */
+body:not(.elementor-editor-active) :where(.w-bare) { display: contents; }
+:where(.w-bare.w-heading > .elementor-heading-title, .w-bare.w-text > p) {
+  margin: revert; padding: revert; line-height: revert; font-size: revert; font-weight: revert;
+}
+/* Prototype rule `h1:not([class]), h2:not([class]), h3:not([class])` can't match Elementor's classed
+   inner heading; restate it on the wrapper (inherited), where a generated inline-style class still overrides it. */
+:where(.w-noclass.w-h1, .w-noclass.w-h2, .w-noclass.w-h3) { font-family: var(--font-serif); letter-spacing: 0; }
+
+/* 5. Rich text blocks keep UA spacing on their children (Elementor's widget CSS is layered away). */
+:where(.w-rich :is(p, h1, h2, h3, h4, h5, h6, ul, ol, li, blockquote, hr)) { margin: revert; padding: revert; }
+
+/* 6. Buttons: wrapper is the visual button; the <a> overlays the whole wrapper. */
+:where(.w-btn) { position: relative; }
+:where(.w-btn .elementor-button-wrapper) { display: contents; }
+:where(.w-btn .elementor-button) { all: unset; cursor: pointer; }
+.w-btn .elementor-button::after { content: ""; position: absolute; inset: 0; }
+:where(.w-btn .elementor-button-content-wrapper, .w-btn .elementor-button-text) { display: inline; }
+.w-btn:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* 7. Images and HTML widgets: wrappers disappear on the frontend so the inner element is a
+   direct child of the prototype container (needed for absolute/overlay/grid children). */
+body:not(.elementor-editor-active) :where(.w-image, .w-html) { display: contents; }
+.elementor-editor-active .w-image { text-align: inherit; }
+
+/* 8. Elementor resets the prototype relied on the UA for. */
+:where(.elementor a) { text-decoration: revert; }
+:where(.elementor img) { height: revert; border-radius: revert; }
