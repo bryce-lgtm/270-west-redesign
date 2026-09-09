@@ -116,10 +116,14 @@ class Converter:
 
     def classes(self, node, marker):
         cls = [marker] + node.classes
-        # "Bare" = no class and no inline style: the wrapper vanishes and the inner element is styled by
-        # UA defaults + descendant rules. An inline style needs a box to land on, so it is not bare.
-        if not node.classes and not node.attrs.get('style') and marker in ('w-heading', 'w-text'):
-            cls += ['w-bare', f'w-{node.tag}']
+        # w-noclass + w-<tag>: the prototype element had no class (prototype rules like h2:not([class])
+        # are restated on the wrapper by the bridge). w-bare: no class AND no inline style, so the
+        # wrapper vanishes and the inner element is styled by UA defaults + descendant rules; an inline
+        # style needs a box to land on, so a styled element is never bare.
+        if not node.classes and marker in ('w-heading', 'w-text'):
+            cls += ['w-noclass', f'w-{node.tag}']
+            if not node.attrs.get('style'):
+                cls.append('w-bare')
         style = node.attrs.get('style')
         if style:
             cls.append(self.styles.cls(style, kind='img' if node.tag == 'img' else 'self'))

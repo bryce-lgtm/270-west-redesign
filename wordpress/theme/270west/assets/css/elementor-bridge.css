@@ -12,7 +12,8 @@
 /* Marker classes emitted by generate.py:
      .e-con.w-con                  prototype block-level wrapper/section (class on the container itself)
      .elementor-widget.w-heading / .w-text / .w-rich / .w-btn / .w-image / .w-html
-     .w-bare (+ .w-h2 / .w-p / .w-raw)  the prototype element had no class: wrapper vanishes, inner element is styled
+     .w-noclass + .w-h2/.w-p     the prototype element had no class (bridge restates :not([class]) rules)
+     .w-bare (+ .w-raw)          no class and no inline style: wrapper vanishes, inner element is styled
    How it works: functions.php loads Elementor's base CSS inside @layer elementor, so any unlayered rule
    (prototype styles.css, this file) wins regardless of specificity. Defaults below use :where() (zero
    specificity) so every prototype rule beats them; `revert` restores user-agent values. */
@@ -42,8 +43,9 @@ body:not(.elementor-editor-active) :where(.w-bare) { display: contents; }
 :where(.w-bare.w-heading > .elementor-heading-title, .w-bare.w-text > p) {
   margin: revert; padding: revert; line-height: revert; font-size: revert; font-weight: revert;
 }
-/* prototype rule h1:not([class]) … can't match Elementor's classed inner heading; restate it */
-:where(.w-bare.w-h1, .w-bare.w-h2, .w-bare.w-h3) > .elementor-heading-title { font-family: var(--font-serif); letter-spacing: 0; }
+/* Prototype rule `h1:not([class]), h2:not([class]), h3:not([class])` can't match Elementor's classed
+   inner heading; restate it on the wrapper (inherited), where a generated inline-style class still overrides it. */
+:where(.w-noclass.w-h1, .w-noclass.w-h2, .w-noclass.w-h3) { font-family: var(--font-serif); letter-spacing: 0; }
 
 /* 5. Rich text blocks keep UA spacing on their children (Elementor's widget CSS is layered away). */
 :where(.w-rich :is(p, h1, h2, h3, h4, h5, h6, ul, ol, li, blockquote, hr)) { margin: revert; padding: revert; }

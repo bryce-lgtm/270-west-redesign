@@ -75,11 +75,12 @@ class GenerateTests(unittest.TestCase):
 
     def test_bare_elements_get_markers_and_blockquote_keeps_class_on_wrapper(self):
         p = first('<p>Plain paragraph</p>')
-        self.assertEqual(p['settings']['_css_classes'], 'w-text w-bare w-p')
+        self.assertEqual(p['settings']['_css_classes'], 'w-text w-noclass w-p w-bare')
         h = first('<h3>Plain heading</h3>')
-        self.assertEqual(h['settings']['_css_classes'], 'w-heading w-bare w-h3')
+        self.assertEqual(h['settings']['_css_classes'], 'w-heading w-noclass w-h3 w-bare')
         styled = first('<h2 style="font-size:52px">Styled</h2>')
         self.assertNotIn('w-bare', styled['settings']['_css_classes'])
+        self.assertIn('w-noclass w-h2', styled['settings']['_css_classes'])
         self.assertIn('w270-s', styled['settings']['_css_classes'])
         q = first('<blockquote class="hero-quote-q">I came.</blockquote>')
         self.assertEqual(q['settings']['editor'], 'I came.')
