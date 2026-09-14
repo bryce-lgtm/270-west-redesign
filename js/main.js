@@ -1,4 +1,4 @@
-// Compass-rose registration mark — the Phase II brand mark, traced from the
+// Compass-rose registration mark: the Phase II brand mark, traced from the
 // identity deck. Sits at the crosshair intersection.
 const COMPASS_PATH = 'M176.13 0 143.57 116.33 78.72 78.77 116.27 143.59 0 176.13 116.47 208.72 79.77 272.1 171.75 225.33 167.85 291.31 184.41 291.31 180.51 225.37 272.49 272.08 234.94 207.27 352.72 176.26 235.61 143.48 273.09 78.77 208.62 116.11ZM146.16 139.62 171.75 48.19 171.75 165.47ZM214.57 137.35 211.06 124.82 249.01 102.84 226.98 140.89ZM102.8 102.84 140.84 124.88 137.29 137.34 124.83 140.89ZM212.64 146.16 304.07 171.75 186.79 171.75ZM48.23 180.52 171.5 180.52 169.66 214.5ZM188.38 219.53 226.16 209.59 250.06 250.87ZM125.19 211.16 160.71 221.1 102.2 250.85Z';
 const COMPASS_MARKER = '<svg width="34" height="28" viewBox="0 0 352.72 291.31" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="' + COMPASS_PATH + '"/></svg>';
@@ -20,7 +20,7 @@ function initPhotos() {
     el.classList.add('photo-scene', 'photo-scene-hover');
     if (d.crossY) el.style.setProperty('--cross-y', d.crossY);
     let html = img + '<div class="photo-scene-overlay"></div>';
-    // Crosshair registration lines (campaign motif) — present whenever a marker is shown
+    // Crosshair registration lines (campaign motif), present whenever a marker is shown
     if (el.hasAttribute('data-marker')) {
       el.classList.add('photo-scene--cross');
       html += '<div class="photo-scene-cross"><span class="v"></span><span class="h"></span></div>';
@@ -171,7 +171,7 @@ const QUIZ_QUESTIONS = [
   { id:'served', q:'Have you served in the Canadian Armed Forces?', options:['Regular Force','Reserve Force','RCMP','No'] },
   { id:'rating', q:'Do you currently have a VAC disability rating?', options:['No rating','0–30%','40–70%','80%+'] },
   { id:'health', q:'Are you experiencing service-related health issues?', options:['Yes','Not sure','No'] },
-  { id:'filed', q:'Have you previously filed a claim with VAC?', options:['Yes — approved','Yes — denied','No'] },
+  { id:'filed', q:'Have you previously filed a claim with VAC?', options:['Yes, approved','Yes, denied','No'] },
   { id:'goal', q:'What are you looking to do?', options:['File a new claim','Increase an existing rating','Appeal a denial','Not sure yet'] }
 ];
 
@@ -193,9 +193,9 @@ function initQuiz(containerId) {
 
     if (step === 0) {
       body = `
-        <div class="quiz-step-label">Step 01 — Intake</div>
+        <div class="quiz-step-label">Step 01 · Intake</div>
         <div class="quiz-h3">See which VAC programs may apply to&nbsp;you.</div>
-        <div class="quiz-lead">Five quick questions. About two minutes. Fully confidential and no obligation — we'll get back to you with a clear, friendly next step.</div>
+        <div class="quiz-lead">Five quick questions. About two minutes. Fully confidential and no obligation. We'll get back to you with a clear next step.</div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <button class="quiz-start-btn" onclick="quizGo(1)">Start now →</button>
           <div class="quiz-badges"><span>● 2 MIN</span><span>● CONFIDENTIAL</span><span>● NO COST</span></div>
@@ -231,7 +231,7 @@ function initQuiz(containerId) {
       const name = contact.name || 'you';
       body = `
         <div class="quiz-result-label">● Result ready</div>
-        <div class="quiz-result-h">Thanks — we'll be in touch shortly.</div>
+        <div class="quiz-result-h">Thanks. We'll be in touch shortly.</div>
         <div class="quiz-result-p">Based on your answers, there are a few VAC programs we'd like to walk through with you. A 270 West advisor will reach out to ${name} within one business day for a friendly, no-obligation conversation.</div>
         <div class="quiz-result-btns">
           <a href="contact.html" class="btn-accent" style="font-size:14px;padding:16px 28px">Book a free conversation →</a>
@@ -315,7 +315,7 @@ function initConsultWidget(containerId) {
       container.innerHTML = `<div class="consult-widget">
         <div class="consult-header"><span>Benefits Analysis Consult</span><span>30 min · free</span></div>
         <h3 class="consult-h3">Book a free 30-minute consult.</h3>
-        <p class="consult-lead">One-on-one with a 270 West advisor. We'll review your situation, walk through which VAC programs may apply, and answer your questions — no obligation.</p>
+        <p class="consult-lead">One-on-one with a 270 West advisor. We'll review your situation, walk through which VAC programs may apply, and answer your questions. No obligation.</p>
         <div class="consult-advisor-row">
           <div class="consult-avatars">
             <span class="consult-avatar" style="background:var(--olive)">JM</span>
@@ -336,7 +336,7 @@ function initConsultWidget(containerId) {
         <div class="consult-header"><span>Benefits Analysis Consult</span><span>30 min · free</span></div>
         <button class="consult-back" onclick="consultBack()">← BACK</button>
         <h3 class="consult-h3">Hold your spot.</h3>
-        <p class="consult-lead"><strong>${slot.date} · ${time} AT</strong> — we'll send a calendar invite and call link.</p>
+        <p class="consult-lead"><strong>${slot.date} · ${time} AT</strong>. We'll send a calendar invite and call link.</p>
         <div class="consult-fields">
           <div class="consult-field consult-field-first"><div class="consult-field-label">Full name</div><input type="text" id="ci-name" value="${info.name}" oninput="consultInfo('name',this.value)" placeholder="Your name"/></div>
           <div class="consult-field"><div class="consult-field-label">Email</div><input type="email" id="ci-email" value="${info.email}" oninput="consultInfo('email',this.value)" placeholder="you@example.ca"/></div>
@@ -351,7 +351,7 @@ function initConsultWidget(containerId) {
       container.innerHTML = `<div class="consult-widget">
         <div class="consult-header"><span>Benefits Analysis Consult</span><span>30 min · free</span></div>
         <div class="consult-confirmed-label">● Booking confirmed</div>
-        <h3 class="consult-h3">Thanks, ${info.name || 'veteran'} — you're on the calendar.</h3>
+        <h3 class="consult-h3">Thanks, ${info.name || 'veteran'}. You're on the calendar.</h3>
         <p class="consult-lead">We've sent a calendar invite to <strong>${info.email || 'your email'}</strong> with a call link for <strong>${slot.date} at ${time} AT</strong>. Talk soon.</p>
         <button class="consult-restart" onclick="consultRestart()">Book another time</button>
       </div>`;

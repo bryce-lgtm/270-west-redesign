@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>VAC Benefits Resources &amp; Guides for Canadian Veterans — 270 West Consulting</title>
-<meta name="description" content="Free, plain-language guides and checklists for navigating Veterans Affairs Canada programs, paperwork, and timelines."/>
+<title>VAC Resources for Canadian Veterans: Stories, Guides &amp; News | 270 West Consulting</title>
+<meta name="description" content="Veteran stories in their own words, plain-language guides to Veterans Affairs Canada programs and paperwork, and news from 270 West Consulting."/>
 <link rel="icon" href="img/compass-circle.svg" type="image/svg+xml"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter+Tight:ital,wght@0,300..700;1,300..600&family=League+Spartan:wght@300..700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v6"/>
+<link rel="stylesheet" href="css/styles.css?v=v7"/>
 </head>
 <body>
 
 <header class="site-header">
-  <a href="index.html" class="logo" aria-label="270 West Veteran Services — home"><img src="img/compass-light.svg" alt="" class="logo-mark" width="42" height="35"/><span class="logo-lockup"><span class="logo-name">270<span class="logo-name-west">West</span></span><span class="logo-rule" aria-hidden="true"></span><span class="logo-tag">Veteran Services</span></span></a>
+  <a href="index.html" class="logo" aria-label="270 West Veteran Services home"><img src="img/compass-light.svg" alt="" class="logo-mark" width="42" height="35"/><span class="logo-lockup"><span class="logo-name">270<span class="logo-name-west">West</span></span><span class="logo-rule" aria-hidden="true"></span><span class="logo-tag">Veteran Services</span></span></a>
   <nav>
     <div class="nav-dropdown">
       <a href="services.html" class="nav-dropdown-parent" aria-haspopup="true">Services <svg class="nav-dropdown-chevron" viewBox="0 0 10 6" width="9" height="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></a>
@@ -27,7 +27,14 @@
     </div>
     <a href="how-it-works.html">How It Works</a>
     <a href="about.html">About</a>
-    <a href="resources.html">Resources</a>
+    <div class="nav-dropdown">
+      <a href="resources.html" class="nav-dropdown-parent" aria-haspopup="true">Resources <svg class="nav-dropdown-chevron" viewBox="0 0 10 6" width="9" height="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></a>
+      <div class="nav-dropdown-menu">
+        <a href="resources.html#stories">Stories</a>
+        <a href="resources.html#guides">Guides</a>
+        <a href="resources.html#news">News</a>
+      </div>
+    </div>
     <a href="contact.html">Contact</a>
     <a href="eligibility.html" class="nav-cta">Check Eligibility →</a>
   </nav>
@@ -42,6 +49,9 @@
   <a href="how-it-works.html">How It Works</a>
   <a href="about.html">About</a>
   <a href="resources.html">Resources</a>
+  <a href="resources.html#stories" class="mobile-subnav">Stories</a>
+  <a href="resources.html#guides" class="mobile-subnav">Guides</a>
+  <a href="resources.html#news" class="mobile-subnav">News</a>
   <a href="contact.html">Contact</a>
   <a href="eligibility.html" class="mobile-nav-cta">Check Eligibility →</a>
 </nav>
@@ -49,25 +59,99 @@
 <!-- PAGE HERO -->
 <section class="page-hero">
   <div class="page-hero-kicker"><span class="page-hero-kicker-rule"></span>Resources</div>
-  <h1 class="page-hero-h1">VAC benefits resources, guides, and checklists for Canadian veterans.</h1>
-  <p class="page-hero-lead">Plain-language guides for navigating VAC.</p>
-  <p class="page-hero-sub">Free, no-jargon explainers and checklists to help you understand Veterans Affairs Canada programs, paperwork, and timelines — whether you choose to work with us or not.</p>
+  <h1 class="page-hero-h1">VAC resources for Canadian veterans: stories, guides, and news</h1>
+  <p class="page-hero-lead">Veterans in their own words. VAC in plain language.</p>
+  <p class="page-hero-sub">Stories from the veterans we've stood beside, free guides to Veterans Affairs Canada programs and paperwork, and news from our team. All of it is here for you whether you work with us or not.</p>
 </section>
 
-<!-- FEATURED GUIDES -->
-<section class="section-pad">
-  <h2 style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin:0 0 24px;font-weight:500">Start here</h2>
+<!-- SECTION SWITCHER -->
+<nav class="res-nav" aria-label="Resource sections">
+  <a href="#stories" class="res-nav-item">
+    <span class="res-nav-h">Stories</span>
+    <span class="res-nav-p">Veterans share what the process was like, on camera and in their own words.</span>
+  </a>
+  <a href="#guides" class="res-nav-item">
+    <span class="res-nav-h">Guides</span>
+    <span class="res-nav-p">Plain-language explainers and checklists for VAC programs and paperwork.</span>
+  </a>
+  <a href="#news" class="res-nav-item">
+    <span class="res-nav-h">News</span>
+    <span class="res-nav-p">Updates from 270 West, the campaign, and the community events we support.</span>
+  </a>
+</nav>
+
+<!-- STORIES -->
+<section id="stories" class="section-pad res-section">
+  <div class="res-section-head">
+    <div class="mono-label">Stories</div>
+    <div>
+      <h2 class="res-section-h">Real veterans. Real stories.</h2>
+      <p class="res-section-p">We're sitting down with veterans across Canada to hear what their service meant, what the VAC process was like, and what changed once someone was in their corner. Each story is recorded on video and shared here with their permission. New stories are added as we record them.</p>
+    </div>
+  </div>
+
+  <div class="story-grid">
+    <a href="story.html" class="story-card">
+      <div class="story-card-media">
+        <img src="img/veteran-sarah.jpg" alt="Capt. Sarah Macdonald, a Canadian Armed Forces veteran, outdoors above a forested valley" loading="lazy" decoding="async" style="object-position:center 30%"/>
+        <span class="story-card-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+      </div>
+      <div class="story-card-body">
+        <div class="story-card-meta">Story 01 · Video · 4 min</div>
+        <blockquote class="story-card-quote">I came with no expectations. I left knowing something was finally being done.</blockquote>
+        <div class="story-card-cite">
+          <span class="story-card-name">Capt. Sarah Macdonald (Ret’d)</span>
+          <span class="story-card-role">Canadian Armed Forces Veteran</span>
+        </div>
+        <span class="story-card-link">Watch Sarah's story →</span>
+      </div>
+    </a>
+    <a href="story.html" class="story-card">
+      <div class="story-card-media">
+        <img src="img/veteran-daniel.jpg" alt="Cpl. Daniel Leblanc, a Canadian Armed Forces veteran, seated on a porch" loading="lazy" decoding="async" style="object-position:center 32%"/>
+        <span class="story-card-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+      </div>
+      <div class="story-card-body">
+        <div class="story-card-meta">Story 02 · Video · 5 min</div>
+        <blockquote class="story-card-quote">I had experts handling everything. That was incredibly reassuring.</blockquote>
+        <div class="story-card-cite">
+          <span class="story-card-name">Cpl. Daniel Leblanc (Ret’d)</span>
+          <span class="story-card-role">Canadian Armed Forces Veteran</span>
+        </div>
+        <span class="story-card-link">Watch Daniel's story →</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="story-invite">
+    <div>
+      <div class="story-invite-h">Have a story of your own?</div>
+      <p class="story-invite-p">If you've worked with us and would like to share your experience, we'd be honoured to record it. You choose what to share and how much.</p>
+    </div>
+    <a href="contact.html" class="btn-ink">Get in touch →</a>
+  </div>
+</section>
+
+<!-- GUIDES -->
+<section id="guides" class="section-pad res-section" style="background:var(--bg2);border-top:1px solid var(--rule)">
+  <div class="res-section-head">
+    <div class="mono-label">Guides</div>
+    <div>
+      <h2 class="res-section-h">Plain-language guides to VAC</h2>
+      <p class="res-section-p">Free, no-jargon explainers and checklists to help you understand Veterans Affairs Canada programs, paperwork, and timelines. Start with the three below, or browse by topic.</p>
+    </div>
+  </div>
+
   <div class="resources-featured">
     <a href="article.html" class="resource-card-main">
-      <div data-photo="mountain-valley" data-aspect="16/10" data-pos="center" data-alt="Canadian wilderness at dawn"></div>
       <div class="resource-card-main-body">
         <div class="resource-card-main-tag">Featured guide · 18 min read</div>
         <h3 class="resource-card-main-h">A plain-language guide to VAC's main benefits programs</h3>
+        <p class="resource-card-main-p">What Disability Benefits, the Income Replacement Benefit, Career Transition Services, and caregiver support are for, who qualifies, and how to apply.</p>
         <div class="resource-card-main-link">Read guide →</div>
       </div>
     </a>
     <a href="article.html" class="resource-card-sm">
-      <div data-photo="forest-fog" data-aspect="16/10" data-pos="center" data-alt="Mountain ridge above the clouds"></div>
       <div class="resource-card-sm-body">
         <div>
           <div class="resource-card-sm-tag">Checklist · 5 min</div>
@@ -77,7 +161,6 @@
       </div>
     </a>
     <a href="article.html" class="resource-card-sm">
-      <div data-photo="hills-road" data-aspect="16/10" data-pos="center" data-alt="Peaks emerging through fog"></div>
       <div class="resource-card-sm-body">
         <div>
           <div class="resource-card-sm-tag">Explainer · 8 min</div>
@@ -87,47 +170,82 @@
       </div>
     </a>
   </div>
+
+  <div class="library-wrap">
+    <div class="library-topic">
+      <div class="library-topic-grid">
+        <h3 class="library-topic-h">VAC eligibility &amp; programs</h3>
+        <div class="library-items">
+          <a href="#" class="library-item">What Disability Benefits cover<span class="library-item-arrow">→</span></a>
+          <a href="#" class="library-item">Income Replacement Benefit explained<span class="library-item-arrow">→</span></a>
+          <a href="#" class="library-item">Career Transition Services<span class="library-item-arrow">→</span></a>
+          <a href="#" class="library-item">Family caregiver support<span class="library-item-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="library-topic">
+      <div class="library-topic-grid">
+        <h3 class="library-topic-h">Filing your first VAC claim</h3>
+        <div class="library-items">
+          <a href="#" class="library-item">What to expect when you apply<span class="library-item-arrow">→</span></a>
+          <a href="#" class="library-item">Building your service-related health record<span class="library-item-arrow">→</span></a>
+          <a href="#" class="library-item">Getting medical documentation right<span class="library-item-arrow">→</span></a>
+          <a href="#" class="library-item">Common reasons applications come back<span class="library-item-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="library-topic">
+      <div class="library-topic-grid">
+        <h3 class="library-topic-h">After a VAC decision</h3>
+        <div class="library-items">
+          <a href="#" class="library-item">Understanding your decision letter<span class="library-item-arrow">→</span></a>
+          <a href="#" class="library-item">When to consider a reassessment<span class="library-item-arrow">→</span></a>
+          <a href="#" class="library-item">How VAC appeals work<span class="library-item-arrow">→</span></a>
+          <a href="#" class="library-item">Mental health &amp; wellness resources<span class="library-item-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- LIBRARY -->
-<section class="section-pad" style="background:var(--bg2);border-top:1px solid var(--rule)">
-  <div style="display:grid;grid-template-columns:1fr 2fr;gap:64px;margin-bottom:56px">
-    <div class="mono-label">Library</div>
-    <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.1;letter-spacing:-0.02em;margin:0;max-width:720px">Browse VAC resources by topic</h2>
+<!-- NEWS -->
+<section id="news" class="section-pad res-section" style="border-top:1px solid var(--rule)">
+  <div class="res-section-head">
+    <div class="mono-label">News</div>
+    <div>
+      <h2 class="res-section-h">Updates from 270 West</h2>
+      <p class="res-section-p">What we're working on, where you'll find us, and new guides as they're published.</p>
+    </div>
   </div>
 
-  <div class="library-topic">
-    <div class="library-topic-grid">
-      <h3 class="library-topic-h">VAC eligibility &amp; programs</h3>
-      <div class="library-items">
-        <a href="#" class="library-item">Disability Benefits — what they cover<span class="library-item-arrow">→</span></a>
-        <a href="#" class="library-item">Income Replacement Benefit explained<span class="library-item-arrow">→</span></a>
-        <a href="#" class="library-item">Career Transition Services<span class="library-item-arrow">→</span></a>
-        <a href="#" class="library-item">Family caregiver support<span class="library-item-arrow">→</span></a>
+  <div class="news-list">
+    <a href="#" class="news-item">
+      <div class="news-item-date">September 2026</div>
+      <div>
+        <div class="news-item-tag">Campaign</div>
+        <h3 class="news-item-h">In service of your story: a campaign built around veterans' own voices</h3>
+        <p class="news-item-p">Over the coming months we're sharing video stories from veterans across Canada. Here's why we're doing it, and how to take part.</p>
       </div>
-    </div>
-  </div>
-  <div class="library-topic">
-    <div class="library-topic-grid">
-      <h3 class="library-topic-h">Filing your first VAC claim</h3>
-      <div class="library-items">
-        <a href="#" class="library-item">What to expect when you apply<span class="library-item-arrow">→</span></a>
-        <a href="#" class="library-item">Building your service-related health record<span class="library-item-arrow">→</span></a>
-        <a href="#" class="library-item">Getting medical documentation right<span class="library-item-arrow">→</span></a>
-        <a href="#" class="library-item">Common reasons applications come back<span class="library-item-arrow">→</span></a>
+      <span class="news-item-arrow">→</span>
+    </a>
+    <a href="#" class="news-item">
+      <div class="news-item-date">August 2026</div>
+      <div>
+        <div class="news-item-tag">Community</div>
+        <h3 class="news-item-h">Where to find us this Remembrance season</h3>
+        <p class="news-item-p">Legion events, family days, and wellness gatherings we're supporting across Nova Scotia this fall.</p>
       </div>
-    </div>
-  </div>
-  <div class="library-topic">
-    <div class="library-topic-grid">
-      <h3 class="library-topic-h">After a VAC decision</h3>
-      <div class="library-items">
-        <a href="#" class="library-item">Understanding your decision letter<span class="library-item-arrow">→</span></a>
-        <a href="#" class="library-item">When to consider a re-assessment<span class="library-item-arrow">→</span></a>
-        <a href="#" class="library-item">How VAC appeals work<span class="library-item-arrow">→</span></a>
-        <a href="#" class="library-item">Mental health &amp; wellness resources<span class="library-item-arrow">→</span></a>
+      <span class="news-item-arrow">→</span>
+    </a>
+    <a href="article.html" class="news-item">
+      <div class="news-item-date">July 2026</div>
+      <div>
+        <div class="news-item-tag">New guide</div>
+        <h3 class="news-item-h">A plain-language guide to VAC's main benefits programs</h3>
+        <p class="news-item-p">Our most-requested explainer, now updated for 2026, covering the four programs veterans ask us about most.</p>
       </div>
-    </div>
+      <span class="news-item-arrow">→</span>
+    </a>
   </div>
 </section>
 
@@ -183,7 +301,7 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>In service of your story.</span></div>
 </footer>
 
-<script src="js/main.js?v=v6"></script>
+<script src="js/main.js?v=v7"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('footer-topo').innerHTML = topoLinesSVG('#A1B6C2', 0.12);
