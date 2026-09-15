@@ -1,8 +1,9 @@
 <?php
 // Renders every Elementor page through Elementor's PHP API; fails on any warning/notice or empty output.
+if ( PHP_SAPI !== 'cli' ) { http_response_code( 403 ); exit; } // never runnable over HTTP
 $site = getenv( 'W270_SITE' ) ?: '/Users/Bryce/Local Sites/270-west/app/public';
 define( 'WP_USE_THEMES', false );
-$_SERVER['HTTP_HOST'] = '270-west.local';
+$_SERVER['HTTP_HOST'] = getenv( 'W270_HOST' ) ?: '270-west.local';
 require $site . '/wp-load.php';
 wp_set_current_user( 1 );
 set_error_handler( function ( $no, $str, $file, $line ) {

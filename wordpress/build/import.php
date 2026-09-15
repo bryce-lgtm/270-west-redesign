@@ -4,14 +4,16 @@
  *   "$PHP" -c "$INI" wordpress/build/import.php --all
  *   "$PHP" -c "$INI" wordpress/build/import.php --pages --only=home
  */
+if ( PHP_SAPI !== 'cli' ) { http_response_code( 403 ); exit; } // never runnable over HTTP
 $site = getenv( 'W270_SITE' ) ?: '/Users/Bryce/Local Sites/270-west/app/public';
 define( 'WP_USE_THEMES', false );
-$_SERVER['HTTP_HOST'] = '270-west.local';
+$_SERVER['HTTP_HOST'] = getenv( 'W270_HOST' ) ?: '270-west.local';
 require $site . '/wp-load.php';
 wp_set_current_user( 1 );
 
 const W270_OUT = __DIR__ . '/out';
-const W270_IMG = __DIR__ . '/../../img';
+// Source photos: the repo's img/ when running from the repo, else the theme's synced copy (server deploys).
+define( 'W270_IMG', is_dir( __DIR__ . '/../../img' ) ? __DIR__ . '/../../img' : __DIR__ . '/../assets/img' );
 
 /** Site paths per slug. Mirrors pages.py (parents before children). */
 function w270_page_paths() {
