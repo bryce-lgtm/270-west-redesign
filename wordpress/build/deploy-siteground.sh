@@ -31,6 +31,10 @@ mkdir -p "$DEST"
 rsync -a --delete --exclude 'build/tests' --exclude '__pycache__' "$ROOT/wordpress/theme/270west/" "$DEST/"
 mkdir -p "$DEST/build"
 rsync -a --delete --exclude 'tests' --exclude '__pycache__' --exclude '*.py' --exclude 'spike.php' --exclude 'deploy-*.sh' --exclude 'build.sh' --exclude 'sync-assets.sh' --exclude 'layout-diff.js' "$ROOT/wordpress/build/" "$DEST/build/"
+PDEST="$CLONE/wp-content/plugins/270west-content"
+mkdir -p "$PDEST"
+rsync -a --delete "$ROOT/wordpress/plugins/270west-content/" "$PDEST/"
+git -C "$CLONE" add -A wp-content/plugins/270west-content
 git -C "$CLONE" add -A wp-content/themes/270west
 if git -C "$CLONE" diff --cached --quiet; then echo "theme unchanged on SiteGround"; else
   git -C "$CLONE" commit -q -m "Deploy 270west theme and importer ($(git -C "$ROOT" rev-parse --short HEAD))"

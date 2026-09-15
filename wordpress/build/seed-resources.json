@@ -1,0 +1,33 @@
+{
+  "topics": ["VAC eligibility & programs", "Filing your first VAC claim", "After a VAC decision"],
+  "landing": {
+    "hero_h1": "VAC benefits resources, guides, and checklists for Canadian veterans.",
+    "hero_lead": "Plain-language guides for navigating VAC.",
+    "hero_sub": "Free, no-jargon explainers and checklists to help you understand Veterans Affairs Canada programs, paperwork, and timelines — whether you choose to work with us or not."
+  },
+  "resources": [
+    { "slug": "vac-benefits-programs-guide", "type": "guide", "title": "A plain-language guide to VAC's main benefits programs", "topic": "VAC eligibility & programs", "read_time": 18, "featured": true, "image": "mountain-valley.jpg", "order": 0,
+      "summary": "Veterans Affairs Canada offers more programs than most veterans realize. This guide walks through the main ones — what they're for, who qualifies, and how to apply — in plain language.",
+      "related": ["vac-application-checklist", "how-vac-disability-ratings-work", "common-reasons-applications-come-back"] },
+    { "slug": "vac-application-checklist", "type": "checklist", "title": "VAC application checklist: documents to gather", "topic": "Filing your first VAC claim", "read_time": 5, "featured": true, "image": "forest-fog.jpg", "order": 1,
+      "summary": "The documents to gather before you start a VAC application, so it is complete the first time.",
+      "items": ["Proof of service (release or service record)", "Current diagnosis from a treating physician", "Service health records covering the condition", "Any earlier VAC decision letters", "Supporting statements from family, peers or supervisors"] },
+    { "slug": "how-vac-disability-ratings-work", "type": "explainer", "title": "How VAC disability ratings actually work", "topic": "After a VAC decision", "read_time": 8, "featured": true, "image": "hills-road.jpg", "order": 2,
+      "summary": "What a disability assessment measures, how the percentage is set, and what it means for your benefits." },
+
+    { "slug": "disability-benefits-what-they-cover", "type": "explainer", "title": "Disability Benefits — what they cover", "topic": "VAC eligibility & programs", "read_time": 6, "order": 10, "summary": "Coming soon: a plain-language explainer from 270 West." },
+    { "slug": "income-replacement-benefit-explained", "type": "explainer", "title": "Income Replacement Benefit explained", "topic": "VAC eligibility & programs", "read_time": 6, "order": 11, "summary": "Coming soon: a plain-language explainer from 270 West." },
+    { "slug": "career-transition-services", "type": "explainer", "title": "Career Transition Services", "topic": "VAC eligibility & programs", "read_time": 5, "order": 12, "summary": "Coming soon: a plain-language explainer from 270 West." },
+    { "slug": "family-caregiver-support", "type": "explainer", "title": "Family caregiver support", "topic": "VAC eligibility & programs", "read_time": 5, "order": 13, "summary": "Coming soon: a plain-language explainer from 270 West." },
+
+    { "slug": "what-to-expect-when-you-apply", "type": "guide", "title": "What to expect when you apply", "topic": "Filing your first VAC claim", "read_time": 8, "order": 20, "summary": "Coming soon: a plain-language guide from 270 West." },
+    { "slug": "building-your-service-related-health-record", "type": "checklist", "title": "Building your service-related health record", "topic": "Filing your first VAC claim", "read_time": 6, "order": 21, "summary": "Coming soon: a checklist from 270 West." },
+    { "slug": "getting-medical-documentation-right", "type": "guide", "title": "Getting medical documentation right", "topic": "Filing your first VAC claim", "read_time": 7, "order": 22, "summary": "Coming soon: a plain-language guide from 270 West." },
+    { "slug": "common-reasons-applications-come-back", "type": "explainer", "title": "Common reasons applications come back", "topic": "Filing your first VAC claim", "read_time": 5, "order": 23, "summary": "Coming soon: a plain-language explainer from 270 West." },
+
+    { "slug": "understanding-your-decision-letter", "type": "explainer", "title": "Understanding your decision letter", "topic": "After a VAC decision", "read_time": 6, "order": 30, "summary": "Coming soon: a plain-language explainer from 270 West." },
+    { "slug": "when-to-consider-a-re-assessment", "type": "guide", "title": "When to consider a re-assessment", "topic": "After a VAC decision", "read_time": 7, "order": 31, "summary": "Coming soon: a plain-language guide from 270 West." },
+    { "slug": "how-vac-appeals-work", "type": "guide", "title": "How VAC appeals work", "topic": "After a VAC decision", "read_time": 9, "order": 32, "summary": "Coming soon: a plain-language guide from 270 West." },
+    { "slug": "mental-health-wellness-resources", "type": "guide", "title": "Mental health & wellness resources", "topic": "After a VAC decision", "read_time": 6, "order": 33, "summary": "Coming soon: a plain-language guide from 270 West." }
+  ]
+}
