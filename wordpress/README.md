@@ -40,6 +40,21 @@ means every classed element has the same box, display and typography as the prot
 - Re-running the importer updates pages in place (keyed by slug) and **overwrites edits made in
   Elementor**. Once content editing starts in WordPress, stop re-importing those pages.
 
+## Resources (custom post types)
+
+`wordpress/plugins/270west-content` registers Guides, Checklists and Explainers (`/resources/guides/…`,
+`/resources/checklists/…`, `/resources/explainers/…`), the Topic taxonomy and the ACF field groups
+(`acf-json/`, loaded automatically; edits in the ACF UI write back to those files). ACF Pro is installed by
+hand in wp-admin on each site; without it the post types still work and field-driven blocks are hidden.
+**After installing ACF Pro, run `import.php --resources` once more** so the seeded posts get their fields
+(read time, featured flag, callout, checklist items, related resources, landing hero copy).
+
+The theme renders them: `single-{guide,checklist,explainer}.php`, `template-resources.php` (assigned to the
+Resources page) and `template-parts/resource/*`. `import.php --resources` seeds the topics and the 15
+prototype resources (`seed-resources.json`; the featured guide's body comes from `article.html` via
+`seed_article.py`), assigns the template and retires the old article page (its URL redirects).
+Re-running `--resources` overwrites the seeded posts by slug.
+
 ## Follow-ups
 
 - Contact form is static markup (Elementor Pro Forms or a form plugin needed to receive mail).

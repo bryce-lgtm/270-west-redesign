@@ -52,6 +52,8 @@ function w270_article_classes( $content ) {
 	foreach ( [ 'h3' => 'article-h3', 'p' => 'article-p', 'blockquote' => 'article-blockquote' ] as $tag => $class ) {
 		$content = preg_replace( '/<' . $tag . '(?![^>]*\bclass=)([^>]*)>/i', '<' . $tag . ' class="' . $class . '"$1>', $content );
 	}
+	// wpautop wraps blockquote text in <p>; that paragraph must not carry the article-p styling.
+	$content = preg_replace_callback( '/<blockquote\b[^>]*>[\s\S]*?<\/blockquote>/i', fn( $m ) => str_replace( ' class="article-p"', '', $m[0] ), $content );
 	return $content;
 }
 add_filter( 'the_content', 'w270_article_classes', 20 );
