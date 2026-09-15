@@ -34,7 +34,8 @@ def prototype_words(src_file):
 
 
 def wp_words(path):
-    with urllib.request.urlopen(BASE + path, timeout=30) as r:
+    req = urllib.request.Request(BASE + path, headers={'User-Agent': 'Mozilla/5.0 (270west coverage check)'})  # hosts block the default UA
+    with urllib.request.urlopen(req, timeout=30) as r:
         s = r.read().decode('utf-8')
     m = re.search(r'<main\b[\s\S]*?</main>', s)
     if not m:
