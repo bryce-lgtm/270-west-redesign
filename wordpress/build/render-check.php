@@ -25,4 +25,23 @@ foreach ( $pages as $p ) {
 		printf( "FAIL %-30s %s @ %s:%d\n", $p->post_name, $e->getMessage(), basename( $e->getFile() ), $e->getLine() );
 	}
 }
+// Resource posts: permalinks must resolve through the rewrite rules and content must filter cleanly.
+$types = function_exists( 'w270c_types' ) ? w270c_types() : [];
+foreach ( get_posts( [ 'post_type' => $types ?: 'nonexistent', 'numberposts' => -1, 'orderby' => 'menu_order', 'order' => 'ASC' ] ) as $p ) {
+	try {
+		$url = get_permalink( $p );
+		if ( url_to_postid( $url ) !== $p->ID ) { throw new RuntimeException( "permalink does not resolve: {$url}" ); }
+		$html = apply_filters( 'the_content', $p->post_content );
+		if ( str_contains( $html, '__W270_MEDIA__' ) ) { throw new RuntimeException( 'unresolved media marker' ); }
+		$terms = wp_get_object_terms( $p->ID, 'resource_topic', [ 'fields' => 'names' ] );
+		printf( "OK   %-45s %s topic=%s\n", $p->post_type . '/' . $p->post_name, parse_url( $url, PHP_URL_PATH ), $terms ? $terms[0] : '-' );
+	} catch ( Throwable $e ) { $fail = true; printf( "FAIL %s: %s\n", $p->post_name, $e->getMessage() ); }
+}
+if ( function_exists( 'acf_get_field_groups' ) ) {
+	$n = count( acf_get_field_groups() );
+	printf( "%s acf field groups: %d\n", 4 === $n ? 'OK  ' : 'FAIL', $n );
+	if ( 4 !== $n ) { $fail = true; }
+} else {
+	echo "WARN acf not installed: field groups not checked\n";
+}
 exit( $fail ? 1 : 0 );
