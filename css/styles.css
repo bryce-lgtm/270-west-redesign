@@ -1488,3 +1488,16 @@ textarea.contact-form-control { resize: vertical; min-height: 140px; }
 }
 /* Quiz and consult: field labels are real <label> elements now */
 label.quiz-field-label, label.consult-field-label { display: block; }
+
+/* ── REVIEW ROUND 3 ── */
+/* C11/C12: components of a strong claim (Claims page) */
+.claim-components { list-style: none; margin: 0 0 32px; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--rule); }
+.claim-component { padding: 32px 24px 32px 0; border-right: 1px solid var(--rule); }
+.claim-component + .claim-component { padding-left: 24px; }
+.claim-component:last-child { border-right: none; padding-right: 0; }
+.claim-component .value-p { font-size: 16px; }
+.claim-components + .esg-snapshot-link { margin-top: 0; }
+@media (max-width: 900px) {
+  .claim-components { grid-template-columns: 1fr; }
+  .claim-component, .claim-component + .claim-component { padding: 24px 0; border-right: none; border-bottom: 1px solid var(--rule); }
+}
