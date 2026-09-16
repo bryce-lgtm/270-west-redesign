@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter+Tight:ital,wght@0,300..700;1,300..600&family=League+Spartan:wght@300..700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v8"/>
+<link rel="stylesheet" href="css/styles.css?v=v9"/>
 </head>
 <body>
 
@@ -30,9 +30,9 @@
     <div class="nav-dropdown">
       <a href="resources.html" class="nav-dropdown-parent" aria-haspopup="true">Resources <svg class="nav-dropdown-chevron" viewBox="0 0 10 6" width="9" height="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></a>
       <div class="nav-dropdown-menu">
-        <a href="resources.html#stories">Stories</a>
-        <a href="resources.html#guides">Guides</a>
-        <a href="resources.html#news">News</a>
+        <a href="stories.html">Stories</a>
+        <a href="guides.html">Guides</a>
+        <a href="news.html">News</a>
       </div>
     </div>
     <a href="contact.html">Contact</a>
@@ -49,9 +49,9 @@
   <a href="how-it-works.html">How It Works</a>
   <a href="about.html">About</a>
   <a href="resources.html">Resources</a>
-  <a href="resources.html#stories" class="mobile-subnav">Stories</a>
-  <a href="resources.html#guides" class="mobile-subnav">Guides</a>
-  <a href="resources.html#news" class="mobile-subnav">News</a>
+  <a href="stories.html" class="mobile-subnav">Stories</a>
+  <a href="guides.html" class="mobile-subnav">Guides</a>
+  <a href="news.html" class="mobile-subnav">News</a>
   <a href="contact.html">Contact</a>
   <a href="eligibility.html" class="mobile-nav-cta">Check Eligibility →</a>
 </nav>
@@ -93,7 +93,6 @@
 
 <!-- 02 · OUR APPROACH -->
 <section class="dark-section" style="padding:80px;position:relative;overflow:hidden">
-  <div id="approach-grid" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></div>
   <div style="position:relative;display:grid;grid-template-columns:1fr 2fr;gap:80px">
     <div class="mono-label" style="color:var(--olive)">Our approach</div>
     <div>
@@ -124,31 +123,60 @@
   </div>
 </section>
 
-<!-- 03 · OUTCOMES -->
+<!-- 03 · COMPONENTS OF A STRONG CLAIM -->
+<section style="padding:100px 80px 0">
+  <div style="display:grid;grid-template-columns:1fr 2fr;gap:80px;align-items:start;margin-bottom:48px">
+    <div class="mono-label">Components of a strong claim</div>
+    <div>
+      <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.2;letter-spacing:-0.02em;margin:0 0 16px;max-width:720px">What a strong claim looks like</h2>
+      <p style="font-size:18px;line-height:1.6;color:var(--muted);margin:0;max-width:680px">Strong claims contain a detailed service history, complete documentation of a current condition, and a credible connection between the two. We help you demonstrate all three.</p>
+    </div>
+  </div>
+  <ol class="claim-components">
+    <li class="claim-component">
+      <div class="value-n">01</div>
+      <h3 class="value-h">Detailed service history</h3>
+      <p class="value-p">Where and how you served, with the records that show it.</p>
+    </li>
+    <li class="claim-component">
+      <div class="value-n">02</div>
+      <h3 class="value-h">Complete documentation</h3>
+      <p class="value-p">A current diagnosis and the medical records that describe your condition today.</p>
+    </li>
+    <li class="claim-component">
+      <div class="value-n">03</div>
+      <h3 class="value-h">Credible connection</h3>
+      <p class="value-p">Clear evidence linking your condition to your service.</p>
+    </li>
+  </ol>
+  <a href="eligibility.html" class="esg-snapshot-link">Check your eligibility →</a>
+</section>
+
+<!-- 04 · HOW IT FEELS -->
 <section style="padding:100px 80px">
   <div style="display:grid;grid-template-columns:1fr 2fr;gap:80px;align-items:start;margin-bottom:56px">
-    <div class="mono-label">What good outcomes look like</div>
+    <div class="mono-label">How it feels</div>
     <div>
-      <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.2;letter-spacing:-0.02em;margin:0 0 16px;max-width:720px">What a good first claim looks like</h2>
-      <p style="font-size:18px;line-height:1.6;color:var(--muted);margin:0 0 12px;max-width:680px">Strong claims contain a detailed service history, complete documentation of a current condition, and a credible connection between the two. We help you demonstrate all three.</p>
-      <p style="font-size:18px;line-height:1.6;color:var(--muted);margin:0;max-width:680px">We can't promise specific results, because VAC makes its own decisions. What we can promise is the clearest, most complete file possible.</p>
+      <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.2;letter-spacing:-0.02em;margin:0 0 16px;max-width:720px">What it's like to have someone in your corner</h2>
+      <p style="font-size:18px;line-height:1.6;color:var(--muted);margin:0 0 12px;max-width:680px">Filing a first claim can feel like a lot to carry. Here's what changes when you have help.</p>
+      <p style="font-size:18px;line-height:1.6;color:var(--muted);margin:0;max-width:680px">VAC makes its own decisions, so we can't promise a result. We can promise you won't face the process alone.</p>
     </div>
   </div>
   <div class="svc-outcomes">
     <div class="svc-outcome">
-      <div class="svc-outcome-metric">Complete</div>
-      <div class="svc-outcome-h">Nothing missing</div>
-      <div class="svc-outcome-p">Every form, every supporting document, every signature in place.</div>
+      <div class="svc-outcome-metric">Less overwhelmed</div>
+      <div class="svc-outcome-h">You know where to start</div>
+      <div class="svc-outcome-p">One clear list of what VAC needs, and someone to work through it with you.</div>
     </div>
     <div class="svc-outcome">
-      <div class="svc-outcome-metric">Connected</div>
-      <div class="svc-outcome-h">Clear service link</div>
-      <div class="svc-outcome-p">Your current condition documented as service-related, with the evidence to back it.</div>
+      <div class="svc-outcome-metric">Supported</div>
+      <div class="svc-outcome-h">You are not doing it alone</div>
+      <div class="svc-outcome-p">We prepare your application with you and review it together before it goes to VAC.</div>
     </div>
     <div class="svc-outcome">
       <div class="svc-outcome-metric">Prepared</div>
-      <div class="svc-outcome-h">You know what to expect</div>
-      <div class="svc-outcome-p">Timelines, possible questions from VAC, and what comes next.</div>
+      <div class="svc-outcome-h">No surprises</div>
+      <div class="svc-outcome-p">You know the timelines, the questions VAC may ask, and what comes next.</div>
     </div>
   </div>
   <div class="inline-note-lg" style="margin-top:32px">270 West Consulting is independent and is not affiliated with Veterans Affairs Canada.</div>
@@ -221,11 +249,6 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>In service of your story.</span></div>
 </footer>
 
-<script src="js/main.js?v=v8"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('approach-grid').innerHTML = mapGridSVG('#A1B6C2', 0.08, 48);
-  });
-</script>
+<script src="js/main.js?v=v9"></script>
 </body>
 </html>

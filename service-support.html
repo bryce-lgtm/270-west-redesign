@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter+Tight:ital,wght@0,300..700;1,300..600&family=League+Spartan:wght@300..700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v8"/>
+<link rel="stylesheet" href="css/styles.css?v=v9"/>
 </head>
 <body>
 
@@ -30,9 +30,9 @@
     <div class="nav-dropdown">
       <a href="resources.html" class="nav-dropdown-parent" aria-haspopup="true">Resources <svg class="nav-dropdown-chevron" viewBox="0 0 10 6" width="9" height="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></a>
       <div class="nav-dropdown-menu">
-        <a href="resources.html#stories">Stories</a>
-        <a href="resources.html#guides">Guides</a>
-        <a href="resources.html#news">News</a>
+        <a href="stories.html">Stories</a>
+        <a href="guides.html">Guides</a>
+        <a href="news.html">News</a>
       </div>
     </div>
     <a href="contact.html">Contact</a>
@@ -49,9 +49,9 @@
   <a href="how-it-works.html">How It Works</a>
   <a href="about.html">About</a>
   <a href="resources.html">Resources</a>
-  <a href="resources.html#stories" class="mobile-subnav">Stories</a>
-  <a href="resources.html#guides" class="mobile-subnav">Guides</a>
-  <a href="resources.html#news" class="mobile-subnav">News</a>
+  <a href="stories.html" class="mobile-subnav">Stories</a>
+  <a href="guides.html" class="mobile-subnav">Guides</a>
+  <a href="news.html" class="mobile-subnav">News</a>
   <a href="contact.html">Contact</a>
   <a href="eligibility.html" class="mobile-nav-cta">Check Eligibility →</a>
 </nav>
@@ -109,7 +109,6 @@
 
 <!-- 02 · OUR APPROACH -->
 <section class="dark-section" style="padding:80px;position:relative;overflow:hidden">
-  <div id="approach-grid" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></div>
   <div style="position:relative;display:grid;grid-template-columns:1fr 2fr;gap:80px">
     <div class="mono-label" style="color:var(--olive)">Our approach</div>
     <div>
@@ -151,29 +150,30 @@
   </div>
 </section>
 
-<!-- 03 · OUTCOMES -->
+<!-- 03 · HOW IT FEELS -->
 <section style="padding:100px 80px">
   <div style="display:grid;grid-template-columns:1fr 2fr;gap:80px;align-items:start;margin-bottom:56px">
-    <div class="mono-label">What good outcomes look like</div>
+    <div class="mono-label">How it feels</div>
     <div>
-      <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.2;letter-spacing:-0.02em;margin:0 0 16px;max-width:720px">What good support looks like</h2>
-      <p style="font-size:18px;line-height:1.6;color:var(--muted);margin:0;max-width:680px">We can't promise specific results. VAC makes its own decisions. What we can promise is the clearest, most complete file possible.</p>
+      <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:500;line-height:1.2;letter-spacing:-0.02em;margin:0 0 16px;max-width:720px">What it's like to have someone in your corner</h2>
+      <p style="font-size:18px;line-height:1.6;color:var(--muted);margin:0 0 12px;max-width:680px">Veterans Affairs can be a long relationship. Support means having someone steady beside you through all of it.</p>
+      <p style="font-size:18px;line-height:1.6;color:var(--muted);margin:0;max-width:680px">VAC makes its own decisions, so we can't promise a result. We can promise you won't face the process alone.</p>
     </div>
   </div>
   <div class="svc-outcomes">
     <div class="svc-outcome">
       <div class="svc-outcome-metric">Clarity</div>
       <div class="svc-outcome-h">You understand what's happening</div>
-      <div class="svc-outcome-p">Decision letters, program rules, timelines. We translate.</div>
+      <div class="svc-outcome-p">Decision letters, program rules and timelines, explained.</div>
     </div>
     <div class="svc-outcome">
       <div class="svc-outcome-metric">Connected</div>
-      <div class="svc-outcome-h">Right resources, right time</div>
-      <div class="svc-outcome-p">VAC Assistance Service, community programs, mental health support. We know who to call.</div>
+      <div class="svc-outcome-h">The right help, at the right time</div>
+      <div class="svc-outcome-p">VAC Assistance Service, community programs and mental health support. We know who to call.</div>
     </div>
     <div class="svc-outcome">
       <div class="svc-outcome-metric">Steady</div>
-      <div class="svc-outcome-h">Long-term partnership</div>
+      <div class="svc-outcome-h">Someone who stays</div>
       <div class="svc-outcome-p">We're here for years, not just for one application.</div>
     </div>
   </div>
@@ -247,11 +247,6 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>In service of your story.</span></div>
 </footer>
 
-<script src="js/main.js?v=v8"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('approach-grid').innerHTML = mapGridSVG('#A1B6C2', 0.08, 48);
-  });
-</script>
+<script src="js/main.js?v=v9"></script>
 </body>
 </html>
