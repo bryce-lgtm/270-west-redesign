@@ -34,12 +34,17 @@ def new_id():
 
 def rewrite_links(s):
     """Rewrite prototype hrefs/srcs: *.html -> site path, img/ -> theme assets placeholder."""
+    # Anchors from the older homepage that now have their own pages.
+    anchor_pages = {'index.html#quiz': '/eligibility/', 'index.html#consult': '/book-a-consult/'}
+
     def href(m):
-        target = m.group(2)
+        target, frag = m.group(2), m.group(3) or ''
+        if target + frag in anchor_pages:
+            return f'{m.group(1)}{anchor_pages[target + frag]}"'
         path = '/' if target == 'index.html' else LINK_MAP.get(target)
         if path is None:
             raise ValueError(f'unmapped link target: {target}')
-        return f'{m.group(1)}{path}{m.group(3) or ""}"'
+        return f'{m.group(1)}{path}{frag}"'
     s = re.sub(r'(href=")([\w-]+\.html)(#[^"]*)?"', href, s)
     s = re.sub(r'((?:src|href)=")img/', rf'\1{ASSETS}/img/', s)
     return s

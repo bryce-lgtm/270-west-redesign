@@ -96,6 +96,8 @@ class GenerateTests(unittest.TestCase):
                          '<a href="/services/claims/#x">c</a> <img src="__W270_ASSETS__/img/a.svg">')
         self.assertEqual(rewrite_links('<a href="index.html">h</a>'), '<a href="/">h</a>')
         self.assertEqual(rewrite_links('<a href="mailto:x@y.z">m</a>'), '<a href="mailto:x@y.z">m</a>')
+        self.assertEqual(rewrite_links('<a href="index.html#quiz">q</a> <a href="index.html#consult">c</a>'),
+                         '<a href="/eligibility/">q</a> <a href="/book-a-consult/">c</a>')
 
     def test_parse_decor(self):
         js = ("document.getElementById('about-maple').innerHTML = brandMarkSVG(260, 'currentColor');"
