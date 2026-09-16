@@ -221,9 +221,9 @@ function initQuiz(containerId) {
         <div class="quiz-h3">You may qualify for additional benefits.</div>
         <div class="quiz-lead">Where should we send your tailored next step? We'll reach out within one business day.</div>
         <div class="quiz-fields">
-          <div class="quiz-field"><div class="quiz-field-label">Full name</div><input type="text" id="qf-name" value="${contact.name}" oninput="quizContact('name',this.value)" placeholder="Your name"/></div>
-          <div class="quiz-field"><div class="quiz-field-label">Email</div><input type="email" id="qf-email" value="${contact.email}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
-          <div class="quiz-field"><div class="quiz-field-label">Phone</div><input type="tel" id="qf-phone" value="${contact.phone}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-name">Full name</label><input type="text" id="qf-name" value="${contact.name}" oninput="quizContact('name',this.value)" placeholder="Your name"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-email">Email</label><input type="email" id="qf-email" value="${contact.email}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-phone">Phone</label><input type="tel" id="qf-phone" value="${contact.phone}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
         </div>
         <button class="quiz-start-btn" onclick="quizGo(${N+2})">Get my results →</button>
         <div class="quiz-privacy">🔒 Confidential. We never share your info.</div>`;
@@ -338,10 +338,10 @@ function initConsultWidget(containerId) {
         <h3 class="consult-h3">Hold your spot.</h3>
         <p class="consult-lead"><strong>${slot.date} · ${time} AT</strong>. We'll send a calendar invite and call link.</p>
         <div class="consult-fields">
-          <div class="consult-field consult-field-first"><div class="consult-field-label">Full name</div><input type="text" id="ci-name" value="${info.name}" oninput="consultInfo('name',this.value)" placeholder="Your name"/></div>
-          <div class="consult-field"><div class="consult-field-label">Email</div><input type="email" id="ci-email" value="${info.email}" oninput="consultInfo('email',this.value)" placeholder="you@example.ca"/></div>
-          <div class="consult-field"><div class="consult-field-label">Phone (optional)</div><input type="tel" id="ci-phone" value="${info.phone}" oninput="consultInfo('phone',this.value)" placeholder="(902) 555-0142"/></div>
-          <div class="consult-field"><div class="consult-field-label">What would you like to focus on?</div><input type="text" id="ci-topic" value="${info.topic}" oninput="consultInfo('topic',this.value)" placeholder="First claim, appeal, reassessment..."/></div>
+          <div class="consult-field consult-field-first"><label class="consult-field-label" for="ci-name">Full name</label><input type="text" id="ci-name" value="${info.name}" oninput="consultInfo('name',this.value)" placeholder="Your name"/></div>
+          <div class="consult-field"><label class="consult-field-label" for="ci-email">Email</label><input type="email" id="ci-email" value="${info.email}" oninput="consultInfo('email',this.value)" placeholder="you@example.ca"/></div>
+          <div class="consult-field"><label class="consult-field-label" for="ci-phone">Phone (optional)</label><input type="tel" id="ci-phone" value="${info.phone}" oninput="consultInfo('phone',this.value)" placeholder="(902) 555-0142"/></div>
+          <div class="consult-field"><label class="consult-field-label" for="ci-topic">What would you like to focus on?</label><input type="text" id="ci-topic" value="${info.topic}" oninput="consultInfo('topic',this.value)" placeholder="First claim, appeal, reassessment..."/></div>
         </div>
         <button class="consult-confirm" onclick="consultConfirm()">Confirm booking →</button>
         <div class="consult-privacy">🔒 Confidential. No obligation. Free of charge.</div>
@@ -367,6 +367,30 @@ function initConsultWidget(containerId) {
   window.consultRestart = function() { stage = 'pick'; time = null; info = { name: '', email: '', phone: '', topic: '' }; render(); };
 
   render();
+}
+
+// ── Story cards (R7): show four, then reveal the next four per click ──
+function initStoryGrid() {
+  document.querySelectorAll('.story-grid').forEach(grid => {
+    const cards = [...grid.querySelectorAll('.story-card')];
+    const STEP = 4;
+    if (cards.length <= STEP) return;
+    cards.slice(STEP).forEach(c => { c.hidden = true; });
+    const wrap = document.createElement('div');
+    wrap.className = 'story-more';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn-ink';
+    btn.textContent = 'Load more stories';
+    btn.addEventListener('click', () => {
+      const hidden = cards.filter(c => c.hidden);
+      hidden.slice(0, STEP).forEach(c => { c.hidden = false; });
+      if (hidden.length <= STEP) wrap.remove();
+      if (hidden[0]) hidden[0].focus();
+    });
+    wrap.appendChild(btn);
+    grid.after(wrap);
+  });
 }
 
 // ── Init all ──
@@ -395,6 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   initDecor();
   initPhotos();
+  initStoryGrid();
   initQuiz();
   if (document.getElementById('consult-widget')) initConsultWidget('consult-widget');
   requestAnimationFrame(() => requestAnimationFrame(initScrollReveal));

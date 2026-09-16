@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter+Tight:ital,wght@0,300..700;1,300..600&family=League+Spartan:wght@300..700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v7"/>
+<link rel="stylesheet" href="css/styles.css?v=v8"/>
 </head>
 <body>
 
@@ -58,10 +58,9 @@
 
 <!-- PAGE HERO -->
 <section class="page-hero">
-  <div class="page-hero-kicker"><span class="page-hero-kicker-rule"></span>Contact</div>
   <h1 class="page-hero-h1">Contact 270 West Consulting for VAC claims help in Canada</h1>
   <p class="page-hero-lead">Reach out. We'll listen.</p>
-  <p class="page-hero-sub">Whether you have a quick question about Veterans Affairs Canada benefits or want to walk through your situation in detail, we're here. No pressure, no obligation.</p>
+  <p class="page-hero-sub">Whether you have a quick question about Veterans Affairs Canada benefits or want to walk through your situation in detail, we're here.</p>
 </section>
 
 <!-- CONTACT SECTION -->
@@ -71,31 +70,31 @@
     <div>
       <div class="mono-label">Send us a note</div>
       <h2 style="font-family:var(--font-serif);font-size:36px;font-weight:500;line-height:1.1;letter-spacing:-0.02em;margin:0 0 32px">Get in touch about your VAC claim</h2>
-      <form action="#" method="post">
+      <form action="#" method="post" class="contact-form">
         <div class="contact-form-field">
-          <div class="contact-form-label">Full name</div>
-          <input type="text" name="name" placeholder="Cpl. Jordan Reyes" style="width:100%;border:none;outline:none;font-size:17px;font-family:inherit;background:transparent;padding:6px 0;color:var(--ink)"/>
+          <label class="contact-form-label" for="cf-name">Full name</label>
+          <input class="contact-form-control" id="cf-name" type="text" name="name" autocomplete="name" placeholder="Your name"/>
         </div>
         <div class="contact-form-field">
-          <div class="contact-form-label">Email</div>
-          <input type="email" name="email" placeholder="you@example.ca" style="width:100%;border:none;outline:none;font-size:17px;font-family:inherit;background:transparent;padding:6px 0;color:var(--ink)"/>
+          <label class="contact-form-label" for="cf-email">Email</label>
+          <input class="contact-form-control" id="cf-email" type="email" name="email" autocomplete="email" placeholder="you@example.ca"/>
         </div>
         <div class="contact-form-field">
-          <div class="contact-form-label">Where are you in the process?</div>
-          <select name="stage" style="width:100%;border:none;outline:none;font-size:17px;font-family:inherit;background:transparent;padding:6px 0;color:var(--muted);-webkit-appearance:none">
-            <option value="">Just starting</option>
+          <label class="contact-form-label" for="cf-stage">Where are you in the process?</label>
+          <select class="contact-form-control" id="cf-stage" name="stage">
+            <option value="starting">Just starting</option>
             <option value="filed">Already filed</option>
             <option value="appeal">Appealing a decision</option>
             <option value="unsure">Not sure</option>
           </select>
         </div>
-        <div class="contact-form-field" style="border-bottom:1px solid var(--rule);padding:20px 0">
-          <div class="contact-form-label">What's on your mind?</div>
-          <textarea name="message" rows="4" placeholder="Share whatever feels useful. We'll take it from there." style="width:100%;border:none;outline:none;font-size:17px;font-family:inherit;background:transparent;padding:6px 0;color:var(--ink);resize:vertical"></textarea>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="cf-message">What's on your mind?</label>
+          <textarea class="contact-form-control" id="cf-message" name="message" rows="5" placeholder="Share whatever feels useful. We'll take it from there."></textarea>
         </div>
-        <div style="margin-top:32px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+        <div style="margin-top:24px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
           <button type="submit" class="btn-accent" style="border:none">Send →</button>
-          <div style="font-size:12px;color:var(--muted);font-family:var(--font-mono);letter-spacing:0.06em">● CONFIDENTIAL · WE REPLY WITHIN 1 BUSINESS DAY</div>
+          <div style="font-size:15px;color:var(--muted)">Confidential. We reply within one business day.</div>
         </div>
       </form>
     </div>
@@ -173,6 +172,6 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>In service of your story.</span></div>
 </footer>
 
-<script src="js/main.js?v=v7"></script>
+<script src="js/main.js?v=v8"></script>
 </body>
 </html>
