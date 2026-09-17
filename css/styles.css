@@ -1540,3 +1540,16 @@ strong, b { font-weight: 500; }
 /* Hero watermark: the new symbol is square, so it needs less width than the old rose. */
 .hero-compass { width: 62%; left: -7%; opacity: 0.5; }
 @media (max-width: 900px) { .hero-compass { width: 120%; left: -26%; opacity: 0.42; } }
+
+/* ── SERVICE PAGE HERO BANNER (tracker C15/A1/RA2/S1) + next-step CTAs (G3) ── */
+.page-hero-split { display: grid; grid-template-columns: 1fr 0.56fr; gap: 64px; align-items: center; }
+.page-hero-split .page-hero-h1 { font-size: clamp(34px, 3.7vw, 54px); max-width: 18ch; }
+.page-hero-split .page-hero-lead { font-size: 24px; margin-bottom: 20px; max-width: 26ch; }
+.page-hero-split .page-hero-sub { max-width: 46ch; }
+.page-hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 32px; }
+.page-hero-quote { aspect-ratio: 4 / 5; max-height: 520px; }
+@media (max-width: 900px) {
+  .page-hero-split { grid-template-columns: 1fr; gap: 32px; }
+  .page-hero-split .page-hero-quote { order: 2; aspect-ratio: 4 / 3; max-height: none; }
+  .page-hero-ctas .btn-accent, .page-hero-ctas .btn-ink { flex: 1 1 auto; justify-content: center; }
+}

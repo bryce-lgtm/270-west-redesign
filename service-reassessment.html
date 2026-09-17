@@ -9,7 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v10"/>
+<link rel="preload" as="image" href="img/mountain-valley.jpg" fetchpriority="high"/>
+<link rel="stylesheet" href="css/styles.css?v=v11"/>
 </head>
 <body>
 
@@ -57,10 +58,32 @@
 </nav>
 
 <!-- PAGE HERO -->
-<section class="page-hero">
+<section class="page-hero page-hero-split">
+  <div class="page-hero-copy">
   <h1 class="page-hero-h1">VAC reassessment and rating-increase support</h1>
   <p class="page-hero-lead">When your situation changes, your rating can too.</p>
   <p class="page-hero-sub">If your service-related condition has worsened, or new medical evidence has come to light, you may qualify for a higher rating. We help you make the case.</p>
+    <div class="page-hero-ctas">
+      <a href="consult.html" class="btn-accent">Book a free consult →</a>
+      <a href="eligibility.html" class="btn-ink">Check eligibility</a>
+    </div>
+  </div>
+  <figure class="hero-quote page-hero-quote">
+    <!-- No distinct story recorded for this service yet (tracker R4). Same banner, our own
+         promise instead of a borrowed testimonial: swap in a story when one is available. -->
+      <img src="img/mountain-valley.jpg" alt="A lone figure standing on a rocky outcrop above a sunlit valley" fetchpriority="high" decoding="async" style="object-position:center 62%"/>
+      <div class="hero-quote-scrim"></div>
+      <figcaption class="hero-quote-body">
+        <svg class="hero-quote-mark" width="56" height="42" viewBox="0 0 56 42" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M1 41V14C1 6.8 6.8 1 14 1h9v20h-9v20H1zM33 41V14c0-7.2 5.8-13 13-13h9v20h-9v20H33z"/>
+        </svg>
+        <blockquote class="hero-quote-q">An honest review first. We tell you whether a reassessment makes sense before you do the paperwork.</blockquote>
+        <div class="hero-quote-cite">
+          <span class="hero-quote-name">270 West Consulting</span>
+          <span class="hero-quote-role">In service of your story</span>
+        </div>
+      </figcaption>
+    </figure>
 </section>
 
 <!-- 01 · COMMON SITUATIONS -->
@@ -221,6 +244,6 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>In service of your story.</span></div>
 </footer>
 
-<script src="js/main.js?v=v10"></script>
+<script src="js/main.js?v=v11"></script>
 </body>
 </html>

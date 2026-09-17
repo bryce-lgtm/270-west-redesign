@@ -9,7 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v10"/>
+<link rel="preload" as="image" href="img/veteran-sarah.jpg" fetchpriority="high"/>
+<link rel="stylesheet" href="css/styles.css?v=v11"/>
 </head>
 <body>
 
@@ -57,10 +58,30 @@
 </nav>
 
 <!-- PAGE HERO -->
-<section class="page-hero">
+<section class="page-hero page-hero-split">
+  <div class="page-hero-copy">
   <h1 class="page-hero-h1">VAC first-time disability and benefits claims</h1>
   <p class="page-hero-lead">A strong first application, the first time.</p>
   <p class="page-hero-sub">Many VAC denials come down to a missing piece, not a lack of eligibility. We help you put together a clear, complete claim from the start.</p>
+    <div class="page-hero-ctas">
+      <a href="consult.html" class="btn-accent">Book a free consult →</a>
+      <a href="eligibility.html" class="btn-ink">Check eligibility</a>
+    </div>
+  </div>
+  <figure class="hero-quote page-hero-quote">
+      <img src="img/veteran-sarah.jpg" alt="Capt. Sarah Macdonald, a Canadian Armed Forces veteran, outdoors above a forested valley" fetchpriority="high" decoding="async" style="object-position:center 30%"/>
+      <div class="hero-quote-scrim"></div>
+      <figcaption class="hero-quote-body">
+        <svg class="hero-quote-mark" width="56" height="42" viewBox="0 0 56 42" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M1 41V14C1 6.8 6.8 1 14 1h9v20h-9v20H1zM33 41V14c0-7.2 5.8-13 13-13h9v20h-9v20H33z"/>
+        </svg>
+        <blockquote class="hero-quote-q">I came with no expectations. I left knowing something was finally being done.</blockquote>
+        <div class="hero-quote-cite">
+          <span class="hero-quote-name">Capt. Sarah Macdonald (Ret’d)</span>
+          <span class="hero-quote-role">Canadian Armed Forces Veteran</span>
+        </div>
+      </figcaption>
+    </figure>
 </section>
 
 <!-- 01 · COMMON SITUATIONS -->
@@ -97,6 +118,7 @@
     <div class="mono-label" style="color:var(--olive)">Our approach</div>
     <div>
       <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:400;line-height:1.2;letter-spacing:-0.02em;margin:0 0 28px;max-width:720px">How we help with VAC claims</h2>
+      <p style="font-size:18px;line-height:1.6;color:#d6d1c8;margin:0 0 36px;max-width:680px">Four steps, from working out which programs apply to staying with you through VAC's decision.</p>
       <div style="border-top:1px solid rgba(122,138,106,0.2)">
         <div class="svc-approach-step">
           <div class="svc-approach-num">01</div>
@@ -249,6 +271,6 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>In service of your story.</span></div>
 </footer>
 
-<script src="js/main.js?v=v10"></script>
+<script src="js/main.js?v=v11"></script>
 </body>
 </html>
