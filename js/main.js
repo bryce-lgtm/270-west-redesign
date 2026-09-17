@@ -1,7 +1,6 @@
 // Compass-rose registration mark: the Phase II brand mark, traced from the
 // identity deck. Sits at the crosshair intersection.
-const COMPASS_PATH = 'M176.13 0 143.57 116.33 78.72 78.77 116.27 143.59 0 176.13 116.47 208.72 79.77 272.1 171.75 225.33 167.85 291.31 184.41 291.31 180.51 225.37 272.49 272.08 234.94 207.27 352.72 176.26 235.61 143.48 273.09 78.77 208.62 116.11ZM146.16 139.62 171.75 48.19 171.75 165.47ZM214.57 137.35 211.06 124.82 249.01 102.84 226.98 140.89ZM102.8 102.84 140.84 124.88 137.29 137.34 124.83 140.89ZM212.64 146.16 304.07 171.75 186.79 171.75ZM48.23 180.52 171.5 180.52 169.66 214.5ZM188.38 219.53 226.16 209.59 250.06 250.87ZM125.19 211.16 160.71 221.1 102.2 250.85Z';
-const COMPASS_MARKER = '<svg width="34" height="28" viewBox="0 0 352.72 291.31" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="' + COMPASS_PATH + '"/></svg>';
+const COMPASS_MARKER = '<img src="img/brand/270west-symbol-light.svg" alt="" width="52" height="52">';
 
 // ── Landscape photo injector (data-photo) ──
 function initPhotos() {
@@ -39,7 +38,7 @@ function initPhotos() {
 }
 
 // ── Decorative SVG injection (data-decor) ──
-// <div data-decor="topoLinesSVG" data-decor-args='["#A1B6C2",0.12]'></div> calls topoLinesSVG('#A1B6C2', 0.12).
+// <div data-decor="topoLinesSVG" data-decor-args='["#A0B5C1",0.12]'></div> calls topoLinesSVG('#A0B5C1', 0.12).
 // Replaces the per-page inline scripts; the WordPress generator emits these attributes.
 function initDecor() {
   document.querySelectorAll('[data-decor]').forEach(el => {
@@ -119,7 +118,7 @@ function compassRoseSVG(size, stroke, sw, bearing) {
 
 // ── Topo Lines SVG ──
 function topoLinesSVG(stroke, opacity) {
-  stroke = stroke || '#A1B6C2';
+  stroke = stroke || '#A0B5C1';
   opacity = opacity !== undefined ? opacity : 0.12;
   const paths = [200,240,280,320,360,400,440,480,520].map(y =>
     `<path d="M -50 ${y} Q 200 ${y-60}, 400 ${y+20} T 850 ${y-20}"/>`
@@ -131,7 +130,7 @@ function topoLinesSVG(stroke, opacity) {
 
 // ── Map Grid SVG ──
 function mapGridSVG(stroke, opacity, size) {
-  stroke = stroke || '#A1B6C2';
+  stroke = stroke || '#A0B5C1';
   opacity = opacity !== undefined ? opacity : 0.06;
   size = size || 32;
   return `<svg class="map-grid" aria-hidden="true">
@@ -260,16 +259,14 @@ function initQuiz(containerId) {
 }
 
 // ── Compass Rose brand mark SVG ──
-function brandMarkSVG(size, fill) {
-  fill = fill || 'currentColor';
-  // Traced from the Phase II identity deck (img/compass.svg).
-  const h = Math.round(size * 291.31 / 352.72);
-  return `<svg viewBox="0 0 352.72 291.31" width="${size}" height="${h}" fill="${fill}" aria-hidden="true" style="display:block"><path fill-rule="evenodd" d="${COMPASS_PATH}"/></svg>`;
+function brandMarkSVG(size) {
+  // Sept 2026 brand symbol, tinted with the parent's text colour (see .brand-symbol).
+  return `<span class="brand-symbol" aria-hidden="true" style="width:${size}px"></span>`;
 }
 
 // ── Dot Pattern SVG ──
 function dotPatternSVG(stroke, opacity, size) {
-  stroke = stroke || '#A1B6C2';
+  stroke = stroke || '#A0B5C1';
   opacity = opacity !== undefined ? opacity : 0.18;
   size = size || 24;
   const half = size / 2;
@@ -401,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Inject compass rose where placeholder exists
   document.querySelectorAll('[data-compass]').forEach(el => {
     const size = el.dataset.size || 340;
-    const stroke = el.dataset.stroke || '#A1B6C2';
+    const stroke = el.dataset.stroke || '#A0B5C1';
     const sw = el.dataset.sw || 1;
     el.innerHTML = compassRoseSVG(size, stroke, sw, 270);
   });

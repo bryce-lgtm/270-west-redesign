@@ -1,7 +1,7 @@
 /* v6 — Phase II identity (Rhyme + Reason, "Initial Concepts", Aug 18).
    Palette and type are taken straight from the deck:
-     #1A3A3F deep teal · #A1B6C2 pale blue · #4E757B mid teal
-     #ADA799 taupe     · #DFE1DE light warm grey · #A32222 brand red
+     #1A3A3F deep teal · #A0B5C1 pale blue · #4E757B mid teal
+     #ACA698 taupe     · #DEE0DD light warm grey · #A22222 brand red
    Serif:   Crimson Text  — headlines, pull quotes, the editorial voice.
    Display: League Spartan — the 270 WEST wordmark, buttons, numerals.
    Body:    Inter Tight    — running copy, nav, letterspaced micro-labels. */
@@ -9,19 +9,19 @@
 :root {
   /* ── Phase II palette ── */
   --teal: #4E757B;    /* mid teal — secondary marks, nav CTA */
-  --blue: #A1B6C2;    /* pale blue — labels and rules on dark */
-  --tan:  #ADA799;    /* warm taupe — the trust strip */
-  --sand: #DFE1DE;    /* light warm grey — reversed logo, tints */
+  --blue: #A0B5C1;    /* pale blue — labels and rules on dark */
+  --tan:  #ACA698;    /* warm taupe — the trust strip */
+  --sand: #DEE0DD;    /* light warm grey — reversed logo, tints */
 
   --bg: #F2F1EE;
   --bg2: #E6E5E1;
   --ink: #1A3A3F;
   --muted: #3E5256;
   --rule: #CFCFC9;
-  --accent: #A32222;
-  --maple: #A32222;   /* brand red — the compass rose */
-  --olive: #A1B6C2;   /* legacy token name; now the pale blue used on dark */
-  --font-display: 'League Spartan', system-ui, -apple-system, sans-serif;
+  --accent: #A22222;
+  --maple: #A22222;   /* brand red — the compass rose */
+  --olive: #A0B5C1;   /* legacy token name; now the pale blue used on dark */
+  --font-display: 'Inter Tight', system-ui, -apple-system, sans-serif;
   --font-serif: 'Crimson Text', Georgia, 'Times New Roman', serif;
   --font-sans: 'Inter Tight', system-ui, -apple-system, sans-serif;
   --font-mono: 'Inter Tight', system-ui, -apple-system, sans-serif;
@@ -62,7 +62,7 @@ button { font-family: inherit; cursor: pointer; }
 img { display: block; max-width: 100%; }
 details summary::-webkit-details-marker { display: none; }
 details summary { list-style: none; }
-::selection { background: rgba(163,34,34, 0.18); }
+::selection { background: rgba(162,34,34, 0.18); }
 
 a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
   outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 1px;
@@ -170,7 +170,7 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
 /* ── FOOTER ── */
 .site-footer { background: var(--ink); color: var(--bg); padding: 100px 80px 40px; position: relative; overflow: hidden; }
 .site-footer .footer-grid {
-  position: relative; border-top: 1px solid rgba(161,182,194,0.24); padding-top: 32px;
+  position: relative; border-top: 1px solid rgba(160,181,193,0.24); padding-top: 32px;
   display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 40px;
   font-size: 13px; color: #B6C6CA;
 }
@@ -179,7 +179,7 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
 .site-footer .footer-col-items { display: grid; gap: 8px; }
 .site-footer .footer-col-items a { color: inherit; text-decoration: none; }
 .site-footer .footer-bottom {
-  position: relative; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(161,182,194,0.16);
+  position: relative; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(160,181,193,0.16);
   font-size: 11px; font-family: var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--olive);
   display: flex; justify-content: space-between;
 }
@@ -229,13 +229,13 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
   position: relative; overflow: hidden;
   border: 2px dashed var(--accent);
   background-color: #E2E1DC;
-  background-image: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(163,34,34,0.07) 10px, rgba(163,34,34,0.07) 11px);
+  background-image: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(162,34,34,0.07) 10px, rgba(162,34,34,0.07) 11px);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 24px;
 }
 .img-placeholder.dark {
   background-color: #20484D;
-  background-image: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(163,34,34,0.1) 10px, rgba(163,34,34,0.1) 11px);
+  background-image: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(162,34,34,0.1) 10px, rgba(162,34,34,0.1) 11px);
 }
 .img-placeholder-tag {
   display: inline-block; padding: 4px 10px; margin-bottom: 14px;
@@ -467,11 +467,11 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .contact-form-input { font-size: 18px; color: var(--muted); font-family: var(--font-sans); }
 .contact-form-textarea { font-size: 18px; color: var(--muted); min-height: 80px; }
 .contact-direct { background: var(--ink); color: var(--bg); padding: 40px; position: relative; overflow: hidden; }
-.contact-direct-item { padding-top: 20px; margin-top: 20px; border-top: 1px solid rgba(161,182,194,0.24); }
+.contact-direct-item { padding-top: 20px; margin-top: 20px; border-top: 1px solid rgba(160,181,193,0.24); }
 .contact-direct-item-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--olive); margin-bottom: 6px; }
 .contact-direct-item-primary { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin-bottom: 4px; }
 .contact-direct-item-secondary { font-size: 13px; color: #B6C6CA; }
-.contact-crisis { margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(161,182,194,0.24); font-size: 12px; color: #B6C6CA; line-height: 1.6; font-style: italic; }
+.contact-crisis { margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(160,181,193,0.24); font-size: 12px; color: #B6C6CA; line-height: 1.6; font-style: italic; }
 .contact-crisis span { color: var(--olive); font-style: normal; }
 
 /* ── ABOUT ── */
@@ -597,7 +597,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .svc-detail-sit-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
 .svc-detail-sit-h { font-family: var(--font-serif); font-size: 24px; font-weight: 500; line-height: 1.2; margin: 0 0 12px; font-style: italic; }
 .svc-detail-sit-p { font-size: 14px; line-height: 1.55; color: var(--muted); margin: 0; }
-.svc-approach-step { display: grid; grid-template-columns: 60px 1fr 200px; gap: 24px; padding: 20px 0; border-bottom: 1px solid rgba(161,182,194,0.24); align-items: start; }
+.svc-approach-step { display: grid; grid-template-columns: 60px 1fr 200px; gap: 24px; padding: 20px 0; border-bottom: 1px solid rgba(160,181,193,0.24); align-items: start; }
 .svc-approach-num { font-family: var(--font-serif); font-size: 32px; font-weight: 400; color: var(--olive); line-height: 1; }
 .svc-approach-h { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin-bottom: 6px; }
 .svc-approach-p { font-size: 14px; line-height: 1.55; color: #B6C6CA; }
@@ -741,7 +741,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
   position: relative;
   display: grid; grid-template-columns: 1.5fr auto; align-items: center;
   padding-bottom: 56px; margin-bottom: 32px;
-  border-bottom: 1px solid rgba(161,182,194,0.24);
+  border-bottom: 1px solid rgba(160,181,193,0.24);
 }
 .footer-tagline-kicker {
   font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.18em;
@@ -788,7 +788,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 /* ── SERVICES PREVIEW CARDS ── */
 .svc-preview-card {
   background: rgba(255,255,255,0.04); padding: 28px; color: var(--bg);
-  text-decoration: none; border: 1px solid rgba(161,182,194,0.24);
+  text-decoration: none; border: 1px solid rgba(160,181,193,0.24);
   display: flex; flex-direction: column; justify-content: space-between; min-height: 200px;
 }
 .svc-preview-card:hover { background: rgba(255,255,255,0.08); }
@@ -861,7 +861,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .lm-h { font-family: var(--font-display); font-size: clamp(28px, 3vw, 38px); font-weight: 600; line-height: 1.0; letter-spacing: -0.02em; margin: 0 0 12px; color: var(--bg); }
 .lm-p { font-size: 16px; line-height: 1.55; margin: 0 0 28px; color: #CFDADC; max-width: 440px; }
 .lm-foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 20px; font-size: 14px; font-weight: 500; }
-.lm-foot-dark { border-top: 1px solid rgba(161,182,194,0.28); color: var(--olive); }
+.lm-foot-dark { border-top: 1px solid rgba(160,181,193,0.28); color: var(--olive); }
 .lm-foot-light { border-top: 1px solid var(--rule); color: var(--muted); }
 .lm-pill { padding: 9px 16px; font-weight: 600; }
 .lm-pill-accent { background: var(--accent); color: #fff; }
@@ -1025,7 +1025,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 }
 .step-num, .service-n, .hiw-step-n { font-weight: 300; color: var(--teal); }
 
-::selection { background: rgba(163,34,34,0.16); }
+::selection { background: rgba(162,34,34,0.16); }
 
 /* ── HEADER: full-bleed deep-teal bar ──
    Per the deck's website mock. The red compass doesn't hold on this
@@ -1047,7 +1047,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
   letter-spacing: 0.005em; line-height: 1; text-transform: uppercase; color: #fff;
 }
 .logo-name-west { font-weight: 400; margin-left: 0.24em; }
-.logo-rule { width: 1px; height: 20px; background: rgba(223,225,222,0.42); }
+.logo-rule { width: 1px; height: 20px; background: rgba(222,224,221,0.42); }
 .site-header .logo-tag {
   font-size: 9.5px; letter-spacing: 0.24em; text-transform: uppercase;
   color: var(--blue); line-height: 1; white-space: nowrap;
@@ -1068,11 +1068,11 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .site-header .nav-cta:hover { background: var(--accent); }
 
 /* Dropdown, reversed onto the dark bar */
-.nav-dropdown-menu { background: var(--ink); border: 1px solid rgba(161,182,194,0.28); }
+.nav-dropdown-menu { background: var(--ink); border: 1px solid rgba(160,181,193,0.28); }
 .site-header nav .nav-dropdown-menu a {
   color: rgba(255,255,255,0.88); text-transform: none; letter-spacing: normal; font-size: 14px;
 }
-.site-header nav .nav-dropdown-menu a:hover { background: rgba(161,182,194,0.14); color: #fff; }
+.site-header nav .nav-dropdown-menu a:hover { background: rgba(160,181,193,0.14); color: #fff; }
 
 /* ── HERO ──
    Pale-blue-to-warm-grey wash with the compass rose blown up behind
@@ -1084,8 +1084,8 @@ details:not([open]) .faq-icon::after { content: '+'; }
 }
 .hero-compass {
   position: absolute; left: -12%; top: 50%; transform: translateY(-50%);
-  width: 82%; max-width: 1240px; aspect-ratio: 352.72 / 291.31;
-  background: url("../img/compass-light.svg") no-repeat center / contain;
+  width: 82%; max-width: 1240px; aspect-ratio: 1;
+  background: var(--sand); -webkit-mask: url("../img/brand/270west-symbol-mono.svg") no-repeat center / contain; mask: url("../img/brand/270west-symbol-mono.svg") no-repeat center / contain;
   opacity: 0.62; pointer-events: none; z-index: 0;
 }
 .hero-home .hero-grid {
@@ -1151,8 +1151,8 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .dark-section, .site-footer, .lm-card-dark, .quiz-widget,
 .contact-direct, .about-maple-card, .compass-card, .article-rail-cta,
 .resource-card-main { background: var(--ink); }
-.svc-preview-card { border-color: rgba(161,182,194,0.24); }
-.svc-preview-card:hover { background: rgba(161,182,194,0.12); }
+.svc-preview-card { border-color: rgba(160,181,193,0.24); }
+.svc-preview-card:hover { background: rgba(160,181,193,0.12); }
 
 /* ── TESTIMONIAL CARDS ──
    Square corners and a roman (not italic) serif quote, matching the
@@ -1193,8 +1193,8 @@ details:not([open]) .faq-icon::after { content: '+'; }
     border-color: rgba(255,255,255,0.5); color: #fff;
     font-family: var(--font-sans); font-weight: 600; letter-spacing: 0.1em;
   }
-  .mobile-nav { background: var(--ink); border-top: 1px solid rgba(161,182,194,0.24); }
-  .mobile-nav a { color: rgba(255,255,255,0.9); border-bottom-color: rgba(161,182,194,0.2); }
+  .mobile-nav { background: var(--ink); border-top: 1px solid rgba(160,181,193,0.24); }
+  .mobile-nav a { color: rgba(255,255,255,0.9); border-bottom-color: rgba(160,181,193,0.2); }
   .mobile-nav a.mobile-subnav { color: var(--blue); }
   .hero-home { padding: 40px 20px 36px; }
   .hero-compass { width: 165%; left: -34%; opacity: 0.5; }
@@ -1242,8 +1242,8 @@ details:not([open]) .faq-icon::after { content: '+'; }
 }
 .tfeature::before {
   content: ""; position: absolute; left: -8%; top: 50%; transform: translateY(-50%);
-  width: 62%; aspect-ratio: 352.72 / 291.31;
-  background: url("../img/compass-light.svg") no-repeat center / contain;
+  width: 62%; aspect-ratio: 1;
+  background: var(--sand); -webkit-mask: url("../img/brand/270west-symbol-mono.svg") no-repeat center / contain; mask: url("../img/brand/270west-symbol-mono.svg") no-repeat center / contain;
   opacity: 0.2; pointer-events: none;
 }
 .tfeature-body {
@@ -1457,7 +1457,7 @@ ol.journey-steps-grid > li { margin: 0; }
 .contact-form-control { display: block; width: 100%; box-sizing: border-box; padding: 14px 16px; border: 1.5px solid #7C8C8F; border-radius: 6px; background: #fff; font: inherit; font-size: 17px; color: var(--ink); transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
 .contact-form-control::placeholder { color: #66777A; }
 .contact-form-control:hover { border-color: var(--ink); }
-.contact-form-control:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(163,34,34,0.28); }
+.contact-form-control:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(162,34,34,0.28); }
 select.contact-form-control { -webkit-appearance: none; appearance: none; padding-right: 44px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%231A3A3F' stroke-width='1.8'/%3E%3C/svg%3E") no-repeat right 16px center; }
 textarea.contact-form-control { resize: vertical; min-height: 140px; }
 
@@ -1501,3 +1501,42 @@ label.quiz-field-label, label.consult-field-label { display: block; }
   .claim-components { grid-template-columns: 1fr; }
   .claim-component, .claim-component + .claim-component { padding: 24px 0; border-right: none; border-bottom: 1px solid var(--rule); }
 }
+
+/* ── SEPT 2026 BRAND (270 West Logos Sept 2026 + brand guidelines) ──
+   Palette #1A3A3F · #A0B5C1 · #4E757B · #ACA698 · #DEE0DD · #A22222.
+   Type: Crimson Text Regular headlines · Inter Tight Medium uppercase labels · Inter Tight Light body.
+   Logos live in img/brand/ (converted from the supplied EPS files). */
+body { font-weight: 300; }
+strong, b { font-weight: 500; }
+.mono-label, .eyebrow, .site-header nav a, .btn-accent, .btn-ink, .btn-outline,
+.lm-pill, .quiz-start-btn, .consult-confirm, .consult-continue, .article-rail-btn, .quiz-restart, .consult-restart { font-weight: 500; }
+
+/* Logo lockups */
+.site-header .logo { display: block; line-height: 0; }
+.site-header .logo-full { display: block; height: 44px; width: auto; }
+.site-header.is-scrolled .logo-full { height: 38px; }
+.footer-lockup { margin-bottom: 16px; }
+.footer-lockup img { width: 186px; height: auto; display: block; }
+
+/* Brand symbol as a tintable background mark: colour comes from the parent's `color`. */
+.brand-symbol { display: block; aspect-ratio: 1; max-width: 100%; background: currentColor;
+  -webkit-mask: url("../img/brand/270west-symbol-mono.svg") no-repeat center / contain;
+          mask: url("../img/brand/270west-symbol-mono.svg") no-repeat center / contain; }
+.footer-compass .brand-symbol { width: 118px !important; }
+.photo-scene-marker img { display: block; width: 56px; height: 56px; }
+.photo-scene--cross .photo-scene-marker { margin-top: -20px; }
+@media (max-width: 900px) {
+  .site-header .logo-full, .site-header.is-scrolled .logo-full { height: 36px; }
+}
+/* Crimson Text ships Regular only in this brand, so serif headings sit at 400
+   (a heavier value makes the browser synthesise a fake bold). */
+.display-xl, .display-lg, .page-hero-h1, .page-hero-lead, .about-why-h,
+.services-fee-h, .lm-h, .svc-preview-h, .service-card-h, .svc-detail-sit-h, .hiw-step-h,
+.about-maple-quote, .about-team-cat-h, .resource-card-main-h, .resource-card-sm-h, .article-h2, .article-h3,
+.faq-group-h, .quiz-h3, .consult-h3, .legal-h2, .res-section-h, .story-card-quote, .tfeature-quote,
+.hero-quote-q, .svc-outcome-h, .value-h, .journey-step-h, .story-invite-h, .news-item-h, .photo-scene-h,
+.res-nav-h, .footer-tagline, .about-founder-q, .esg-logos-label, .library-topic-h, .value-h em, .footer-tagline em { font-weight: 400; }
+
+/* Hero watermark: the new symbol is square, so it needs less width than the old rose. */
+.hero-compass { width: 62%; left: -7%; opacity: 0.5; }
+@media (max-width: 900px) { .hero-compass { width: 120%; left: -26%; opacity: 0.42; } }
