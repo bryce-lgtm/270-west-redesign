@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v19"/>
+<link rel="stylesheet" href="css/styles.css?v=v20"/>
 </head>
 <body>
 
@@ -121,56 +121,79 @@
   </div>
 </section>
 
-<!-- COMMUNITIES WE SERVE — events from the Q4 outreach tracker and the Fall Event Plan.
-     Public detail only: no costs, fees or forecasts from those internal documents. -->
+<!-- COMMUNITIES WE SERVE — the events we sponsor (Fall Event Plan sponsorship commitments).
+     Confirmed sponsorships only; nothing financial from that document is published. -->
 <section class="section-pad communities-section">
   <div style="display:grid;grid-template-columns:1fr 2fr;gap:80px;align-items:start;margin-bottom:56px">
     <div class="mono-label">Communities we serve</div>
     <div>
-      <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:400;line-height:1.2;letter-spacing:-0.02em;margin:0 0 20px;max-width:800px">Where you’ll find us this fall.</h2>
-      <p style="font-size:18px;line-height:1.6;color:var(--muted);margin:0;max-width:700px">We sponsor and attend community events across Atlantic Canada, the Ottawa Valley and Greater Toronto. Come and say hello, or book a conversation for another time.</p>
+      <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:400;line-height:1.2;letter-spacing:-0.02em;margin:0 0 20px;max-width:800px">Events we’re proud to sponsor.</h2>
+      <p style="font-size:18px;line-height:1.6;color:var(--muted);margin:0;max-width:700px">We back community events across Atlantic Canada, the Ottawa Valley and Greater Toronto, and you’ll find our team at many more through the year. Come and say hello.</p>
     </div>
   </div>
-  <div class="event-regions">
-    <div class="event-region">
-      <h3 class="event-region-h">Atlantic Canada</h3>
-      <ul class="event-list">
-        <li class="event-item"><span class="event-name">BBB Golf Tournament, Halifax <span class="event-badge">Featured sponsor</span></span><span class="event-date">Sept 9</span></li>
-        <li class="event-item"><span class="event-name">Hants County Exhibition</span><span class="event-date">Sept 18–20 & Sept 25–27</span></li>
-        <li class="event-item"><span class="event-name">Halifax Fall Home Show</span><span class="event-date">Oct 2–4</span></li>
-        <li class="event-item"><span class="event-name">Glow Gardens, Halifax</span><span class="event-date">Nov 19 – Jan 2</span></li>
-        <li class="event-item"><span class="event-name">Valley / Greenwood CFB Market</span><span class="event-date">Nov 28–29</span></li>
-        <li class="event-item"><span class="event-name">Greenwood Mall Christmas Program <span class="event-badge">Featured sponsor</span></span><span class="event-date">Nov 29</span></li>
-      </ul>
-    </div>
-    <div class="event-region">
-      <h3 class="event-region-h">Ottawa Valley</h3>
-      <ul class="event-list">
-        <li class="event-item"><span class="event-name">Gatineau Air Show</span><span class="event-date">Sept 18–20</span></li>
-        <li class="event-item"><span class="event-name">55+ Home Show, Ottawa</span><span class="event-date">Sept 25–26</span></li>
-        <li class="event-item"><span class="event-name">Pembroke Rib Fest</span><span class="event-date">Sept 25–27</span></li>
-        <li class="event-item"><span class="event-name">Ottawa REDBLACKS, three games</span><span class="event-date">Sept 26, Oct 2, Oct 16</span></li>
-        <li class="event-item"><span class="event-name">Ottawa Fall Home Show</span><span class="event-date">Oct 1–4</span></li>
-        <li class="event-item"><span class="event-name">Petawawa Ramble Fall Festival</span><span class="event-date">Oct 15–18</span></li>
-        <li class="event-item"><span class="event-name">Ottawa National Women’s Show</span><span class="event-date">Oct 17–18</span></li>
-        <li class="event-item"><span class="event-name">Ottawa Senators, twelve games</span><span class="event-date">October to December</span></li>
-        <li class="event-item"><span class="event-name">Lansdowne Christmas Market <span class="event-badge">Featured sponsor</span></span><span class="event-date">Nov 20 – Dec 31, weekends</span></li>
-      </ul>
-    </div>
-    <div class="event-region">
-      <h3 class="event-region-h">Greater Toronto</h3>
-      <ul class="event-list">
-        <li class="event-item"><span class="event-name">Canadian International Air Show</span><span class="event-date">Sept 5–7</span></li>
-        <li class="event-item"><span class="event-name">CFB Trenton / Belleville Home Show</span><span class="event-date">Sept 25–27</span></li>
-        <li class="event-item"><span class="event-name">Belleville Senators, three games</span><span class="event-date">Oct 2, Nov 6, Dec 18</span></li>
-        <li class="event-item"><span class="event-name">Toronto Snowmobile, ATV &amp; Powersports</span><span class="event-date">Oct 23–25</span></li>
-        <li class="event-item"><span class="event-name">Toronto Maple Leafs CAF Night</span><span class="event-date">November</span></li>
-        <li class="event-item"><span class="event-name">Christkindl Market, Toronto</span><span class="event-date">Dec 3–6</span></li>
-        <li class="event-item"><span class="event-name">Raptors CAF Night</span><span class="event-date">December</span></li>
-      </ul>
-    </div>
-  </div>
-  <p class="event-note">Dates are added as events are confirmed. Want us at your event? <a href="contact.html">Get in touch</a>.</p>
+  <ul class="sponsor-grid">
+    <li class="sponsor">
+      <div class="sponsor-logo">
+        <!-- Drop the logo in as img/events/bbb-golf.svg (or .png) and replace this placeholder. -->
+        <span class="sponsor-logo-placeholder">BBB Golf Tournament</span>
+      </div>
+      <h3 class="sponsor-h">BBB Golf Tournament</h3>
+      <p class="sponsor-meta">Halifax, Nova Scotia<span aria-hidden="true"> · </span>September 9</p>
+    </li>
+    <li class="sponsor">
+      <div class="sponsor-logo">
+        <!-- Drop the logo in as img/events/greenwood-mall.svg (or .png) and replace this placeholder. -->
+        <span class="sponsor-logo-placeholder">Greenwood Mall Christmas Program</span>
+      </div>
+      <h3 class="sponsor-h">Greenwood Mall Christmas Program</h3>
+      <p class="sponsor-meta">Greenwood, Nova Scotia<span aria-hidden="true"> · </span>November 29</p>
+    </li>
+    <li class="sponsor">
+      <div class="sponsor-logo">
+        <!-- Drop the logo in as img/events/lansdowne.svg (or .png) and replace this placeholder. -->
+        <span class="sponsor-logo-placeholder">Lansdowne Christmas Market</span>
+      </div>
+      <h3 class="sponsor-h">Lansdowne Christmas Market</h3>
+      <p class="sponsor-meta">Ottawa, Ontario<span aria-hidden="true"> · </span>November 20 – December 31</p>
+    </li>
+  </ul>
+  <!-- Sponsorship terms still being negotiated (Fall Event Plan). A template never renders:
+       move a card into the list above once that sponsorship is signed. -->
+  <template id="pending-sponsorships">
+      <li class="sponsor">
+        <div class="sponsor-logo">
+          <!-- Drop the logo in as img/events/ottawa-senators.svg (or .png) and replace this placeholder. -->
+          <span class="sponsor-logo-placeholder">Ottawa Senators</span>
+        </div>
+        <h3 class="sponsor-h">Ottawa Senators</h3>
+        <p class="sponsor-meta">Ottawa, Ontario<span aria-hidden="true"> · </span>October to December</p>
+      </li>
+      <li class="sponsor">
+        <div class="sponsor-logo">
+          <!-- Drop the logo in as img/events/belleville-senators.svg (or .png) and replace this placeholder. -->
+          <span class="sponsor-logo-placeholder">Belleville Senators</span>
+        </div>
+        <h3 class="sponsor-h">Belleville Senators</h3>
+        <p class="sponsor-meta">Belleville, Ontario<span aria-hidden="true"> · </span>October to December</p>
+      </li>
+      <li class="sponsor">
+        <div class="sponsor-logo">
+          <!-- Drop the logo in as img/events/leafs-caf-night.svg (or .png) and replace this placeholder. -->
+          <span class="sponsor-logo-placeholder">Toronto Maple Leafs CAF Night</span>
+        </div>
+        <h3 class="sponsor-h">Toronto Maple Leafs CAF Night</h3>
+        <p class="sponsor-meta">Toronto, Ontario<span aria-hidden="true"> · </span>November</p>
+      </li>
+      <li class="sponsor">
+        <div class="sponsor-logo">
+          <!-- Drop the logo in as img/events/raptors-caf-night.svg (or .png) and replace this placeholder. -->
+          <span class="sponsor-logo-placeholder">Raptors CAF Night</span>
+        </div>
+        <h3 class="sponsor-h">Raptors CAF Night</h3>
+        <p class="sponsor-meta">Toronto, Ontario<span aria-hidden="true"> · </span>December</p>
+      </li>
+  </template>
+  <p class="event-note">Want us at your event? <a href="contact.html">Get in touch</a>.</p>
 </section>
 <!-- FAQ (tracker S4). Copy from FAQs and Core Messages; shared across pages for now. -->
 <section class="section-pad" style="background:var(--bg2)">
@@ -253,7 +276,7 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>Veteran-founded · Canadian-owned</span></div>
 </footer>
 
-<script src="js/main.js?v=v19"></script>
+<script src="js/main.js?v=v20"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('about-maple').innerHTML = brandMarkSVG(260, 'currentColor');
