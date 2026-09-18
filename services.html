@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v12"/>
+<link rel="stylesheet" href="css/styles.css?v=v14"/>
 </head>
 <body>
 
@@ -36,7 +36,7 @@
       </div>
     </div>
     <a href="contact.html">Contact</a>
-    <a href="eligibility.html" class="nav-cta">Check Eligibility →</a>
+    <a href="consult.html" class="nav-cta">Book a Consult →</a>
   </nav>
   <button class="mobile-menu-btn" aria-label="Open menu">Menu</button>
 </header>
@@ -53,7 +53,7 @@
   <a href="guides.html" class="mobile-subnav">Guides</a>
   <a href="news.html" class="mobile-subnav">News</a>
   <a href="contact.html">Contact</a>
-  <a href="eligibility.html" class="mobile-nav-cta">Check Eligibility →</a>
+  <a href="consult.html" class="mobile-nav-cta">Book a Consult →</a>
 </nav>
 
 <!-- PAGE HERO -->
@@ -62,28 +62,6 @@
   <p class="page-hero-lead">Four ways we can help you navigate Veterans Affairs Canada.</p>
   <p class="page-hero-sub">From a first eligibility check to appeals and reconsiderations, we offer hands-on support at your pace.</p>
 </section>
-
-<!-- NO-FEE STRIP -->
-<div class="services-fee-strip">
-  <div class="services-fee-badge">
-    <div class="services-fee-check">
-      <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="16" cy="16" r="12"/>
-        <path d="M10 16 L14 20 L22 12"/>
-      </svg>
-    </div>
-    <div>
-      <div class="services-fee-h">No successful claim? No fee.</div>
-      <div class="services-fee-sub">Fees only payable if your claim is successful. Free first consultation, every time.</div>
-    </div>
-  </div>
-  <div class="services-fee-pills">
-    <span>• No upfront fees</span>
-    <span>• Privacy</span>
-    <span>• Respect</span>
-    <span>• Support</span>
-  </div>
-</div>
 
 <!-- 2×2 SERVICES GRID -->
 <section style="padding:100px 80px">
@@ -143,6 +121,46 @@
   </div>
 </section>
 
+<!-- FAQ (tracker S4). Copy from FAQs and Core Messages; shared across pages for now. -->
+<section class="section-pad" style="background:var(--bg2)">
+  <div style="display:grid;grid-template-columns:1fr 2fr;gap:64px">
+    <div>
+      <div class="mono-label">Common questions</div>
+      <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:400;line-height:1.2;letter-spacing:-0.02em;margin:0">Frequently asked questions</h2>
+    </div>
+    <div style="border-top:1px solid var(--rule)">
+      <details class="faq-item">
+        <summary>What exactly does 270 West do?<span class="faq-icon"></span></summary>
+        <p>We help veterans and their families understand and navigate the disability benefits process: understanding your options, organizing the information a claim needs, preparing and filing documentation, connecting you with medical professionals and resources, and keeping you informed about what comes next.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How much does 270 West charge?<span class="faq-icon"></span></summary>
+        <p>Our fee for benefit navigation and filing is 10%, and we only get paid if your claim is successful. There is no fee for an initial conversation, and we explain our fees and terms clearly before you decide whether to move forward.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does 270 West charge for everything it does?<span class="faq-icon"></span></summary>
+        <p>No. Many of the supports and resources we provide are at no charge. The service we charge for is benefit navigation and filing.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is there any commitment required for the first meeting?<span class="faq-icon"></span></summary>
+        <p>No. The first meeting is a conversation. We listen, answer questions and explain where we may be able to help. Then you decide whether there is a fit.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does 270 West take over my claim?<span class="faq-icon"></span></summary>
+        <p>No, and that distinction matters. We take on the administrative work, organization and follow-up, but it remains your claim. You review the information, ask questions and approve what is submitted.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can 270 West guarantee my claim will be approved?<span class="faq-icon"></span></summary>
+        <p>No responsible organization can guarantee how VAC will decide a claim. What we can promise is that we take your experience seriously, prepare the information carefully and support you through the process.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is 270 West part of Veterans Affairs Canada?<span class="faq-icon"></span></summary>
+        <p>No. We are an independent advisory service based in Canada and are not affiliated with Veterans Affairs Canada.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
 <!-- CTA -->
 <section class="dark-section section-pad" style="position:relative;overflow:hidden">
   <div id="svc-topo" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></div>
@@ -161,7 +179,6 @@
   <div id="footer-topo" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></div>
   <div class="footer-tagline-band" style="position:relative">
     <div>
-      <div class="footer-tagline">In service of <em>your story.</em></div>
       <div class="footer-pillars">
         <span>• Privacy</span><span>• Respect</span><span>• Support</span><span class="footer-pillar-accent">• No successful claim? No fee.</span>
       </div>
@@ -205,9 +222,9 @@
       <div class="footer-col-items"><span>English</span><span>Français (Canada)</span></div>
     </div>
   </div>
-  <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>In service of your story.</span></div>
+  <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>Veteran-founded · Canadian-owned</span></div>
 </footer>
 
-<script src="js/main.js?v=v12"></script>
+<script src="js/main.js?v=v14"></script>
 </body>
 </html>
