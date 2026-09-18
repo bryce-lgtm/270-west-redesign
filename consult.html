@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v17"/>
+<link rel="stylesheet" href="css/styles.css?v=v18"/>
 </head>
 <body>
 
@@ -64,9 +64,9 @@
 </section>
 
 <!-- CONSULT LAYOUT -->
-<section class="consult-page-layout">
+<section class="consult-intro">
   <!-- Left: context -->
-  <div class="consult-page-sticky">
+  <div class="consult-intro-body">
     <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px">What to expect</div>
     <h2 style="font-size:36px;font-weight:400;line-height:1.1;letter-spacing:-0.02em;margin:0 0 20px">A real conversation, not a sales call.</h2>
     <p style="font-size:16px;line-height:1.6;color:var(--muted);margin:0 0 32px">You'll speak with an advisor who has worked with VAC for years. Bring whatever's on your mind: a denied claim, a new diagnosis, a family member's situation. We'll listen first.</p>
@@ -100,92 +100,80 @@
       <div style="font-size:13px;color:var(--muted);line-height:1.55;font-style:italic">Not ready to book? <a href="eligibility.html" style="color:var(--accent);font-style:normal">Check your eligibility first →</a></div>
     </div>
   </div>
-  <!-- Right: two ways to talk to us -->
-  <div>
-    <div class="consult-options">
-      <div class="consult-tabs" role="tablist" aria-label="How would you like to talk to us?">
-        <button type="button" class="consult-tab" id="tab-book" role="tab" aria-controls="panel-book" aria-selected="true">
-          <span class="consult-tab-h">Book a time</span>
-          <span class="consult-tab-p">Pick a slot in an advisor’s calendar</span>
-        </button>
-        <button type="button" class="consult-tab" id="tab-call" role="tab" aria-controls="panel-call" aria-selected="false">
-          <span class="consult-tab-h">Ask us to call you</span>
-          <span class="consult-tab-p">Tell us when suits and we’ll reach out</span>
-        </button>
-      </div>
-
-      <div class="consult-panel" id="panel-book" role="tabpanel" aria-labelledby="tab-book">
-        <!-- Scheduler slot. Set data-scheduler-url to the Calendly (or replacement) link and the
-             embed loads in place of the sample below. UTM values are appended automatically. -->
-        <div id="consult-scheduler" data-scheduler-url="" data-scheduler-height="720"></div>
-        <div id="consult-widget"></div>
-        <p class="consult-sample-note">Sample scheduler shown for layout. The live calendar replaces it once the scheduling link is connected.</p>
-      </div>
-
-      <div class="consult-panel" id="panel-call" role="tabpanel" aria-labelledby="tab-call" hidden>
-        <form class="contact-form consult-request" action="#" method="post">
-          <p class="consult-panel-intro">Leave your details and an advisor will call you back, usually within one business day.</p>
-          <div class="contact-form-field">
-            <label class="contact-form-label" for="cr-name">Full name</label>
-            <input class="contact-form-control" id="cr-name" name="name" type="text" autocomplete="name" placeholder="Your name" required/>
-          </div>
-          <div class="contact-form-field">
-            <label class="contact-form-label" for="cr-email">Email</label>
-            <input class="contact-form-control" id="cr-email" name="email" type="email" autocomplete="email" placeholder="you@example.ca" required/>
-          </div>
-          <div class="contact-form-field">
-            <label class="contact-form-label" for="cr-phone">Phone</label>
-            <input class="contact-form-control" id="cr-phone" name="phone" type="tel" autocomplete="tel" placeholder="(902) 555-0142" required/>
-          </div>
-          <div class="contact-form-field">
-            <label class="contact-form-label" for="cr-when">Best time to reach you</label>
-            <select class="contact-form-control" id="cr-when" name="preferred_time">
-              <option value="morning">Weekday mornings</option>
-              <option value="afternoon">Weekday afternoons</option>
-              <option value="evening">Evenings</option>
-              <option value="any">Any time</option>
-            </select>
-          </div>
-          <div class="contact-form-field">
-            <label class="contact-form-label" for="cr-topic">What’s on your mind?</label>
-            <textarea class="contact-form-control" id="cr-topic" name="message" rows="4" placeholder="A denied claim, a new diagnosis, a family member’s situation. Whatever feels useful."></textarea>
-          </div>
-          <div class="consult-consent">
-            <input type="checkbox" id="cr-consent" name="consent" required/>
-            <label for="cr-consent">I agree that 270 West may contact me about my enquiry. See our <a href="privacy.html">Privacy Policy</a>.</label>
-          </div>
-          <!-- Attribution: filled by initLeadTracking(), submitted with the lead to Creatio. -->
-          <input type="hidden" name="utm_source" data-lead-field="utm_source"/>
-          <input type="hidden" name="utm_medium" data-lead-field="utm_medium"/>
-          <input type="hidden" name="utm_campaign" data-lead-field="utm_campaign"/>
-          <input type="hidden" name="utm_term" data-lead-field="utm_term"/>
-          <input type="hidden" name="utm_content" data-lead-field="utm_content"/>
-          <input type="hidden" name="gclid" data-lead-field="gclid"/>
-          <input type="hidden" name="referrer" data-lead-field="referrer"/>
-          <input type="hidden" name="landing_page" data-lead-field="landing_page"/>
-          <div style="margin-top:24px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
-            <button type="submit" class="btn-accent" style="border:none">Request a call →</button>
-            <div style="font-size:15px;color:var(--muted)">Confidential. We reply within one business day.</div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 </section>
+
+  <!-- Two ways to talk to us, both shown at once. No tabs: everything stays visible and
+       reachable in one pass for keyboard and screen-reader users. -->
+  <div class="consult-options">
+    <section class="consult-option" aria-labelledby="opt-book-h">
+      <div class="consult-option-head">
+        <span class="consult-option-n">Option 1</span>
+        <h2 class="consult-option-h" id="opt-book-h">Book a time</h2>
+        <p class="consult-option-p">Pick a slot in an advisor’s calendar and get a confirmation straight away.</p>
+      </div>
+      <!-- Scheduler slot. Set data-scheduler-url to the Calendly (or replacement) link and the
+           embed loads in place of the sample below. UTM values are appended automatically. -->
+      <div id="consult-scheduler" data-scheduler-url="" data-scheduler-height="720"></div>
+      <div id="consult-widget"></div>
+      <p class="consult-sample-note">Sample scheduler shown for layout. The live calendar replaces it once the scheduling link is connected.</p>
+    </section>
+
+    <section class="consult-option" aria-labelledby="opt-call-h">
+      <div class="consult-option-head">
+        <span class="consult-option-n">Option 2</span>
+        <h2 class="consult-option-h" id="opt-call-h">Ask us to call you</h2>
+        <p class="consult-option-p">Leave your details and an advisor will call you back, usually within one business day.</p>
+      </div>
+      <form class="contact-form consult-request" action="#" method="post">
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="cr-name">Full name</label>
+          <input class="contact-form-control" id="cr-name" name="name" type="text" autocomplete="name" placeholder="Your name" required/>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="cr-email">Email</label>
+          <input class="contact-form-control" id="cr-email" name="email" type="email" autocomplete="email" placeholder="you@example.ca" required/>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="cr-phone">Phone</label>
+          <input class="contact-form-control" id="cr-phone" name="phone" type="tel" autocomplete="tel" placeholder="(902) 555-0142" required/>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="cr-when">Best time to reach you</label>
+          <select class="contact-form-control" id="cr-when" name="preferred_time">
+            <option value="morning">Weekday mornings</option>
+            <option value="afternoon">Weekday afternoons</option>
+            <option value="evening">Evenings</option>
+            <option value="any">Any time</option>
+          </select>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="cr-topic">What’s on your mind?</label>
+          <textarea class="contact-form-control" id="cr-topic" name="message" rows="4" placeholder="A denied claim, a new diagnosis, a family member’s situation. Whatever feels useful."></textarea>
+        </div>
+        <div class="consult-consent">
+          <input type="checkbox" id="cr-consent" name="consent" required/>
+          <label for="cr-consent">I agree that 270 West may contact me about my enquiry. See our <a href="privacy.html">Privacy Policy</a>.</label>
+        </div>
+        <!-- Attribution: filled by initLeadTracking(), submitted with the lead to Creatio. -->
+        <input type="hidden" name="utm_source" data-lead-field="utm_source"/>
+        <input type="hidden" name="utm_medium" data-lead-field="utm_medium"/>
+        <input type="hidden" name="utm_campaign" data-lead-field="utm_campaign"/>
+        <input type="hidden" name="utm_term" data-lead-field="utm_term"/>
+        <input type="hidden" name="utm_content" data-lead-field="utm_content"/>
+        <input type="hidden" name="gclid" data-lead-field="gclid"/>
+        <input type="hidden" name="referrer" data-lead-field="referrer"/>
+        <input type="hidden" name="landing_page" data-lead-field="landing_page"/>
+        <div style="margin-top:24px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+          <button type="submit" class="btn-accent" style="border:none">Request a call →</button>
+          <div style="font-size:15px;color:var(--muted)">Confidential. We reply within one business day.</div>
+        </div>
+      </form>
+    </section>
+  </div>
 
 <!-- FOOTER -->
 <footer class="site-footer">
   <div id="footer-topo" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></div>
-  <div class="footer-tagline-band" style="position:relative">
-    <div>
-      <div class="footer-pillars">
-        <span>• Privacy</span><span>• Respect</span><span>• Support</span><span class="footer-pillar-accent">• No successful claim? No fee.</span>
-      </div>
-    </div>
-    <div style="color:var(--olive);opacity:0.5;line-height:0">
-      <span class="brand-symbol" aria-hidden="true" style="width:140px"></span>
-    </div>
-  </div>
   <div class="footer-grid-5">
     <div>
       <div class="footer-lockup"><img src="img/brand/270west-horizontal-light.svg" alt="270 West Consulting" width="186" height="50"/></div>
@@ -224,7 +212,7 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>Veteran-founded · Canadian-owned</span></div>
 </footer>
 
-<script src="js/main.js?v=v17"></script>
+<script src="js/main.js?v=v18"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     initConsultWidget('consult-widget');

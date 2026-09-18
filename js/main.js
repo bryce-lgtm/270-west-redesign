@@ -480,30 +480,6 @@ function initScheduler(lead) {
   }
 }
 
-// ── Consult page tabs: book a time / ask us to call ──
-function initConsultTabs() {
-  const tabs = [...document.querySelectorAll('.consult-tab')];
-  if (!tabs.length) return;
-  const panels = tabs.map(t => document.getElementById(t.getAttribute('aria-controls')));
-  function select(i, focus) {
-    tabs.forEach((t, n) => {
-      t.setAttribute('aria-selected', n === i ? 'true' : 'false');
-      t.tabIndex = n === i ? 0 : -1;
-      if (panels[n]) panels[n].hidden = n !== i;
-    });
-    if (focus) tabs[i].focus();
-  }
-  tabs.forEach((t, i) => {
-    t.addEventListener('click', () => select(i));
-    t.addEventListener('keydown', e => {
-      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-      e.preventDefault();
-      select((i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length, true);
-    });
-  });
-  select(0);
-  if (location.hash === '#request-a-call') select(1);
-}
 
 // ── Init all ──
 document.addEventListener('DOMContentLoaded', function() {
@@ -533,7 +509,6 @@ document.addEventListener('DOMContentLoaded', function() {
   initPhotos();
   const w270Lead = initLeadTracking();
   initScheduler(w270Lead);
-  initConsultTabs();
   initVideoLightbox();
   initStoryGrid();
   initQuiz();
