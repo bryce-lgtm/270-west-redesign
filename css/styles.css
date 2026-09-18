@@ -1639,3 +1639,20 @@ strong, b { font-weight: 500; }
 @media (max-width: 700px) { .commitments-grid { grid-template-columns: 1fr; } }
 .about-founder-h { font-family: var(--font-serif); font-size: clamp(30px, 3.4vw, 44px); font-weight: 400; line-height: 1.2; margin: 0 0 8px; }
 .commitments-grid::after { content: ""; background: var(--bg); }
+
+/* ── CONSULT PAGE: book a time or ask for a call ── */
+.consult-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--rule); margin-bottom: 28px; }
+.consult-tab { display: block; padding: 18px 22px; background: var(--bg2); border: none; border-right: 1px solid var(--rule);
+  text-align: left; cursor: pointer; font-family: inherit; color: var(--muted); transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
+.consult-tab:last-child { border-right: none; }
+.consult-tab[aria-selected="true"] { background: var(--ink); color: #fff; }
+.consult-tab:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.consult-tab-h { display: block; font-size: 18px; font-weight: 500; color: inherit; }
+.consult-tab-p { display: block; margin-top: 4px; font-size: 15px; color: inherit; opacity: 0.78; }
+.consult-panel-intro { margin: 0 0 24px; font-size: 17px; line-height: 1.6; color: var(--muted); }
+.consult-sample-note { margin: 16px 0 0; font-size: 14px; color: var(--muted); font-style: italic; }
+.consult-consent { display: flex; gap: 10px; align-items: flex-start; margin-top: 8px; font-size: 15px; line-height: 1.5; }
+.consult-consent input { margin-top: 3px; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--accent); }
+.consult-consent a { color: var(--accent); }
+#consult-scheduler iframe, #consult-scheduler .calendly-inline-widget { display: block; }
+@media (max-width: 560px) { .consult-tabs { grid-template-columns: 1fr; } .consult-tab { border-right: none; border-bottom: 1px solid var(--rule); } }

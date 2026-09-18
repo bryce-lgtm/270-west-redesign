@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v16"/>
+<link rel="stylesheet" href="css/styles.css?v=v17"/>
 </head>
 <body>
 
@@ -92,6 +92,15 @@
           <label class="contact-form-label" for="cf-message">What's on your mind?</label>
           <textarea class="contact-form-control" id="cf-message" name="message" rows="5" placeholder="Share whatever feels useful. We'll take it from there."></textarea>
         </div>
+        <!-- Attribution: filled by initLeadTracking(), submitted with the lead to Creatio. -->
+        <input type="hidden" name="utm_source" data-lead-field="utm_source"/>
+        <input type="hidden" name="utm_medium" data-lead-field="utm_medium"/>
+        <input type="hidden" name="utm_campaign" data-lead-field="utm_campaign"/>
+        <input type="hidden" name="utm_term" data-lead-field="utm_term"/>
+        <input type="hidden" name="utm_content" data-lead-field="utm_content"/>
+        <input type="hidden" name="gclid" data-lead-field="gclid"/>
+        <input type="hidden" name="referrer" data-lead-field="referrer"/>
+        <input type="hidden" name="landing_page" data-lead-field="landing_page"/>
         <div style="margin-top:24px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
           <button type="submit" class="btn-accent" style="border:none">Send →</button>
           <div style="font-size:15px;color:var(--muted)">Confidential. We reply within one business day.</div>
@@ -171,6 +180,6 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>Veteran-founded · Canadian-owned</span></div>
 </footer>
 
-<script src="js/main.js?v=v16"></script>
+<script src="js/main.js?v=v17"></script>
 </body>
 </html>

@@ -422,6 +422,89 @@ function initVideoLightbox() {
   }));
 }
 
+// ── Lead attribution: keep campaign data for the session and stamp it on every form ──
+function initLeadTracking() {
+  const KEY = 'w270_lead_src';
+  const params = new URLSearchParams(location.search);
+  let data = {};
+  try { data = JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { data = {}; }
+  const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'msclkid'];
+  let fresh = false;
+  // A new campaign touch replaces the whole set, so one lead never mixes two campaigns.
+  if (keys.some(k => params.get(k))) {
+    data = {};
+    keys.forEach(k => { const v = params.get(k); if (v) data[k] = v; });
+    data.landing_page = location.pathname + location.search;
+    fresh = true;
+  }
+  if (!data.landing_page) { data.landing_page = location.pathname + location.search; fresh = true; }
+  if (!data.referrer && document.referrer && !document.referrer.includes(location.host)) { data.referrer = document.referrer; fresh = true; }
+  if (fresh) { try { sessionStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {} }
+  document.querySelectorAll('[data-lead-field]').forEach(el => { el.value = data[el.dataset.leadField] || ''; });
+  return data;
+}
+
+// ── Scheduler embed (Calendly today, our own booking plugin later) ──
+function initScheduler(lead) {
+  const host = document.getElementById('consult-scheduler');
+  if (!host) return;
+  const url = host.dataset.schedulerUrl;
+  if (!url) return; // no link configured yet: the sample scheduler stays in place
+  const sample = document.getElementById('consult-widget');
+  const note = document.querySelector('.consult-sample-note');
+  if (sample) sample.remove();
+  if (note) note.remove();
+  const u = new URL(url);
+  Object.entries(lead || {}).forEach(([k, v]) => { if (v && /^utm_|^gclid$|^msclkid$/.test(k)) u.searchParams.set(k, v); });
+  u.searchParams.set('hide_gdpr_banner', '1');
+  if (/calendly\.com/.test(u.hostname)) {
+    const div = document.createElement('div');
+    div.className = 'calendly-inline-widget';
+    div.dataset.url = u.toString();
+    div.style.minWidth = '320px';
+    div.style.height = (host.dataset.schedulerHeight || 720) + 'px';
+    host.appendChild(div);
+    const css = document.createElement('link');
+    css.rel = 'stylesheet'; css.href = 'https://assets.calendly.com/assets/external/widget.css';
+    document.head.appendChild(css);
+    const js = document.createElement('script');
+    js.src = 'https://assets.calendly.com/assets/external/widget.js'; js.async = true;
+    document.body.appendChild(js);
+  } else {
+    const frame = document.createElement('iframe');
+    frame.src = u.toString();
+    frame.title = 'Book a consult';
+    frame.loading = 'lazy';
+    frame.style.cssText = 'width:100%;border:0;height:' + (host.dataset.schedulerHeight || 720) + 'px';
+    host.appendChild(frame);
+  }
+}
+
+// ── Consult page tabs: book a time / ask us to call ──
+function initConsultTabs() {
+  const tabs = [...document.querySelectorAll('.consult-tab')];
+  if (!tabs.length) return;
+  const panels = tabs.map(t => document.getElementById(t.getAttribute('aria-controls')));
+  function select(i, focus) {
+    tabs.forEach((t, n) => {
+      t.setAttribute('aria-selected', n === i ? 'true' : 'false');
+      t.tabIndex = n === i ? 0 : -1;
+      if (panels[n]) panels[n].hidden = n !== i;
+    });
+    if (focus) tabs[i].focus();
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(i));
+    t.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      select((i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length, true);
+    });
+  });
+  select(0);
+  if (location.hash === '#request-a-call') select(1);
+}
+
 // ── Init all ──
 document.addEventListener('DOMContentLoaded', function() {
   initMobileMenu();
@@ -448,6 +531,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   initDecor();
   initPhotos();
+  const w270Lead = initLeadTracking();
+  initScheduler(w270Lead);
+  initConsultTabs();
   initVideoLightbox();
   initStoryGrid();
   initQuiz();
