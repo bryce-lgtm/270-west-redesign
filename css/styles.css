@@ -1553,3 +1553,89 @@ strong, b { font-weight: 500; }
   .page-hero-split .page-hero-quote { order: 2; aspect-ratio: 4 / 3; max-height: none; }
   .page-hero-ctas .btn-accent, .page-hero-ctas .btn-ink { flex: 1 1 auto; justify-content: center; }
 }
+
+/* ── VIDEO CARDS + LIGHTBOX (homepage hero film, brand pillar films) ── */
+.video-card { position: relative; display: block; width: 100%; margin: 0; padding: 0; border: none; overflow: hidden;
+  background: var(--ink); color: #fff; cursor: pointer; text-align: left; box-shadow: var(--shadow-md);
+  transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.video-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.video-card > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.video-card-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,30,32,0) 38%, rgba(8,30,32,0.78) 100%); }
+.video-card-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  width: 76px; height: 76px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.92); color: var(--accent); box-shadow: var(--shadow-md);
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.video-card:hover .video-card-play { background: var(--accent); color: #fff; transform: translate(-50%,-50%) scale(1.06); }
+.video-card:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.video-card-body { position: absolute; left: 28px; right: 28px; bottom: 26px; display: flex; flex-direction: column; gap: 4px; z-index: 2; }
+.video-card-label { font-family: var(--font-sans); font-weight: 500; font-size: 17px; letter-spacing: 0.01em; }
+.video-card-meta { font-size: 14px; color: rgba(255,255,255,0.82); }
+.hero-video { aspect-ratio: 3 / 4; }
+.pillar-video { aspect-ratio: 16 / 10; }
+.pillar-video .video-card-play { width: 58px; height: 58px; }
+.pillar-video .video-card-body { left: 18px; right: 18px; bottom: 16px; }
+.pillar-video .video-card-label { font-size: 15px; }
+.pillar-video .video-card-meta { font-size: 13px; }
+
+.video-lightbox { border: none; padding: 0; background: transparent; max-width: min(1100px, 92vw); width: 100%; }
+.video-lightbox::backdrop { background: rgba(8,30,32,0.86); }
+.video-lightbox-inner { position: relative; background: var(--ink); box-shadow: var(--shadow-lg); }
+.video-lightbox-frame { aspect-ratio: 16 / 9; width: 100%; display: block; background: #000; }
+.video-lightbox-frame iframe, .video-lightbox-frame video { width: 100%; height: 100%; border: 0; display: block; }
+.video-lightbox-pending { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  height: 100%; color: var(--sand); text-align: center; padding: 32px; }
+.video-lightbox-pending strong { font-family: var(--font-serif); font-size: 26px; font-weight: 400; }
+.video-lightbox-close { position: absolute; top: -46px; right: 0; background: none; border: none; color: #fff;
+  font-family: var(--font-sans); font-weight: 500; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; padding: 8px; }
+.video-lightbox-close:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* ── BRAND PILLARS ── */
+.pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.pillar { margin: 0; }
+.pillar-h { font-family: var(--font-serif); font-size: 28px; font-weight: 400; line-height: 1.2; margin: 22px 0 10px; }
+.pillar-p { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 0; }
+
+/* ── STATS: one headline metric, three by element ── */
+.banner-stats-lead { grid-template-columns: 1fr 1.15fr; align-items: end; gap: 40px; }
+.banner-stat-hero { padding-left: 0; border-left: none; }
+.banner-stat-hero .banner-stat-num { font-size: clamp(40px, 5vw, 68px); }
+.banner-stat-hero .banner-stat-label { font-size: 15px; }
+.banner-substats { display: grid; grid-template-columns: repeat(3, 1fr); }
+.banner-substats .banner-stat-num { font-size: clamp(22px, 2.4vw, 32px); }
+
+/* ── COMMUNITIES WE SERVE ── */
+.event-regions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; border-top: 1px solid var(--rule); padding-top: 32px; }
+.event-region-h { font-family: var(--font-serif); font-size: 26px; font-weight: 400; margin: 0 0 16px; }
+.event-list { list-style: none; margin: 0; padding: 0; }
+.event-item { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.event-name { font-weight: 500; }
+.event-date { font-size: 15px; color: var(--muted); }
+.event-badge { display: inline-block; margin-left: 6px; padding: 2px 8px; background: var(--accent); color: #fff;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.04em; vertical-align: 2px; }
+.event-note { margin: 32px 0 0; font-size: 16px; color: var(--muted); }
+.event-note a { color: var(--accent); }
+
+/* ── HOW IT WORKS: what it costs ── */
+.hiw-fees { margin-top: 64px; padding: 36px 40px; background: var(--bg2); border-left: 3px solid var(--accent); max-width: 900px; }
+.hiw-fees-h { font-family: var(--font-serif); font-size: 32px; font-weight: 400; margin: 0 0 12px; }
+.hiw-fees-p { font-size: 18px; line-height: 1.6; margin: 0; color: var(--ink); }
+
+@media (max-width: 900px) {
+  .pillars-grid, .event-regions, .banner-substats { grid-template-columns: 1fr; }
+  .banner-stats-lead { grid-template-columns: 1fr; gap: 16px; }
+  .banner-substats { grid-template-columns: repeat(3, 1fr); }
+  .hero-video { aspect-ratio: 4 / 3; }
+  .video-lightbox-close { top: auto; bottom: -44px; }
+  .hiw-fees { padding: 24px; }
+}
+
+/* ── CODE OF ETHICS / VETERAN COMMITMENTS (How It Works) ── */
+.commitments-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.commitment { background: var(--bg); padding: 28px 24px; }
+.commitment-n { font-family: var(--font-sans); font-size: 13px; font-weight: 500; letter-spacing: 0.14em; color: var(--accent); }
+.commitment-h { font-family: var(--font-serif); font-size: 24px; font-weight: 400; line-height: 1.2; margin: 12px 0 8px; }
+.commitment-p { font-size: 16px; line-height: 1.55; color: var(--muted); margin: 0; }
+@media (max-width: 1100px) { .commitments-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 700px) { .commitments-grid { grid-template-columns: 1fr; } }
+.about-founder-h { font-family: var(--font-serif); font-size: clamp(30px, 3.4vw, 44px); font-weight: 400; line-height: 1.2; margin: 0 0 8px; }
+.commitments-grid::after { content: ""; background: var(--bg); }

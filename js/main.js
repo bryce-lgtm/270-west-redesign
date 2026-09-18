@@ -390,6 +390,38 @@ function initStoryGrid() {
   });
 }
 
+// ── Video lightbox: poster cards open the film in a dialog (data-video-src) ──
+function initVideoLightbox() {
+  const cards = [...document.querySelectorAll('.video-card')];
+  if (!cards.length) return;
+  let dialog, frame, opener;
+  function build() {
+    dialog = document.createElement('dialog');
+    dialog.className = 'video-lightbox';
+    dialog.innerHTML = '<div class="video-lightbox-inner"><button type="button" class="video-lightbox-close">Close ✕</button><div class="video-lightbox-frame"></div></div>';
+    frame = dialog.querySelector('.video-lightbox-frame');
+    dialog.querySelector('.video-lightbox-close').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
+    dialog.addEventListener('close', () => { frame.innerHTML = ''; if (opener) opener.focus(); });
+    document.body.appendChild(dialog);
+  }
+  cards.forEach(card => card.addEventListener('click', () => {
+    if (!dialog) build();
+    opener = card;
+    const src = card.dataset.videoSrc;
+    const title = card.dataset.videoTitle || 'Video';
+    dialog.setAttribute('aria-label', title);
+    if (src) {
+      frame.innerHTML = /\.(mp4|webm)$/i.test(src)
+        ? `<video src="${src}" controls autoplay playsinline></video>`
+        : `<iframe src="${src}" title="${title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    } else {
+      frame.innerHTML = `<div class="video-lightbox-pending"><strong>${title}</strong><span>Coming soon. This film is in production.</span></div>`;
+    }
+    dialog.showModal();
+  }));
+}
+
 // ── Init all ──
 document.addEventListener('DOMContentLoaded', function() {
   initMobileMenu();
@@ -416,6 +448,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   initDecor();
   initPhotos();
+  initVideoLightbox();
   initStoryGrid();
   initQuiz();
   if (document.getElementById('consult-widget')) initConsultWidget('consult-widget');
