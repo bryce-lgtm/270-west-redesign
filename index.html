@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v22"/>
+<link rel="stylesheet" href="css/styles.css?v=v23"/>
 </head>
 <body>
 
@@ -190,7 +190,9 @@
   </div>
 </section>
 
-<!-- EDITORIAL BANNER (campaign crosshair motif): stats over image -->
+<!-- STATS BANNER (campaign crosshair motif).
+     1,700+ clients and 12,000+ claims are confirmed. The branch split is still a
+     placeholder: it sums to 1,700 so the design reads (tracker H3). -->
 <section class="banner-section">
   <div class="photo-band photo-scene photo-scene-hover photo-scene--cross" style="aspect-ratio:4/1;--cross-y:30%">
     <img src="img/mountain-valley.jpg" alt="Canadian wilderness at golden hour" loading="lazy" decoding="async" style="object-position:center 55%"/>
@@ -199,12 +201,16 @@
     <div class="photo-scene-body">
       <div class="photo-scene-marker"><img src="img/brand/270west-symbol-light.svg" alt="" width="52" height="52"/></div>
     </div>
-    <!-- 1,700+ clients is confirmed. The branch split is still a placeholder: it sums to
-         1,700 so the design reads, pending real numbers from 270 West (tracker H3). -->
     <div class="banner-stats-bar banner-stats-lead">
-      <div class="banner-stat banner-stat-hero">
-        <span class="banner-stat-num">1,700+</span>
-        <span class="banner-stat-label">Clients served across Canada</span>
+      <div class="banner-lead-group">
+        <div class="banner-stat banner-stat-hero">
+          <span class="banner-stat-num">1,700+</span>
+          <span class="banner-stat-label">Clients served across Canada</span>
+        </div>
+        <div class="banner-stat banner-stat-hero">
+          <span class="banner-stat-num">12,000+</span>
+          <span class="banner-stat-label">Claims</span>
+        </div>
       </div>
       <div class="banner-substats">
         <div class="banner-stat"><span class="banner-stat-num">900+</span><span class="banner-stat-label">Army</span></div>
@@ -298,7 +304,7 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>Veteran-founded · Canadian-owned</span></div>
 </footer>
 
-<script src="js/main.js?v=v22"></script>
+<script src="js/main.js?v=v23"></script>
 <script>
   // Decoration dialed way back: faint texture only in the two dark sections + footer.
   document.addEventListener('DOMContentLoaded', function() {
