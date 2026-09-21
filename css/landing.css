@@ -129,3 +129,6 @@
   .lp-hero { padding-top: 48px; padding-bottom: 48px; }
   .lp-proof-num { font-size: 26px; }
 }
+/* The homepage stats banner sits under the landing hero; the simple strip is retired. */
+.lp .banner-section { background: var(--bg); }
+.lp-split-single { grid-template-columns: 1fr; max-width: 900px; }
