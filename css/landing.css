@@ -143,3 +143,6 @@
 .lp-book-p { font-size: 16px; line-height: 1.55; color: var(--muted); margin: 0; }
 .lp-form-card-plain { border: none; box-shadow: none; padding: 0; background: transparent; }
 @media (max-width: 1000px) { .lp-booking-split { grid-template-columns: 1fr; gap: 24px; } }
+/* Story card beside the who-we-are copy */
+.lp-story { aspect-ratio: 4 / 5; max-height: 520px; margin: 0; }
+@media (max-width: 1000px) { .lp-story { aspect-ratio: 4 / 3; max-height: none; } }
