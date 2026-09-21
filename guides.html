@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v26"/>
+<link rel="stylesheet" href="css/styles.css?v=v27"/>
 </head>
 <body>
 
@@ -63,72 +63,164 @@
   <p class="page-hero-sub">Free explainers and checklists on Veterans Affairs Canada programs, paperwork and timelines, whether you work with us or not.</p>
 </section>
 
-<section class="section-pad res-section">
-  <div class="resources-featured">
-    <a href="article.html" class="resource-card-main">
-      <div class="resource-card-main-body">
-        <div class="resource-card-main-tag">Featured guide · 18 min read</div>
-        <h3 class="resource-card-main-h">A plain-language guide to VAC's main benefits programs</h3>
-        <p class="resource-card-main-p">What Disability Benefits, the Income Replacement Benefit, Career Transition Services, and caregiver support are for, who qualifies, and how to apply.</p>
-        <div class="resource-card-main-link">Read guide →</div>
-      </div>
-    </a>
-    <a href="article.html" class="resource-card-sm">
-      <div class="resource-card-sm-body">
-        <div>
-          <div class="resource-card-sm-tag">Checklist · 5 min</div>
-          <h3 class="resource-card-sm-h">VAC application checklist: documents to gather</h3>
-        </div>
-        <div class="resource-card-sm-link">Read →</div>
-      </div>
-    </a>
-    <a href="article.html" class="resource-card-sm">
-      <div class="resource-card-sm-body">
-        <div>
-          <div class="resource-card-sm-tag">Explainer · 8 min</div>
-          <h3 class="resource-card-sm-h">How VAC disability ratings actually work</h3>
-        </div>
-        <div class="resource-card-sm-link">Read →</div>
-      </div>
-    </a>
+<!-- GUIDES ARCHIVE — modelled on the WordPress archive template: filter row, card
+     grid with post type and read time, load more, and a sidebar of taxonomy links. -->
+<section class="archive archive-guides">
+  <div class="archive-toolbar">
+    <div class="archive-count"><strong id="guide-count">14</strong> guides, checklists and explainers</div>
+    <div class="filter-row" role="group" aria-label="Filter guides by topic">
+      <button type="button" class="filter-chip" data-filter="all" aria-pressed="true">All guides</button>
+      <button type="button" class="filter-chip" data-filter="eligibility" aria-pressed="false">VAC eligibility & programs</button>
+      <button type="button" class="filter-chip" data-filter="filing" aria-pressed="false">Filing a VAC claim</button>
+      <button type="button" class="filter-chip" data-filter="decision" aria-pressed="false">After a VAC decision</button>
+    </div>
   </div>
 
-  <div class="library-wrap">
-    <div class="library-topic">
-      <div class="library-topic-grid">
-        <h3 class="library-topic-h">VAC eligibility &amp; programs</h3>
-        <div class="library-items">
-          <a href="#" class="library-item">What Disability Benefits cover<span class="library-item-arrow">→</span></a>
-          <a href="#" class="library-item">Income Replacement Benefit explained<span class="library-item-arrow">→</span></a>
-          <a href="#" class="library-item">Career Transition Services<span class="library-item-arrow">→</span></a>
-          <a href="#" class="library-item">Family caregiver support<span class="library-item-arrow">→</span></a>
-        </div>
-      </div>
+  <div class="archive-layout">
+    <div>
+      <article class="guide-featured" data-topic="eligibility">
+        <a class="guide-featured-link" href="article.html">
+          <div class="guide-card-meta"><span class="guide-type guide-type-guide">Featured guide</span><span class="guide-read">18 min read</span></div>
+          <h2 class="guide-featured-h">A plain-language guide to VAC’s main benefits programs</h2>
+          <p class="guide-featured-p">What Disability Benefits, the Income Replacement Benefit, Career Transition Services and caregiver support are for, who qualifies, and how to apply.</p>
+          <span class="guide-card-more">Read guide →</span>
+        </a>
+      </article>
+
+      <ul class="guide-grid" id="guide-grid">
+      <li class="guide-card" data-topic="filing">
+        <a class="guide-card-link" href="article.html">
+          <div class="guide-card-meta"><span class="guide-type guide-type-checklist">Checklist</span><span class="guide-read">5 min read</span></div>
+          <h3 class="guide-card-h">VAC application checklist: documents to gather</h3>
+          <p class="guide-card-p">Everything VAC asks for in one list, with notes on where each document comes from and who can help you get it.</p>
+          <span class="guide-card-more">Read checklist →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="decision">
+        <a class="guide-card-link" href="article.html">
+          <div class="guide-card-meta"><span class="guide-type guide-type-explainer">Explainer</span><span class="guide-read">8 min read</span></div>
+          <h3 class="guide-card-h">How VAC disability ratings actually work</h3>
+          <p class="guide-card-p">How a rating is calculated, what the tables mean, and why two veterans with the same condition can receive different results.</p>
+          <span class="guide-card-more">Read explainer →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="eligibility">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-explainer">Explainer</span><span class="guide-read">6 min read</span></div>
+          <h3 class="guide-card-h">What Disability Benefits cover</h3>
+          <p class="guide-card-p">A plain look at what the programme pays for and what it does not.</p>
+          <span class="guide-card-more">Read explainer →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="eligibility">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-explainer">Explainer</span><span class="guide-read">7 min read</span></div>
+          <h3 class="guide-card-h">Income Replacement Benefit explained</h3>
+          <p class="guide-card-p">Who qualifies, how it is calculated, and how it interacts with other income.</p>
+          <span class="guide-card-more">Read explainer →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="eligibility">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-explainer">Explainer</span><span class="guide-read">5 min read</span></div>
+          <h3 class="guide-card-h">Career Transition Services</h3>
+          <p class="guide-card-p">Training, job search support and what you can claim while you retrain.</p>
+          <span class="guide-card-more">Read explainer →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="eligibility">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-explainer">Explainer</span><span class="guide-read">6 min read</span></div>
+          <h3 class="guide-card-h">Family caregiver support</h3>
+          <p class="guide-card-p">Recognition benefits and practical help for the people caring for a veteran.</p>
+          <span class="guide-card-more">Read explainer →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="filing">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-guide">Guide</span><span class="guide-read">10 min read</span></div>
+          <h3 class="guide-card-h">What to expect when you apply</h3>
+          <p class="guide-card-p">The stages of a claim, realistic timelines, and what VAC does at each step.</p>
+          <span class="guide-card-more">Read guide →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="filing">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-checklist">Checklist</span><span class="guide-read">7 min read</span></div>
+          <h3 class="guide-card-h">Building your service-related health record</h3>
+          <p class="guide-card-p">How to assemble a health record that connects your condition to your service.</p>
+          <span class="guide-card-more">Read checklist →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="filing">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-guide">Guide</span><span class="guide-read">9 min read</span></div>
+          <h3 class="guide-card-h">Getting medical documentation right</h3>
+          <p class="guide-card-p">What a useful medical opinion contains, and what to ask your provider for.</p>
+          <span class="guide-card-more">Read guide →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="filing">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-explainer">Explainer</span><span class="guide-read">6 min read</span></div>
+          <h3 class="guide-card-h">Common reasons applications come back</h3>
+          <p class="guide-card-p">The gaps that most often send a file back, and how to close them first time.</p>
+          <span class="guide-card-more">Read explainer →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="decision">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-explainer">Explainer</span><span class="guide-read">7 min read</span></div>
+          <h3 class="guide-card-h">Understanding your decision letter</h3>
+          <p class="guide-card-p">How to read the decision, the rating and the reasons behind it.</p>
+          <span class="guide-card-more">Read explainer →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="decision">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-guide">Guide</span><span class="guide-read">8 min read</span></div>
+          <h3 class="guide-card-h">When to consider a reassessment</h3>
+          <p class="guide-card-p">Signs that your condition has changed enough to be worth a fresh look.</p>
+          <span class="guide-card-more">Read guide →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="decision">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-guide">Guide</span><span class="guide-read">11 min read</span></div>
+          <h3 class="guide-card-h">How VAC appeals work</h3>
+          <p class="guide-card-p">Reconsideration, departmental review and VRAB, and what each one involves.</p>
+          <span class="guide-card-more">Read guide →</span>
+        </a>
+      </li>
+      <li class="guide-card" data-topic="decision">
+        <a class="guide-card-link" href="#">
+          <div class="guide-card-meta"><span class="guide-type guide-type-guide">Guide</span><span class="guide-read">6 min read</span></div>
+          <h3 class="guide-card-h">Mental health and wellness resources</h3>
+          <p class="guide-card-p">Where to turn for support, including services that cost nothing.</p>
+          <span class="guide-card-more">Read guide →</span>
+        </a>
+      </li>
+      </ul>
+      <div class="archive-more"><button type="button" class="btn-ink" id="guide-more">Load more guides</button></div>
+      <p class="archive-empty" hidden>No guides in that topic yet. <button type="button" class="link-button" data-filter="all">Show all guides</button></p>
     </div>
-    <div class="library-topic">
-      <div class="library-topic-grid">
-        <h3 class="library-topic-h">Filing a VAC claim</h3>
-        <div class="library-items">
-          <a href="#" class="library-item">What to expect when you apply<span class="library-item-arrow">→</span></a>
-          <a href="#" class="library-item">Building your service-related health record<span class="library-item-arrow">→</span></a>
-          <a href="#" class="library-item">Getting medical documentation right<span class="library-item-arrow">→</span></a>
-          <a href="#" class="library-item">Common reasons applications come back<span class="library-item-arrow">→</span></a>
-        </div>
+
+    <aside class="archive-side" aria-label="Browse guides">
+      <div class="side-block">
+        <h2 class="side-h">Browse by topic</h2>
+        <ul class="side-list"><li><a href="#" data-filter-link="eligibility">VAC eligibility & programs<span class="side-count">5</span></a></li><li><a href="#" data-filter-link="filing">Filing a VAC claim<span class="side-count">5</span></a></li><li><a href="#" data-filter-link="decision">After a VAC decision<span class="side-count">5</span></a></li></ul>
       </div>
-    </div>
-    <div class="library-topic">
-      <div class="library-topic-grid">
-        <h3 class="library-topic-h">After a VAC decision</h3>
-        <div class="library-items">
-          <a href="#" class="library-item">Understanding your decision letter<span class="library-item-arrow">→</span></a>
-          <a href="#" class="library-item">When to consider a reassessment<span class="library-item-arrow">→</span></a>
-          <a href="#" class="library-item">How VAC appeals work<span class="library-item-arrow">→</span></a>
-          <a href="#" class="library-item">Mental health &amp; wellness resources<span class="library-item-arrow">→</span></a>
-        </div>
+      <div class="side-block">
+        <h2 class="side-h">Start here</h2>
+        <ul class="side-list side-list-plain"><li><a href="article.html">A plain-language guide to VAC’s main benefits programs</a></li><li><a href="article.html">VAC application checklist: documents to gather</a></li><li><a href="article.html">How VAC disability ratings actually work</a></li></ul>
       </div>
-    </div>
+      <div class="side-cta">
+        <h2 class="side-cta-h">Rather talk it through?</h2>
+        <p class="side-cta-p">A free conversation with an advisor, no obligation.</p>
+        <a href="consult.html" class="btn-accent">Book a consult →</a>
+      </div>
+    </aside>
   </div>
-  <a href="resources.html" class="esg-snapshot-link">All resources →</a>
 </section>
 
 <!-- FOOTER -->
@@ -172,6 +264,6 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>Veteran-founded · Canadian-owned</span></div>
 </footer>
 
-<script src="js/main.js?v=v26"></script>
+<script src="js/main.js?v=v27"></script>
 </body>
 </html>
