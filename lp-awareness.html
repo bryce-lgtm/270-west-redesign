@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v23"/>
-<link rel="stylesheet" href="css/landing.css?v=v23"/>
+<link rel="stylesheet" href="css/styles.css?v=v24"/>
+<link rel="stylesheet" href="css/landing.css?v=v24"/>
 </head>
 <body class="lp">
 
@@ -50,10 +50,10 @@
 </section>
 
 <!-- STATS BANNER (campaign crosshair motif).
-     1,700+ clients and 12,000+ claims are confirmed. The branch split is still a
-     placeholder: it sums to 1,700 so the design reads (tracker H3). -->
+     12,000+ claims and 1,700+ clients are confirmed. The branch split is a placeholder
+     that sums to 1,700, and is labelled as clients so it isn't read against claims. -->
 <section class="banner-section">
-  <div class="photo-band photo-scene photo-scene-hover photo-scene--cross" style="aspect-ratio:4/1;--cross-y:30%">
+  <div class="photo-band photo-scene photo-scene-hover photo-scene--cross" style="aspect-ratio:3.2/1;--cross-y:26%">
     <img src="img/mountain-valley.jpg" alt="Canadian wilderness at golden hour" loading="lazy" decoding="async" style="object-position:center 55%"/>
     <div class="photo-scene-overlay"></div>
     <div class="photo-scene-cross"><span class="v"></span><span class="h"></span></div>
@@ -63,18 +63,21 @@
     <div class="banner-stats-bar banner-stats-lead">
       <div class="banner-lead-group">
         <div class="banner-stat banner-stat-hero">
-          <span class="banner-stat-num">1,700+</span>
-          <span class="banner-stat-label">Clients served across Canada</span>
-        </div>
-        <div class="banner-stat banner-stat-hero">
           <span class="banner-stat-num">12,000+</span>
           <span class="banner-stat-label">Claims</span>
         </div>
+        <div class="banner-stat banner-stat-hero banner-stat-clients">
+          <span class="banner-stat-num">1,700+</span>
+          <span class="banner-stat-label">Clients served across Canada</span>
+        </div>
       </div>
-      <div class="banner-substats">
-        <div class="banner-stat"><span class="banner-stat-num">900+</span><span class="banner-stat-label">Army</span></div>
-        <div class="banner-stat"><span class="banner-stat-num">350+</span><span class="banner-stat-label">Navy</span></div>
-        <div class="banner-stat"><span class="banner-stat-num">450+</span><span class="banner-stat-label">Air Force</span></div>
+      <div class="banner-substats-wrap">
+        <div class="banner-substats-label">Clients by branch</div>
+        <div class="banner-substats">
+          <div class="banner-stat"><span class="banner-stat-num">900+</span><span class="banner-stat-label">Army</span></div>
+          <div class="banner-stat"><span class="banner-stat-num">350+</span><span class="banner-stat-label">Navy</span></div>
+          <div class="banner-stat"><span class="banner-stat-num">450+</span><span class="banner-stat-label">Air Force</span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -245,6 +248,6 @@
   <p class="lp-footer-note">270 West Consulting is independent and is not affiliated with Veterans Affairs Canada.<br>© 2026 270 West Consulting · Veteran-founded · Canadian-owned</p>
 </footer>
 
-<script src="js/main.js?v=v23"></script>
+<script src="js/main.js?v=v24"></script>
 </body>
 </html>
