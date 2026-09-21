@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v24"/>
-<link rel="stylesheet" href="css/landing.css?v=v24"/>
+<link rel="stylesheet" href="css/styles.css?v=v25"/>
+<link rel="stylesheet" href="css/landing.css?v=v25"/>
 </head>
 <body class="lp">
 
@@ -169,16 +169,36 @@
 
 
 <section class="lp-section lp-section-form">
-  <div class="lp-form-split">
+  <div class="lp-booking-intro">
     <div>
       <div class="mono-label">Get started</div>
       <h2 class="lp-h2">It’s our turn to serve you.</h2>
       <p class="lp-section-p">No cost to start a conversation, and no obligation to continue. Tell us where you are and we’ll tell you honestly whether we can help.</p>
       <div class="lp-trust lp-trust-stack"><span class="lp-trust-item"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Free first conversation</span><span class="lp-trust-item"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Fee only on a successful claim</span><span class="lp-trust-item"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>You approve everything before it’s filed</span></div>
     </div>
-    <div class="lp-form-card" id="start">
-      <h2 class="lp-form-h">Request a call</h2>
-      <p class="lp-form-sub">Tell us about your situation and an advisor will call you back, usually within one business day.</p>
+  </div>
+  <div class="lp-booking-split">
+    <div class="lp-book-card">
+      <div class="lp-book-head">
+        <span class="lp-book-n">Option 1</span>
+        <h3 class="lp-book-h">Book a time</h3>
+        <p class="lp-book-p">Pick a slot in an advisor’s calendar and get a confirmation straight away.</p>
+      </div>
+      <!-- Scheduler slot, same as the consult page. Set data-scheduler-url to the Calendly
+           (or replacement) link and the embed loads in place of the sample below; UTM values
+           are appended automatically. -->
+      <div id="consult-scheduler" data-scheduler-url="" data-scheduler-height="680"></div>
+      <div id="consult-widget"></div>
+      <p class="consult-sample-note">Sample scheduler shown for layout. The live calendar replaces it once the scheduling link is connected.</p>
+    </div>
+
+    <div class="lp-book-card lp-book-card-form">
+      <div class="lp-book-head">
+        <span class="lp-book-n">Option 2</span>
+        <h3 class="lp-book-h">Ask us to call you</h3>
+        <p class="lp-book-p">Leave your details and an advisor will call you back, usually within one business day.</p>
+      </div>
+    <div class="lp-form-card lp-form-card-plain" id="start">
       <form class="contact-form lp-form" action="#" method="post" novalidate>
         <div class="lp-form-row">
           <div class="contact-form-field">
@@ -233,6 +253,7 @@
         <p>An advisor will be in touch, usually within one business day. If it’s easier, call us on <a href="tel:18332709378">1-833-270-9378</a>.</p>
       </div>
     </div>
+    </div>
   </div>
 </section>
 
@@ -248,6 +269,6 @@
   <p class="lp-footer-note">270 West Consulting is independent and is not affiliated with Veterans Affairs Canada.<br>© 2026 270 West Consulting · Veteran-founded · Canadian-owned</p>
 </footer>
 
-<script src="js/main.js?v=v24"></script>
+<script src="js/main.js?v=v25"></script>
 </body>
 </html>

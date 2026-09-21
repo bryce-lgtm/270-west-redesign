@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v24"/>
-<link rel="stylesheet" href="css/landing.css?v=v24"/>
+<link rel="stylesheet" href="css/styles.css?v=v25"/>
+<link rel="stylesheet" href="css/landing.css?v=v25"/>
 </head>
 <body class="lp">
 
@@ -192,6 +192,92 @@
   </div>
 </section>
 
+<section class="lp-section lp-section-form" id="book-section">
+  <div class="lp-booking-intro">
+    <div class="mono-label">Get started</div>
+    <h2 class="lp-h2">Book a time, or ask us to call.</h2>
+    <p class="lp-section-p">Whichever suits you. There’s no cost to start a conversation, and no obligation to continue.</p>
+  </div>
+  <div class="lp-booking-split">
+    <div class="lp-book-card">
+      <div class="lp-book-head">
+        <span class="lp-book-n">Option 1</span>
+        <h3 class="lp-book-h">Book a time</h3>
+        <p class="lp-book-p">Pick a slot in an advisor’s calendar and get a confirmation straight away.</p>
+      </div>
+      <!-- Scheduler slot, same as the consult page. Set data-scheduler-url to the Calendly
+           (or replacement) link and the embed loads in place of the sample below; UTM values
+           are appended automatically. -->
+      <div id="consult-scheduler" data-scheduler-url="" data-scheduler-height="680"></div>
+      <div id="consult-widget"></div>
+      <p class="consult-sample-note">Sample scheduler shown for layout. The live calendar replaces it once the scheduling link is connected.</p>
+    </div>
+
+    <div class="lp-book-card lp-book-card-form">
+      <div class="lp-book-head">
+        <span class="lp-book-n">Option 2</span>
+        <h3 class="lp-book-h">Ask us to call you</h3>
+        <p class="lp-book-p">Leave your details and an advisor will call you back, usually within one business day.</p>
+      </div>
+    <div class="lp-form-card lp-form-card-plain" id="book">
+      <form class="contact-form lp-form" action="#" method="post" novalidate>
+        <div class="lp-form-row">
+          <div class="contact-form-field">
+            <label class="contact-form-label" for="book-first">First name</label>
+            <input class="contact-form-control" id="book-first" name="first_name" type="text" autocomplete="given-name" required/>
+          </div>
+          <div class="contact-form-field">
+            <label class="contact-form-label" for="book-last">Last name</label>
+            <input class="contact-form-control" id="book-last" name="last_name" type="text" autocomplete="family-name" required/>
+          </div>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="book-email">Email</label>
+          <input class="contact-form-control" id="book-email" name="email" type="email" autocomplete="email" required/>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="book-phone">Phone</label>
+          <input class="contact-form-control" id="book-phone" name="phone" type="tel" autocomplete="tel" required/>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="book-status">Your service</label>
+          <select class="contact-form-control" id="book-status" name="service_status">
+            <option value="veteran">Released veteran</option>
+            <option value="serving">Currently serving</option>
+            <option value="rcmp">Former RCMP member</option>
+            <option value="family">Family member or caregiver</option>
+            <option value="other">Something else</option>
+          </select>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="book-message">What’s on your mind?</label>
+          <textarea class="contact-form-control" id="book-message" name="message" rows="3" placeholder="A first claim, a denied claim, a new diagnosis, a family member’s situation."></textarea>
+        </div>
+        <div class="consult-consent">
+          <input type="checkbox" id="book-consent" name="consent" required/>
+          <label for="book-consent">I agree that 270 West may contact me about my enquiry. See our <a href="privacy.html">Privacy Policy</a>.</label>
+        </div>
+        <!-- Attribution: filled by initLeadTracking(), submitted with the lead to Creatio. -->
+          <input type="hidden" name="utm_source" data-lead-field="utm_source"/>
+          <input type="hidden" name="utm_medium" data-lead-field="utm_medium"/>
+          <input type="hidden" name="utm_campaign" data-lead-field="utm_campaign"/>
+          <input type="hidden" name="utm_term" data-lead-field="utm_term"/>
+          <input type="hidden" name="utm_content" data-lead-field="utm_content"/>
+          <input type="hidden" name="gclid" data-lead-field="gclid"/>
+          <input type="hidden" name="referrer" data-lead-field="referrer"/>
+          <input type="hidden" name="landing_page" data-lead-field="landing_page"/>
+        <button type="submit" class="btn-accent lp-form-submit">Request a call →</button>
+        <p class="lp-form-note">No cost to start a conversation. Our fee is 10% and applies only when your claim is successful.</p>
+      </form>
+      <div class="lp-form-done" hidden>
+        <h3>Thank you, we’ve got it.</h3>
+        <p>An advisor will be in touch, usually within one business day. If it’s easier, call us on <a href="tel:18332709378">1-833-270-9378</a>.</p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
 <section class="lp-cta">
   <h2 class="lp-cta-h">It’s our turn to serve you.</h2>
   <p class="lp-cta-p">A free, no-obligation conversation to understand your situation and see how we can help.</p>
@@ -213,6 +299,6 @@
   <p class="lp-footer-note">270 West Consulting is independent and is not affiliated with Veterans Affairs Canada.<br>© 2026 270 West Consulting · Veteran-founded · Canadian-owned</p>
 </footer>
 
-<script src="js/main.js?v=v24"></script>
+<script src="js/main.js?v=v25"></script>
 </body>
 </html>
