@@ -481,6 +481,22 @@ function initScheduler(lead) {
 }
 
 
+// ── Landing page lead forms: confirm in place, push a dataLayer event ──
+function initLandingForms() {
+  document.querySelectorAll('.lp-form').forEach(form => {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      const card = form.closest('.lp-form-card');
+      const done = card && card.querySelector('.lp-form-done');
+      // The live site posts through Gravity Forms; this confirms the design in the prototype.
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'lead_submit', form_id: form.closest('[id]') ? form.closest('[id]').id : 'lead', page_type: 'landing' });
+      if (done) { form.hidden = true; done.hidden = false; done.setAttribute('tabindex', '-1'); done.focus(); }
+    });
+  });
+}
+
 // ── Init all ──
 document.addEventListener('DOMContentLoaded', function() {
   initMobileMenu();
@@ -507,6 +523,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   initDecor();
   initPhotos();
+  initLandingForms();
   const w270Lead = initLeadTracking();
   initScheduler(w270Lead);
   initVideoLightbox();

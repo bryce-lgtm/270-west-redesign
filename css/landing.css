@@ -1,0 +1,131 @@
+/* ── AD LANDING PAGES ──────────────────────────────────────────────────────
+   Standalone pages for paid campaigns. They load the site stylesheet first,
+   so type, colour and components match; this file adds the landing layout.
+   No site navigation: one path in, one action out.                        */
+
+.lp { background: var(--bg); }
+
+/* Header: logo, phone, one CTA */
+.lp-header { display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 14px 48px; background: var(--ink); position: sticky; top: 0; z-index: 100; }
+.lp-logo { display: block; line-height: 0; }
+.lp-logo img { display: block; height: 42px; width: auto; }
+.lp-header-actions { display: flex; align-items: center; gap: 20px; }
+.lp-phone { display: inline-flex; align-items: center; gap: 8px; color: #fff; text-decoration: none;
+  font-weight: 500; font-size: 16px; }
+.lp-phone svg { color: var(--blue); }
+.lp-phone:hover { color: var(--blue); }
+
+/* Hero */
+.lp-hero { position: relative; overflow: hidden; padding: 72px 48px;
+  background: linear-gradient(176deg, #C4D0D0 0%, #D4D6D1 40%, #E7E5DF 100%); }
+.lp-hero-mark { opacity: 0.42; }
+.lp-hero-inner { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 470px; gap: 56px; align-items: center; }
+.lp-hero-inner-video { grid-template-columns: 1fr 0.85fr; }
+.lp-hero-inner-centred { display: block; max-width: 820px; text-align: center; }
+.lp-hero-centred .mono-label { justify-content: center; }
+.lp-h1 { font-family: var(--font-serif); font-size: clamp(36px, 4.6vw, 62px); font-weight: 400;
+  line-height: 1.08; letter-spacing: -0.01em; margin: 0 0 20px; color: var(--ink); }
+.lp-lead { font-size: 19px; line-height: 1.6; color: var(--muted); max-width: 52ch; margin: 0 0 28px; }
+.lp-hero-inner-centred .lp-lead { margin-left: auto; margin-right: auto; }
+.lp-hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 28px; }
+.lp-hero-inner-centred .lp-hero-btns { justify-content: center; }
+.lp-hero-video { aspect-ratio: 4 / 3; }
+
+/* Trust ticks */
+.lp-trust { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+.lp-trust-stack { flex-direction: column; gap: 12px; margin-top: 28px; }
+.lp-trust-item { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; color: var(--ink); }
+.lp-trust-item svg { color: var(--accent); flex-shrink: 0; }
+
+/* Lead form card */
+.lp-form-card { background: var(--bg); border: 1px solid var(--rule); box-shadow: var(--shadow-md); padding: 32px; }
+.lp-form-h { font-family: var(--font-serif); font-size: 30px; font-weight: 400; line-height: 1.2; margin: 0 0 6px; }
+.lp-form-sub { font-size: 16px; color: var(--muted); margin: 0 0 24px; }
+.lp-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.lp-form-submit { width: 100%; justify-content: center; margin-top: 20px; border: none; }
+.lp-form-note { font-size: 14px; line-height: 1.5; color: var(--muted); margin: 14px 0 0; }
+.lp-form-done { padding: 8px 0; }
+.lp-form-done h3 { font-family: var(--font-serif); font-size: 26px; font-weight: 400; margin: 0 0 8px; }
+.lp-form-done p { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 0; }
+.lp-form-done a { color: var(--accent); }
+
+/* Proof strip */
+.lp-proof { background: var(--tan); padding: 24px 48px; display: flex; flex-wrap: wrap; justify-content: center; gap: 24px 56px; }
+.lp-proof-item { display: flex; align-items: baseline; gap: 10px; color: var(--ink); }
+.lp-proof-num { font-family: var(--font-serif); font-size: 30px; line-height: 1; }
+.lp-proof-label { font-size: 15px; }
+
+/* Sections */
+.lp-section { padding: 88px 48px; }
+.lp-section-alt { background: var(--bg2); }
+.lp-section-dark { background: var(--ink); color: var(--bg); }
+.lp-section-form { background: var(--bg2); }
+.lp-section-head { max-width: 1240px; margin: 0 auto 44px; }
+.lp-h2 { font-family: var(--font-serif); font-size: clamp(30px, 3.6vw, 46px); font-weight: 400;
+  line-height: 1.15; margin: 0 0 14px; }
+.lp-section-dark .lp-h2 { color: var(--bg); }
+.lp-section-p { font-size: 18px; line-height: 1.65; color: var(--muted); max-width: 62ch; margin: 0 0 16px; }
+.lp-section-dark .lp-section-p { color: #d6d1c8; }
+.lp-split { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: start; }
+.lp-form-split { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr 470px; gap: 56px; align-items: start; }
+.lp-section .journey-steps-grid, .lp-card-grid, .lp-quote-grid { max-width: 1240px; margin: 0 auto; }
+.lp-section .journey-steps-grid { list-style: none; padding: 0; grid-template-columns: repeat(3, 1fr); }
+
+/* Cards */
+.lp-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.lp-card-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.lp-card { background: var(--bg); border: 1px solid var(--rule); border-left: 3px solid var(--accent); padding: 28px; }
+.lp-section-alt .lp-card { background: var(--bg); }
+.lp-card-h { font-family: var(--font-serif); font-size: 24px; font-weight: 400; line-height: 1.2; margin: 0 0 10px; }
+.lp-card-p { font-size: 16px; line-height: 1.6; color: var(--muted); margin: 0; }
+.lp-list { list-style: none; margin: 0; padding: 0; }
+.lp-list li { font-size: 16px; line-height: 1.5; color: var(--muted); padding: 9px 0; border-bottom: 1px solid var(--rule); }
+.lp-list li:last-child { border-bottom: none; }
+
+/* Stats */
+.lp-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.lp-stat { background: var(--bg2); border: 1px solid var(--rule); padding: 22px; }
+.lp-stat-num { display: block; font-family: var(--font-serif); font-size: 34px; line-height: 1; color: var(--accent); margin-bottom: 6px; }
+.lp-stat-label { display: block; font-size: 15px; color: var(--muted); }
+
+/* Quotes */
+.lp-quote-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.lp-quote { margin: 0; background: rgba(255,255,255,0.06); border: 1px solid rgba(160,181,193,0.25); padding: 30px; }
+.lp-quote-q { font-family: var(--font-serif); font-size: 21px; line-height: 1.45; font-style: italic; color: var(--bg); margin: 0 0 22px; }
+.lp-quote-cite { border-top: 1px solid rgba(160,181,193,0.3); padding-top: 14px; font-style: normal; }
+.lp-quote-rank { display: block; font-weight: 500; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: #fff; }
+.lp-quote-branch { display: block; font-size: 14px; color: var(--blue); }
+
+/* Closing CTA */
+.lp-cta { background: var(--accent); color: #fff; text-align: center; padding: 84px 48px; }
+.lp-cta-h { font-family: var(--font-serif); font-size: clamp(32px, 4vw, 52px); font-weight: 400; line-height: 1.1; margin: 0 0 14px; color: #fff; }
+.lp-cta-p { font-size: 19px; line-height: 1.6; color: rgba(255,255,255,0.9); max-width: 58ch; margin: 0 auto 32px; }
+.lp-cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.lp-cta .btn-accent { background: #fff; color: var(--accent); }
+.lp-cta .btn-accent:hover { background: var(--sand); }
+.lp-cta .btn-outline { color: #fff; border-color: rgba(255,255,255,0.7); }
+.lp-cta .btn-outline:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+/* Footer */
+.lp-footer { background: var(--ink); color: var(--bg); text-align: center; padding: 48px; }
+.lp-footer img { display: block; margin: 0 auto 20px; height: 40px; width: auto; }
+.lp-footer-links { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+.lp-footer-links a { color: var(--blue); font-size: 15px; }
+.lp-footer-note { font-size: 14px; line-height: 1.6; color: rgba(222,224,221,0.72); margin: 0; }
+
+@media (max-width: 1000px) {
+  .lp-hero-inner, .lp-hero-inner-video, .lp-split, .lp-form-split { grid-template-columns: 1fr; gap: 36px; }
+  .lp-section .journey-steps-grid, .lp-card-grid, .lp-card-grid-3 { grid-template-columns: 1fr; }
+  .lp-hero, .lp-section, .lp-cta, .lp-footer { padding-left: 24px; padding-right: 24px; }
+  .lp-header { padding: 12px 20px; }
+  .lp-proof { padding: 20px 24px; gap: 16px 28px; }
+}
+@media (max-width: 620px) {
+  .lp-header-cta { display: none; }
+  .lp-form-row { grid-template-columns: 1fr; }
+  .lp-form-card { padding: 24px 20px; }
+  .lp-hero { padding-top: 48px; padding-bottom: 48px; }
+  .lp-proof-num { font-size: 26px; }
+}
