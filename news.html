@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/styles.css?v=v26"/>
+<link rel="stylesheet" href="css/styles.css?v=v27"/>
 </head>
 <body>
 
@@ -63,37 +63,99 @@
   <p class="page-hero-sub">Where you'll find us, new guides as they're published, and updates from the team.</p>
 </section>
 
-<section class="section-pad res-section">
-  <div class="news-list">
-    <a href="#" class="news-item">
-      <div class="news-item-date">September 2026</div>
-      <div>
-        <div class="news-item-tag">Campaign</div>
-        <h3 class="news-item-h">In service of your story: a campaign built around veterans' own voices</h3>
-        <p class="news-item-p">Over the coming months we're sharing video stories from veterans across Canada. Here's why we're doing it, and how to take part.</p>
-      </div>
-      <span class="news-item-arrow">→</span>
-    </a>
-    <a href="#" class="news-item">
-      <div class="news-item-date">August 2026</div>
-      <div>
-        <div class="news-item-tag">Community</div>
-        <h3 class="news-item-h">Where to find us this Remembrance season</h3>
-        <p class="news-item-p">Legion events, family days, and wellness gatherings we're supporting across Nova Scotia this fall.</p>
-      </div>
-      <span class="news-item-arrow">→</span>
-    </a>
-    <a href="article.html" class="news-item">
-      <div class="news-item-date">July 2026</div>
-      <div>
-        <div class="news-item-tag">New guide</div>
-        <h3 class="news-item-h">A plain-language guide to VAC's main benefits programs</h3>
-        <p class="news-item-p">Our most-requested explainer, now updated for 2026, covering the four programs veterans ask us about most.</p>
-      </div>
-      <span class="news-item-arrow">→</span>
-    </a>
+<!-- NEWS ARCHIVE — modelled on the WordPress blog archive: posts in reverse date order,
+     grouped by month, with categories and pagination. -->
+<section class="archive archive-news">
+  <div class="archive-toolbar">
+    <div class="archive-count">Latest updates from the team</div>
+    <div class="news-cats" role="group" aria-label="Filter updates by category">
+      <button type="button" class="filter-chip" data-filter="all" aria-pressed="true">All updates</button>
+      <button type="button" class="filter-chip" data-filter="Campaign" aria-pressed="false">Campaign</button>
+      <button type="button" class="filter-chip" data-filter="Community" aria-pressed="false">Community</button>
+      <button type="button" class="filter-chip" data-filter="Sponsorship" aria-pressed="false">Sponsorship</button>
+      <button type="button" class="filter-chip" data-filter="New guide" aria-pressed="false">New guide</button>
+      <button type="button" class="filter-chip" data-filter="Team" aria-pressed="false">Team</button>
+    </div>
   </div>
-  <a href="resources.html" class="esg-snapshot-link">All resources →</a>
+
+  <div class="news-timeline" id="news-timeline">
+    <section class="news-month" aria-labelledby="m-september-2026">
+      <h2 class="news-month-h" id="m-september-2026">September 2026</h2>
+      <ol class="news-entries">
+        <li class="news-entry">
+          <article>
+            <div class="news-entry-meta">
+              <time datetime="2026-09-14">14 September 2026</time>
+              <span class="news-cat">Campaign</span>
+            </div>
+            <h3 class="news-entry-h"><a href="#">In service of your story: a campaign built around veterans’ own voices</a></h3>
+            <p class="news-entry-p">Over the coming months we’re sharing video stories from veterans across Canada. Here’s why we’re doing it, and how to take part.</p>
+            <a class="news-entry-more" href="#">Read update →</a>
+          </article>
+        </li>
+        <li class="news-entry">
+          <article>
+            <div class="news-entry-meta">
+              <time datetime="2026-09-02">2 September 2026</time>
+              <span class="news-cat">Community</span>
+            </div>
+            <h3 class="news-entry-h"><a href="#">Where to find us this Remembrance season</a></h3>
+            <p class="news-entry-p">Legion events, family days and wellness gatherings we’re supporting across Nova Scotia this fall.</p>
+            <a class="news-entry-more" href="#">Read update →</a>
+          </article>
+        </li>
+      </ol>
+    </section>
+    <section class="news-month" aria-labelledby="m-august-2026">
+      <h2 class="news-month-h" id="m-august-2026">August 2026</h2>
+      <ol class="news-entries">
+        <li class="news-entry">
+          <article>
+            <div class="news-entry-meta">
+              <time datetime="2026-08-21">21 August 2026</time>
+              <span class="news-cat">Sponsorship</span>
+            </div>
+            <h3 class="news-entry-h"><a href="#">Back at the Royal Nova Scotia International Tattoo</a></h3>
+            <p class="news-entry-p">A week of conversations with veterans and families at one of the largest indoor shows in the world.</p>
+            <a class="news-entry-more" href="#">Read update →</a>
+          </article>
+        </li>
+      </ol>
+    </section>
+    <section class="news-month" aria-labelledby="m-july-2026">
+      <h2 class="news-month-h" id="m-july-2026">July 2026</h2>
+      <ol class="news-entries">
+        <li class="news-entry">
+          <article>
+            <div class="news-entry-meta">
+              <time datetime="2026-07-30">30 July 2026</time>
+              <span class="news-cat">New guide</span>
+            </div>
+            <h3 class="news-entry-h"><a href="article.html">A plain-language guide to VAC’s main benefits programs</a></h3>
+            <p class="news-entry-p">Our most-requested explainer, updated for 2026, covering the four programmes veterans ask us about most.</p>
+            <a class="news-entry-more" href="article.html">Read update →</a>
+          </article>
+        </li>
+        <li class="news-entry">
+          <article>
+            <div class="news-entry-meta">
+              <time datetime="2026-07-08">8 July 2026</time>
+              <span class="news-cat">Team</span>
+            </div>
+            <h3 class="news-entry-h"><a href="#">Meet the advisors joining us in the Ottawa Valley</a></h3>
+            <p class="news-entry-p">Two new claims advisors have joined the team, adding capacity for veterans in Petawawa and Pembroke.</p>
+            <a class="news-entry-more" href="#">Read update →</a>
+          </article>
+        </li>
+      </ol>
+    </section>
+  </div>
+  <p class="archive-empty" hidden>No updates in that category yet. <button type="button" class="link-button" data-filter="all">Show all updates</button></p>
+
+  <nav class="pagination" aria-label="Updates pages">
+    <span class="pagination-current" aria-current="page">1</span>
+    <a href="#" aria-disabled="true" class="pagination-next">Older updates →</a>
+  </nav>
 </section>
 
 <!-- FOOTER -->
@@ -137,6 +199,6 @@
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>Veteran-founded · Canadian-owned</span></div>
 </footer>
 
-<script src="js/main.js?v=v26"></script>
+<script src="js/main.js?v=v27"></script>
 </body>
 </html>

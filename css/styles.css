@@ -1663,3 +1663,89 @@ strong, b { font-weight: 500; }
 .consult-consent a { color: var(--accent); }
 #consult-scheduler iframe, #consult-scheduler .calendly-inline-widget { display: block; }
 @media (max-width: 1000px) { .consult-options { grid-template-columns: 1fr; padding: 48px 20px; gap: 32px; } .consult-option { padding: 28px 22px; } }
+
+/* ── RESOURCE ARCHIVES ──────────────────────────────────────────────────
+   Guides and News are modelled on WordPress archive templates so the build
+   maps cleanly: Guides is a filterable card archive with a taxonomy sidebar,
+   News is a dated timeline. Stories keeps its full-width media cards.      */
+.archive { padding: 64px 80px 110px; }
+.archive-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 18px 32px; padding-bottom: 20px; border-bottom: 1px solid var(--rule); margin-bottom: 40px; }
+.archive-count { font-size: 16px; color: var(--muted); }
+.archive-count strong { font-family: var(--font-serif); font-size: 22px; color: var(--ink); font-weight: 400; }
+.filter-row, .news-cats { display: flex; flex-wrap: wrap; gap: 8px; }
+.filter-chip { font: inherit; font-size: 15px; font-weight: 500; padding: 8px 16px; cursor: pointer;
+  background: transparent; border: 1px solid var(--rule-strong); color: var(--muted); border-radius: 100px;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+.filter-chip:hover { border-color: var(--ink); color: var(--ink); }
+.filter-chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.filter-chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.link-button { font: inherit; color: var(--accent); background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; }
+.archive-empty { font-size: 17px; color: var(--muted); padding: 32px 0; }
+.archive-more { display: flex; justify-content: center; margin-top: 36px; }
+
+/* Guides archive */
+.archive-layout { display: grid; grid-template-columns: 1fr 320px; gap: 56px; align-items: start; }
+.guide-featured { background: var(--ink); color: var(--bg); margin-bottom: 28px; }
+.guide-featured-link { display: block; padding: 40px; text-decoration: none; color: inherit; }
+.guide-featured-h { font-family: var(--font-serif); font-size: clamp(28px, 3vw, 40px); font-weight: 400; line-height: 1.15; margin: 14px 0 12px; color: var(--bg); }
+.guide-featured-p { font-size: 18px; line-height: 1.6; color: #d6d1c8; margin: 0 0 18px; max-width: 60ch; }
+.guide-featured .guide-read { color: var(--blue); }
+.guide-featured .guide-card-more { color: var(--blue); }
+.guide-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.guide-card { background: var(--bg); border: 1px solid var(--rule); transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.guide-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-2px); }
+.guide-card-link { display: flex; flex-direction: column; height: 100%; padding: 24px; text-decoration: none; color: inherit; }
+.guide-card-meta { display: flex; align-items: center; gap: 12px; }
+.guide-type { font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; color: #fff; background: var(--teal); }
+.guide-type-checklist { background: var(--accent); }
+.guide-type-explainer { background: var(--tan); color: var(--ink); }
+.guide-read { font-size: 14px; color: var(--muted); }
+.guide-card-h { font-family: var(--font-serif); font-size: 23px; font-weight: 400; line-height: 1.25; margin: 14px 0 10px; }
+.guide-card-p { font-size: 16px; line-height: 1.55; color: var(--muted); margin: 0 0 18px; }
+.guide-card-more { margin-top: auto; font-size: 15px; font-weight: 500; color: var(--accent); }
+
+/* Guides sidebar */
+.archive-side { position: sticky; top: 100px; display: grid; gap: 28px; }
+.side-block { border-top: 2px solid var(--ink); padding-top: 16px; }
+.side-h { font-size: 15px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 12px; }
+.side-list { list-style: none; margin: 0; padding: 0; }
+.side-list li { border-bottom: 1px solid var(--rule); }
+.side-list a { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; font-size: 16px; color: var(--ink); text-decoration: none; }
+.side-list a:hover { color: var(--accent); }
+.side-count { color: var(--muted); font-size: 15px; }
+.side-list-plain a { display: block; line-height: 1.45; }
+.side-cta { background: var(--bg2); border-left: 3px solid var(--accent); padding: 24px; }
+.side-cta-h { font-family: var(--font-serif); font-size: 24px; font-weight: 400; margin: 0 0 8px; }
+.side-cta-p { font-size: 16px; line-height: 1.55; color: var(--muted); margin: 0 0 18px; }
+
+/* News timeline */
+.archive-news { max-width: 1000px; margin: 0 auto; }
+.news-month + .news-month { margin-top: 44px; }
+.news-month-h { font-size: 15px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  margin: 0 0 18px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+.news-entries { list-style: none; margin: 0; padding: 0; }
+.news-entry { position: relative; padding: 0 0 30px 32px; border-left: 2px solid var(--rule); }
+.news-entry:last-child { padding-bottom: 0; }
+.news-entry::before { content: ""; position: absolute; left: -7px; top: 6px; width: 12px; height: 12px;
+  border-radius: 50%; background: var(--accent); }
+.news-entry-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 15px; color: var(--muted); }
+.news-cat { font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--teal); border: 1px solid var(--teal); padding: 2px 9px; }
+.news-entry-h { font-family: var(--font-serif); font-size: clamp(22px, 2.2vw, 28px); font-weight: 400; line-height: 1.25; margin: 10px 0 8px; }
+.news-entry-h a { color: var(--ink); text-decoration: none; }
+.news-entry-h a:hover { color: var(--accent); }
+.news-entry-p { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 0 0 10px; max-width: 70ch; }
+.news-entry-more { font-size: 15px; font-weight: 500; color: var(--accent); text-decoration: none; }
+.pagination { display: flex; align-items: center; gap: 14px; margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--rule); }
+.pagination-current { width: 38px; height: 38px; display: grid; place-items: center; background: var(--ink); color: #fff; font-weight: 500; }
+.pagination-next { font-size: 16px; color: var(--muted); text-decoration: none; }
+.pagination-next[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
+
+@media (max-width: 1000px) {
+  .archive { padding: 48px 24px 72px; }
+  .archive-layout { grid-template-columns: 1fr; gap: 40px; }
+  .archive-side { position: static; }
+  .guide-grid { grid-template-columns: 1fr; }
+  .guide-featured-link { padding: 28px 24px; }
+}

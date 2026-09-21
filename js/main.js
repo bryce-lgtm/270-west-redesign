@@ -497,6 +497,62 @@ function initLandingForms() {
   });
 }
 
+// ── Resource archives: topic/category filters and load more ──
+function initArchives() {
+  const chips = [...document.querySelectorAll('.filter-chip, [data-filter-link]')];
+  if (!chips.length) return;
+  const cards = [...document.querySelectorAll('.guide-card')];
+  const featured = document.querySelector('.guide-featured');
+  const entries = [...document.querySelectorAll('.news-entry')];
+  const months = [...document.querySelectorAll('.news-month')];
+  const empty = document.querySelector('.archive-empty');
+  const more = document.getElementById('guide-more');
+  const count = document.getElementById('guide-count');
+  const STEP = 8;
+  let shown = STEP, filter = 'all';
+
+  function render() {
+    let visible = 0;
+    if (featured) {
+      const match = filter === 'all' || featured.dataset.topic === filter;
+      featured.hidden = !match;
+      if (match) visible++;
+    }
+    cards.forEach(card => {
+      const match = filter === 'all' || card.dataset.topic === filter;
+      const within = visible < shown;
+      card.hidden = !(match && within);
+      if (match) visible++;
+    });
+    entries.forEach(e => {
+      const cat = (e.querySelector('.news-cat') || {}).textContent;
+      const match = filter === 'all' || cat === filter;
+      e.hidden = !match;
+      if (match) visible++;
+    });
+    months.forEach(m => { m.hidden = ![...m.querySelectorAll('.news-entry')].some(e => !e.hidden); });
+    if (more) more.hidden = filter !== 'all' ? true : cards.filter(c => c.dataset.topic).length <= shown;
+    if (count) count.textContent = cards.filter(c => filter === 'all' || c.dataset.topic === filter).length
+      + (featured && (filter === 'all' || featured.dataset.topic === filter) ? 1 : 0);
+    if (empty) empty.hidden = visible > 0;
+  }
+  function setFilter(value) {
+    filter = value; shown = STEP;
+    document.querySelectorAll('.filter-chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.filter === value)));
+    render();
+  }
+  chips.forEach(el => el.addEventListener('click', e => {
+    e.preventDefault();
+    setFilter(el.dataset.filter || el.dataset.filterLink);
+  }));
+  if (more) more.addEventListener('click', () => {
+    const first = cards.filter(c => c.hidden)[0];
+    shown += STEP; render();
+    if (first) { const link = first.querySelector('a'); if (link) link.focus(); }
+  });
+  render();
+}
+
 // ── Init all ──
 document.addEventListener('DOMContentLoaded', function() {
   initMobileMenu();
@@ -523,6 +579,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   initDecor();
   initPhotos();
+  initArchives();
   initLandingForms();
   const w270Lead = initLeadTracking();
   initScheduler(w270Lead);
