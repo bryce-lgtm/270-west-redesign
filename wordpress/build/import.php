@@ -4,14 +4,16 @@
  *   "$PHP" -c "$INI" wordpress/build/import.php --all
  *   "$PHP" -c "$INI" wordpress/build/import.php --pages --only=home
  */
+if ( PHP_SAPI !== 'cli' ) { http_response_code( 403 ); exit; } // never runnable over HTTP
 $site = getenv( 'W270_SITE' ) ?: '/Users/Bryce/Local Sites/270-west/app/public';
 define( 'WP_USE_THEMES', false );
-$_SERVER['HTTP_HOST'] = '270-west.local';
+$_SERVER['HTTP_HOST'] = getenv( 'W270_HOST' ) ?: '270-west.local';
 require $site . '/wp-load.php';
 wp_set_current_user( 1 );
 
 const W270_OUT = __DIR__ . '/out';
-const W270_IMG = __DIR__ . '/../../img';
+// Source photos: the repo's img/ when running from the repo, else the theme's synced copy (server deploys).
+define( 'W270_IMG', is_dir( __DIR__ . '/../../img' ) ? __DIR__ . '/../../img' : __DIR__ . '/../assets/img' );
 
 /** Site paths per slug. Mirrors pages.py (parents before children). */
 function w270_page_paths() {
@@ -213,6 +215,95 @@ function w270_import_kit() {
 	echo "kit: ok\n";
 }
 
+/** Replace __W270_MEDIA__:<file> markers with Media Library URLs. */
+function w270_media_urls( $html ) {
+	return preg_replace_callback( '/__W270_MEDIA__:([\w.-]+)/', function ( $m ) {
+		$id = w270_media_id( $m[1] );
+		if ( ! $id ) { throw new RuntimeException( "media not imported: {$m[1]}" ); }
+		return wp_get_attachment_url( $id );
+	}, $html );
+}
+
+function w270_import_resources() {
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	$plugin = '270west-content/270west-content.php';
+	if ( ! is_plugin_active( $plugin ) ) {
+		$r = activate_plugin( $plugin );
+		if ( is_wp_error( $r ) ) { echo "resources: cannot activate plugin: " . $r->get_error_message() . "\n"; $GLOBALS['w270_failed'] = true; return; }
+		echo "plugin 270west-content: activated\n";
+	}
+	$acf = function_exists( 'update_field' );
+	if ( ! $acf ) { echo "acf: missing — fields skipped (install ACF Pro and re-run --resources)\n"; }
+	$seed    = json_decode( file_get_contents( __DIR__ . '/seed-resources.json' ), true, 512, JSON_THROW_ON_ERROR );
+	$article = json_decode( file_get_contents( W270_OUT . '/seed-article.json' ), true, 512, JSON_THROW_ON_ERROR );
+
+	$topics = [];
+	foreach ( $seed['topics'] as $name ) {
+		$t = term_exists( $name, 'resource_topic' );
+		if ( ! $t ) { $t = wp_insert_term( $name, 'resource_topic' ); if ( is_wp_error( $t ) ) { throw new RuntimeException( $t->get_error_message() ); } }
+		$topics[ $name ] = (int) $t['term_id'];
+	}
+	echo 'topics: ' . implode( ', ', array_keys( $topics ) ) . "\n";
+
+	$ids = [];
+	foreach ( $seed['resources'] as $r ) {
+		try {
+			$is_article = $r['slug'] === $article['slug'];
+			$existing   = get_page_by_path( $r['slug'], OBJECT, $r['type'] );
+			$post = [
+				'post_type' => $r['type'], 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
+				'post_excerpt' => $r['summary'], 'menu_order' => (int) $r['order'],
+				'post_content' => $is_article ? w270_media_urls( $article['content'] ) : '<p>Content coming soon.</p>',
+			];
+			$pid = $existing ? wp_update_post( $post + [ 'ID' => $existing->ID ], true ) : wp_insert_post( $post, true );
+			if ( is_wp_error( $pid ) ) { throw new RuntimeException( $pid->get_error_message() ); }
+			wp_set_object_terms( $pid, [ $topics[ $r['topic'] ] ], 'resource_topic' );
+			if ( ! empty( $r['image'] ) && ( $mid = w270_media_id( $r['image'] ) ) ) { set_post_thumbnail( $pid, $mid ); }
+			if ( $acf ) {
+				update_field( 'field_270w_summary', $r['summary'], $pid );
+				update_field( 'field_270w_read_time', (int) $r['read_time'], $pid );
+				update_field( 'field_270w_featured', empty( $r['featured'] ) ? 0 : 1, $pid );
+				update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $pid );
+				if ( 'guide' === $r['type'] ) {
+					update_field( 'field_270w_show_toc', 1, $pid );
+					if ( $is_article ) {
+						update_field( 'field_270w_callout', [ 'field_270w_callout_label' => $article['callout_label'], 'field_270w_callout_text' => $article['callout_text'] ], $pid );
+					}
+				}
+				if ( 'checklist' === $r['type'] && ! empty( $r['items'] ) ) {
+					update_field( 'field_270w_items', array_map( fn( $i ) => [ 'field_270w_item' => $i, 'field_270w_item_note' => '' ], $r['items'] ), $pid );
+				}
+			}
+			$ids[ $r['slug'] ] = $pid;
+			echo "resource {$r['type']}/{$r['slug']}: #{$pid}\n";
+		} catch ( Throwable $e ) {
+			echo "resource {$r['slug']}: ERROR " . $e->getMessage() . "\n";
+			$GLOBALS['w270_failed'] = true;
+		}
+	}
+	if ( $acf ) {
+		foreach ( $seed['resources'] as $r ) {
+			if ( empty( $r['related'] ) || empty( $ids[ $r['slug'] ] ) ) { continue; }
+			$related = array_values( array_filter( array_map( fn( $s ) => $ids[ $s ] ?? 0, $r['related'] ) ) );
+			update_field( 'field_270w_related', $related, $ids[ $r['slug'] ] );
+		}
+	}
+
+	$page = w270_page_by_slug( 'resources' );
+	if ( $page ) {
+		update_post_meta( $page->ID, '_wp_page_template', 'template-resources.php' );
+		if ( $acf ) {
+			update_field( 'field_270w_hero_h1', $seed['landing']['hero_h1'], $page->ID );
+			update_field( 'field_270w_hero_lead', $seed['landing']['hero_lead'], $page->ID );
+			update_field( 'field_270w_hero_sub', $seed['landing']['hero_sub'], $page->ID );
+		}
+		echo "resources page: template assigned\n";
+	}
+	$old = get_page_by_path( 'resources/vac-benefits-programs-guide', OBJECT, 'page' );
+	if ( $old ) { wp_trash_post( $old->ID ); echo "old article page #{$old->ID}: trashed\n"; }
+	flush_rewrite_rules();
+}
+
 function w270_main( $argv ) {
 	$flags = array_fill_keys( array_map( fn( $a ) => explode( '=', ltrim( $a, '-' ) )[0], array_slice( $argv, 1 ) ), true );
 	$only  = null;
@@ -221,6 +312,7 @@ function w270_main( $argv ) {
 	if ( $all || isset( $flags['media'] ) ) { function_exists( 'w270_import_media' ) && w270_import_media(); }
 	if ( $all || isset( $flags['pages'] ) ) { function_exists( 'w270_import_pages' ) && w270_import_pages( $only ); }
 	if ( $all || isset( $flags['menus'] ) ) { w270_import_menus(); }
+	if ( $all || isset( $flags['resources'] ) ) { w270_import_resources(); }
 	if ( $all || isset( $flags['kit'] ) ) { function_exists( 'w270_import_kit' ) && w270_import_kit(); }
 	if ( $all || isset( $flags['settings'] ) ) { w270_import_settings(); }
 	if ( class_exists( '\Elementor\Plugin' ) ) { \Elementor\Plugin::$instance->files_manager->clear_cache(); }

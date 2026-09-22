@@ -9,7 +9,6 @@ PAGES = [
     ('how-it-works.html', 'how-it-works', None),
     ('about.html', 'about', None),
     ('resources.html', 'resources', None),
-    ('article.html', 'vac-benefits-programs-guide', 'resources'),
     ('contact.html', 'contact', None),
     ('faq.html', 'faq', None),
     ('vac-status-checker.html', 'vac-status-checker', None),
@@ -36,3 +35,5 @@ def path_for(slug):
 
 # prototype file -> site path
 LINK_MAP = {src: path_for(slug) for src, slug, _ in PAGES}
+# The article became the featured Guide post (seeded by import.php --resources); prototype links still point at it.
+LINK_MAP['article.html'] = '/resources/guides/vac-benefits-programs-guide/'
