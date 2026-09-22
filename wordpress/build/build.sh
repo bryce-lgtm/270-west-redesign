@@ -7,6 +7,7 @@ PHP="${W270_PHP:-/Users/Bryce/Library/Application Support/Local/lightning-servic
 INI="${W270_INI:-/Users/Bryce/Library/Application Support/Local/run/USpouZOL3/conf/php/php.ini}"
 ./sync-assets.sh
 python3 -m unittest discover -s tests -q
+python3 seed_article.py
 python3 generate.py
 ./deploy-theme.sh
 ./deploy-proto.sh

@@ -196,16 +196,16 @@ function w270_import_kit() {
 			[ '_id' => 'primary', 'title' => 'Primary', 'color' => '#1A3A3F' ],
 			[ '_id' => 'secondary', 'title' => 'Secondary', 'color' => '#4E757B' ],
 			[ '_id' => 'text', 'title' => 'Text', 'color' => '#1A3A3F' ],
-			[ '_id' => 'accent', 'title' => 'Accent', 'color' => '#A32222' ],
+			[ '_id' => 'accent', 'title' => 'Accent', 'color' => '#A22222' ],
 		],
 		'custom_colors' => [
-			[ '_id' => 'w270blu', 'title' => 'Pale blue', 'color' => '#A1B6C2' ],
-			[ '_id' => 'w270tan', 'title' => 'Taupe', 'color' => '#ADA799' ],
-			[ '_id' => 'w270snd', 'title' => 'Light warm grey', 'color' => '#DFE1DE' ],
+			[ '_id' => 'w270blu', 'title' => 'Pale blue', 'color' => '#A0B5C1' ],
+			[ '_id' => 'w270tan', 'title' => 'Taupe', 'color' => '#ACA698' ],
+			[ '_id' => 'w270snd', 'title' => 'Light warm grey', 'color' => '#DEE0DD' ],
 			[ '_id' => 'w270bkg', 'title' => 'Page background', 'color' => '#F2F1EE' ],
 		],
 		'system_typography' => [
-			$typo( 'primary', 'Primary', 'League Spartan', '600' ),
+			$typo( 'primary', 'Primary', 'Inter Tight', '500' ),
 			$typo( 'secondary', 'Secondary', 'Crimson Text', '400' ),
 			$typo( 'text', 'Text', 'Inter Tight', '400' ),
 			$typo( 'accent', 'Accent', 'Inter Tight', '600' ),
@@ -252,18 +252,36 @@ function w270_import_resources() {
 	foreach ( $seed['resources'] as $r ) {
 		try {
 			$is_article = $r['slug'] === $article['slug'];
+			// The one resource with real body copy takes its summary from the prototype article
+			// itself, so the two cannot drift apart; the rest use the seed file.
+			$summary    = ( $is_article && ! empty( $article['summary'] ) ) ? $article['summary'] : $r['summary'];
 			$existing   = get_page_by_path( $r['slug'], OBJECT, $r['type'] );
 			$post = [
 				'post_type' => $r['type'], 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
-				'post_excerpt' => $r['summary'], 'menu_order' => (int) $r['order'],
+				'post_excerpt' => $summary, 'menu_order' => (int) $r['order'],
 				'post_content' => $is_article ? w270_media_urls( $article['content'] ) : '<p>Content coming soon.</p>',
 			];
 			$pid = $existing ? wp_update_post( $post + [ 'ID' => $existing->ID ], true ) : wp_insert_post( $post, true );
 			if ( is_wp_error( $pid ) ) { throw new RuntimeException( $pid->get_error_message() ); }
 			wp_set_object_terms( $pid, [ $topics[ $r['topic'] ] ], 'resource_topic' );
 			if ( ! empty( $r['image'] ) && ( $mid = w270_media_id( $r['image'] ) ) ) { set_post_thumbnail( $pid, $mid ); }
+			// Plain post meta first so the theme renders without ACF; update_field() below
+			// overwrites these with ACF's own values (same meta keys) when the plugin is present.
+			update_post_meta( $pid, 'summary', $summary );
+			update_post_meta( $pid, 'read_time', (int) $r['read_time'] );
+			update_post_meta( $pid, 'featured', empty( $r['featured'] ) ? 0 : 1 );
+			update_post_meta( $pid, 'seo_h1', $r['seo_h1'] ?? '' );
+			if ( 'guide' === $r['type'] ) {
+				update_post_meta( $pid, 'show_toc', 1 );
+				if ( $is_article ) {
+					update_post_meta( $pid, 'callout', [ 'label' => $article['callout_label'], 'text' => $article['callout_text'] ] );
+				}
+			}
+			if ( 'checklist' === $r['type'] && ! empty( $r['items'] ) ) {
+				update_post_meta( $pid, 'items', array_map( fn( $i ) => [ 'item' => $i, 'note' => '' ], $r['items'] ) );
+			}
 			if ( $acf ) {
-				update_field( 'field_270w_summary', $r['summary'], $pid );
+				update_field( 'field_270w_summary', $summary, $pid );
 				update_field( 'field_270w_read_time', (int) $r['read_time'], $pid );
 				update_field( 'field_270w_featured', empty( $r['featured'] ) ? 0 : 1, $pid );
 				update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $pid );
@@ -284,23 +302,22 @@ function w270_import_resources() {
 			$GLOBALS['w270_failed'] = true;
 		}
 	}
-	if ( $acf ) {
-		foreach ( $seed['resources'] as $r ) {
-			if ( empty( $r['related'] ) || empty( $ids[ $r['slug'] ] ) ) { continue; }
-			$related = array_values( array_filter( array_map( fn( $s ) => $ids[ $s ] ?? 0, $r['related'] ) ) );
-			update_field( 'field_270w_related', $related, $ids[ $r['slug'] ] );
-		}
+	foreach ( $seed['resources'] as $r ) {
+		if ( empty( $r['related'] ) || empty( $ids[ $r['slug'] ] ) ) { continue; }
+		$related = array_values( array_filter( array_map( fn( $s ) => $ids[ $s ] ?? 0, $r['related'] ) ) );
+		update_post_meta( $ids[ $r['slug'] ], 'related_resources', $related );
+		if ( $acf ) { update_field( 'field_270w_related', $related, $ids[ $r['slug'] ] ); }
 	}
 
+	// /resources/ renders the approved prototype hub (Stories / Guides / News previews) from its
+	// generated Elementor content, like every other page. template-resources.php predates that
+	// redesign and would replace the content with the older "browse by topic" archive, so the
+	// override is cleared rather than assigned. The child archives at /resources/{stories,guides,news}/
+	// carry the topic filtering, and the CPT singles keep their own single-*.php templates.
 	$page = w270_page_by_slug( 'resources' );
 	if ( $page ) {
-		update_post_meta( $page->ID, '_wp_page_template', 'template-resources.php' );
-		if ( $acf ) {
-			update_field( 'field_270w_hero_h1', $seed['landing']['hero_h1'], $page->ID );
-			update_field( 'field_270w_hero_lead', $seed['landing']['hero_lead'], $page->ID );
-			update_field( 'field_270w_hero_sub', $seed['landing']['hero_sub'], $page->ID );
-		}
-		echo "resources page: template assigned\n";
+		delete_post_meta( $page->ID, '_wp_page_template' );
+		echo "resources page: prototype hub content\n";
 	}
 	$old = get_page_by_path( 'resources/vac-benefits-programs-guide', OBJECT, 'page' );
 	if ( $old ) { wp_trash_post( $old->ID ); echo "old article page #{$old->ID}: trashed\n"; }

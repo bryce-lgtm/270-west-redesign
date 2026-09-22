@@ -10,7 +10,14 @@ function w270_resource_types() {
 
 /** ACF field value, or null when ACF is not installed. */
 function w270_field( $name, $post_id = null ) {
-	return function_exists( 'get_field' ) ? get_field( $name, $post_id ) : null;
+	if ( function_exists( 'get_field' ) ) {
+		$v = get_field( $name, $post_id );
+		if ( null !== $v && '' !== $v && false !== $v && [] !== $v ) { return $v; }
+	}
+	// The importer also writes each field as plain post meta, so the site renders correctly
+	// before ACF is installed (and if it is ever deactivated).
+	$v = get_post_meta( $post_id ?: get_the_ID(), $name, true );
+	return ( '' === $v || [] === $v ) ? null : $v;
 }
 
 function w270_type_label( $type, $featured = false ) {

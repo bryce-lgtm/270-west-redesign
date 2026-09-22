@@ -28,7 +28,7 @@ add_action( 'after_setup_theme', function () {
 add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_style(
 		'w270-fonts',
-		'https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter+Tight:ital,wght@0,300..700;1,300..600&family=League+Spartan:wght@300..700&display=swap',
+		'https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter+Tight:ital,wght@0,300..600;1,300..500&display=swap',
 		[],
 		null
 	);
@@ -47,7 +47,7 @@ add_action( 'wp_enqueue_scripts', function () {
 add_action( 'wp_head', function () {
 	echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
 	echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
-	echo '<link rel="icon" href="' . esc_url( W270_ASSETS . '/img/compass-circle.svg' ) . '" type="image/svg+xml">' . "\n";
+	echo '<link rel="icon" href="' . esc_url( W270_ASSETS . '/img/brand/favicon.svg' ) . '" type="image/svg+xml">' . "\n";
 }, 1 );
 
 // Hello's header/footer experiment styles its own dynamic header; ours is the prototype markup.
@@ -75,4 +75,21 @@ add_filter( 'document_title_parts', function ( $parts ) {
 		unset( $parts['site'] );
 	}
 	return $parts;
+} );
+
+// The eligibility checker was renamed to the VAC Status Checker; keep the old paths working
+// for anything already pointing at them (ads, printed material, external links).
+add_action( 'template_redirect', function () {
+	if ( ! is_404() ) {
+		return;
+	}
+	$path = trim( wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) ?? '', '/' );
+	$moved = [
+		'eligibility'         => 'vac-status-checker',
+		'eligibility-checker' => 'vac-status-checker',
+	];
+	if ( isset( $moved[ $path ] ) ) {
+		wp_safe_redirect( home_url( '/' . $moved[ $path ] . '/' ), 301 );
+		exit;
+	}
 } );

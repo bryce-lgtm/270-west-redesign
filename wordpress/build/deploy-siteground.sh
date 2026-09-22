@@ -16,7 +16,7 @@ SSH="ssh -p $SG_PORT $SG_USER@$SG_HOST"
 
 # 1. Fresh build artefacts in the repo (theme assets, generated.css, out/*.json).
 "$ROOT/wordpress/build/sync-assets.sh"
-( cd "$ROOT/wordpress/build" && python3 -m unittest discover -s tests -q && python3 generate.py )
+( cd "$ROOT/wordpress/build" && python3 -m unittest discover -s tests -q && python3 seed_article.py && python3 generate.py )
 
 # 2. Clone or update the SiteGround repo (public_html is the repo root).
 if [ ! -d "$CLONE/.git" ]; then
