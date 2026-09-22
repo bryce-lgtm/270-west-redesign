@@ -146,3 +146,14 @@
 /* Story card beside the who-we-are copy */
 .lp-story { aspect-ratio: 4 / 5; max-height: 520px; margin: 0; }
 @media (max-width: 1000px) { .lp-story { aspect-ratio: 4 / 3; max-height: none; } }
+
+/* Option 3: the VAC Status Checker, for visitors not ready to talk yet */
+.lp-third-option { max-width: 1240px; margin: 24px auto 0; padding: 26px 28px; background: var(--ink); color: var(--bg);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 40px; }
+.lp-third-option .lp-book-n { color: var(--blue); }
+.lp-third-copy { max-width: 70ch; }
+.lp-third-h { font-family: var(--font-serif); font-size: 26px; font-weight: 400; line-height: 1.2; margin: 6px 0 8px; color: var(--bg); }
+.lp-third-p { font-size: 16px; line-height: 1.55; color: #d6d1c8; margin: 0; }
+.lp-third-btn { border-color: var(--bg); color: var(--bg); flex-shrink: 0; }
+.lp-third-btn:hover { background: var(--bg); color: var(--ink); }
+@media (max-width: 700px) { .lp-third-option { flex-direction: column; align-items: flex-start; } .lp-third-btn { width: 100%; justify-content: center; } }
