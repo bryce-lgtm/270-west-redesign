@@ -55,10 +55,10 @@ class GenerateTests(unittest.TestCase):
         self.assertIn('data-photo="shoreline"', ph['settings']['html'])
 
     def test_linked_card_container(self):
-        c = first('<a href="eligibility.html" class="lm-card lm-card-dark"><div class="lm-meta">2 min</div><h2 class="lm-h">Checker</h2></a>')
+        c = first('<a href="vac-status-checker.html" class="lm-card lm-card-dark"><div class="lm-meta">2 min</div><h2 class="lm-h">Checker</h2></a>')
         self.assertEqual(c['elType'], 'container')
         self.assertEqual(c['settings']['html_tag'], 'a')
-        self.assertEqual(c['settings']['link']['url'], '/eligibility/')
+        self.assertEqual(c['settings']['link']['url'], '/vac-status-checker/')
         self.assertEqual([e['widgetType'] for e in c['elements']], ['text-editor', 'heading'])
 
     def test_rich_block_is_one_text_widget(self):
