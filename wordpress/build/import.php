@@ -19,7 +19,7 @@ function w270_page_paths() {
 		'home' => '/', 'services' => '/services/', 'claims' => '/services/claims/', 'appeals' => '/services/appeals/',
 		'reassessment' => '/services/reassessment/', 'support' => '/services/support/', 'how-it-works' => '/how-it-works/',
 		'about' => '/about/', 'resources' => '/resources/', 'vac-benefits-programs-guide' => '/resources/vac-benefits-programs-guide/',
-		'contact' => '/contact/', 'faq' => '/faq/', 'eligibility' => '/eligibility/', 'book-a-consult' => '/book-a-consult/',
+		'contact' => '/contact/', 'faq' => '/faq/', 'vac-status-checker' => '/vac-status-checker/', 'book-a-consult' => '/book-a-consult/',
 		'privacy' => '/privacy/', 'terms' => '/terms/', 'accessibility' => '/accessibility/',
 	];
 }
@@ -37,7 +37,7 @@ function w270_menu_defs() {
 	$main = [
 		[ 'Services', 'services', '', $services_children ],
 		[ 'How It Works', 'how-it-works' ], [ 'About', 'about' ], [ 'Resources', 'resources' ], [ 'Contact', 'contact' ],
-		[ 'Check Eligibility', 'eligibility', 'nav-cta' ],
+		[ 'Book a Consult', 'book-a-consult', 'nav-cta' ],
 	];
 	return [
 		'Primary' => [ 'location' => 'primary', 'items' => $main ],

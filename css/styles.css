@@ -799,8 +799,8 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .testimonial-figure { margin: 0; background: var(--bg2); padding: 28px; border: 1px solid var(--rule); }
 
 /* ── ELIGIBILITY PAGE ── */
-.eligibility-page-layout { padding: 80px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
-.eligibility-page-sticky { position: sticky; top: 100px; }
+.status-page-layout { padding: 80px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
+.status-page-sticky { position: sticky; top: 100px; }
 
 /* ── CONSULT PAGE ── */
 .consult-intro { padding: 56px 80px 0; }
@@ -819,8 +819,8 @@ details:not([open]) .faq-icon::after { content: '+'; }
   .journey-steps-grid { grid-template-columns: 1fr; }
   .journey-arrow { display: none; }
   .testimonials-new-grid { grid-template-columns: 1fr; }
-  .eligibility-page-layout { grid-template-columns: 1fr; padding: 40px 20px; }
-  .eligibility-page-sticky { position: static; }
+  .status-page-layout { grid-template-columns: 1fr; padding: 40px 20px; }
+  .status-page-sticky { position: static; }
   .consult-intro { padding: 40px 20px 0; }
 
 }

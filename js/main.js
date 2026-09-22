@@ -165,7 +165,7 @@ function initMobileMenu() {
   }
 }
 
-// ── Eligibility Quiz ──
+// ── VAC Status Checker ──
 const QUIZ_QUESTIONS = [
   { id:'served', q:'Have you served in the Canadian Armed Forces?', options:['Regular Force','Reserve Force','RCMP','No'] },
   { id:'rating', q:'Do you currently have a VAC disability rating?', options:['No rating','0–30%','40–70%','80%+'] },
@@ -193,8 +193,8 @@ function initQuiz(containerId) {
     if (step === 0) {
       body = `
         <div class="quiz-step-label">Step 01 · Intake</div>
-        <div class="quiz-h3">See which VAC programs may apply to&nbsp;you.</div>
-        <div class="quiz-lead">Five quick questions. About two minutes. Fully confidential and no obligation. We'll get back to you with a clear next step.</div>
+        <div class="quiz-h3">See where you stand with&nbsp;VAC.</div>
+        <div class="quiz-lead">Five quick questions about your service and your history with VAC. About two minutes, confidential, no obligation. We'll come back with a clear next step.</div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <button class="quiz-start-btn" onclick="quizGo(1)">Start now →</button>
           <div class="quiz-badges"><span>● 2 MIN</span><span>● CONFIDENTIAL</span><span>● NO COST</span></div>
@@ -217,8 +217,8 @@ function initQuiz(containerId) {
     } else if (step === N + 1) {
       body = `
         <div class="quiz-step-label">Almost there</div>
-        <div class="quiz-h3">You may qualify for additional benefits.</div>
-        <div class="quiz-lead">Where should we send your tailored next step? We'll reach out within one business day.</div>
+        <div class="quiz-h3">Where should we send your next step?</div>
+        <div class="quiz-lead">An advisor will review your answers and reach out within one business day.</div>
         <div class="quiz-fields">
           <div class="quiz-field"><label class="quiz-field-label" for="qf-name">Full name</label><input type="text" id="qf-name" value="${contact.name}" oninput="quizContact('name',this.value)" placeholder="Your name"/></div>
           <div class="quiz-field"><label class="quiz-field-label" for="qf-email">Email</label><input type="email" id="qf-email" value="${contact.email}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
@@ -231,7 +231,7 @@ function initQuiz(containerId) {
       body = `
         <div class="quiz-result-label">● Result ready</div>
         <div class="quiz-result-h">Thanks. We'll be in touch shortly.</div>
-        <div class="quiz-result-p">Based on your answers, there are a few VAC programs we'd like to walk through with you. A 270 West advisor will reach out to ${name} within one business day for a friendly, no-obligation conversation.</div>
+        <div class="quiz-result-p">Based on your answers, we can see where you sit with VAC and what we may be able to help with. A 270 West advisor will reach out to ${name} within one business day for a friendly, no-obligation conversation.</div>
         <div class="quiz-result-btns">
           <a href="contact.html" class="btn-accent" style="font-size:14px;padding:16px 28px">Book a free conversation →</a>
           <button class="quiz-restart" onclick="quizReset()">Restart</button>
@@ -240,7 +240,7 @@ function initQuiz(containerId) {
 
     container.innerHTML = `
       <div class="quiz-widget">
-        <div class="quiz-header"><span>Eligibility Check</span><span>${stepLabel} / ${String(total).padStart(2,'0')}</span></div>
+        <div class="quiz-header"><span>VAC Status Check</span><span>${stepLabel} / ${String(total).padStart(2,'0')}</span></div>
         <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
         ${body}
       </div>`;

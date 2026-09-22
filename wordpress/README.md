@@ -30,7 +30,7 @@ means every classed element has the same box, display and typography as the prot
   prototype stylesheet, `elementor-bridge.css` and `main.js`, and loads Elementor's own base CSS
   inside a cascade layer so the prototype styles always win.
 - Pages are Elementor documents: one Container per section, native Heading / Text Editor / Button /
-  Image widgets, HTML widgets for SVG decoration, the eligibility quiz, consult scheduler, FAQ
+  Image widgets, HTML widgets for SVG decoration, the VAC status checker, consult scheduler, FAQ
   accordions and the contact form. Widgets carry the prototype's class names in their CSS Classes
   field; `generated.css` holds the prototype's inline styles as classes.
 - `generate.py` classification: heading → Heading widget; `p`/inline-only element → Text Editor;

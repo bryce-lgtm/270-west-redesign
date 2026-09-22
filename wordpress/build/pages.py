@@ -12,7 +12,7 @@ PAGES = [
     ('article.html', 'vac-benefits-programs-guide', 'resources'),
     ('contact.html', 'contact', None),
     ('faq.html', 'faq', None),
-    ('eligibility.html', 'eligibility', None),
+    ('vac-status-checker.html', 'vac-status-checker', None),
     ('consult.html', 'book-a-consult', None),
     ('privacy.html', 'privacy', None),
     ('terms.html', 'terms', None),
