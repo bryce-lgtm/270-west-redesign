@@ -9,6 +9,10 @@ PAGES = [
     ('how-it-works.html', 'how-it-works', None),
     ('about.html', 'about', None),
     ('resources.html', 'resources', None),
+    ('stories.html', 'stories', 'resources'),
+    ('guides.html', 'guides', 'resources'),
+    ('news.html', 'news', 'resources'),
+    ('article.html', 'vac-benefits-programs-guide', 'resources'),
     ('contact.html', 'contact', None),
     ('faq.html', 'faq', None),
     ('vac-status-checker.html', 'vac-status-checker', None),
@@ -33,7 +37,15 @@ def path_for(slug):
     return '/' + '/'.join(reversed(parts)) + '/'
 
 
+# Prototype files that aren't pages of their own in WordPress.
+# story.html is the sample veteran story: it becomes a `story` post once that post type
+# exists, so for now its links point at the Stories archive.
+EXTRA_LINKS = {
+    'story.html': '/resources/stories/',
+}
+
 # prototype file -> site path
 LINK_MAP = {src: path_for(slug) for src, slug, _ in PAGES}
 # The article became the featured Guide post (seeded by import.php --resources); prototype links still point at it.
 LINK_MAP['article.html'] = '/resources/guides/vac-benefits-programs-guide/'
+LINK_MAP.update(EXTRA_LINKS)

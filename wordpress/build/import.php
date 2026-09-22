@@ -20,7 +20,8 @@ function w270_page_paths() {
 	return [
 		'home' => '/', 'services' => '/services/', 'claims' => '/services/claims/', 'appeals' => '/services/appeals/',
 		'reassessment' => '/services/reassessment/', 'support' => '/services/support/', 'how-it-works' => '/how-it-works/',
-		'about' => '/about/', 'resources' => '/resources/', 'vac-benefits-programs-guide' => '/resources/vac-benefits-programs-guide/',
+		'about' => '/about/', 'resources' => '/resources/',
+		'stories' => '/resources/stories/', 'guides' => '/resources/guides/', 'news' => '/resources/news/', 'vac-benefits-programs-guide' => '/resources/vac-benefits-programs-guide/',
 		'contact' => '/contact/', 'faq' => '/faq/', 'vac-status-checker' => '/vac-status-checker/', 'book-a-consult' => '/book-a-consult/',
 		'privacy' => '/privacy/', 'terms' => '/terms/', 'accessibility' => '/accessibility/',
 	];
@@ -36,9 +37,11 @@ function w270_page_by_slug( $slug ) {
 /** Menu definition items: [title, slug, classes, children]. */
 function w270_menu_defs() {
 	$services_children = [ [ 'Claims', 'claims' ], [ 'Appeals', 'appeals' ], [ 'Reassessment', 'reassessment' ], [ 'Support', 'support' ] ];
+	$resources_children = [ [ 'Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ] ];
 	$main = [
 		[ 'Services', 'services', '', $services_children ],
-		[ 'How It Works', 'how-it-works' ], [ 'About', 'about' ], [ 'Resources', 'resources' ], [ 'Contact', 'contact' ],
+		[ 'How It Works', 'how-it-works' ], [ 'About', 'about' ],
+		[ 'Resources', 'resources', '', $resources_children ], [ 'Contact', 'contact' ],
 		[ 'Book a Consult', 'book-a-consult', 'nav-cta' ],
 	];
 	return [

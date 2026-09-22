@@ -25,6 +25,9 @@ HTML_TAGS = {'svg', 'form', 'details', 'table', 'input', 'select', 'textarea', '
 BUTTON_CLASSES = {'btn-accent', 'btn-ink', 'btn-outline', 'esg-snapshot-link', 'article-rail-btn'}
 CONTAINER_TAGS = {'div', 'header', 'footer', 'main', 'article', 'section', 'aside', 'nav', 'a'}
 JS_WIDGET_IDS = {'quiz-widget', 'consult-widget'}
+# Blocks whose markup must survive intact: the resource archives carry filter state in
+# data-/aria- attributes and become PHP loops in the theme, so they ship as raw HTML.
+RAW_HTML_CLASSES = {'archive'}
 SKIP_TOP = {'header', 'footer', 'script', 'style'}
 
 
@@ -35,7 +38,7 @@ def new_id():
 def rewrite_links(s):
     """Rewrite prototype hrefs/srcs: *.html -> site path, img/ -> theme assets placeholder."""
     # Anchors from the older homepage that now have their own pages.
-    anchor_pages = {'index.html#quiz': '/eligibility/', 'index.html#consult': '/book-a-consult/'}
+    anchor_pages = {'index.html#quiz': '/vac-status-checker/', 'index.html#consult': '/book-a-consult/'}
 
     def href(m):
         target, frag = m.group(2), m.group(3) or ''
@@ -170,7 +173,16 @@ class Converter:
         })
 
     def image(self, node):
-        name = os.path.basename(node.attrs.get('src', ''))
+        src = node.attrs.get('src', '')
+        # SVGs (the brand marks) ship with the theme: WordPress blocks SVG uploads by
+        # default, and there's no reason to put logo files in the media library.
+        if src.lower().endswith('.svg'):
+            attrs = ' '.join(f'{k}="{v}"' for k, v in node.attrs.items() if k not in ('src', 'class'))
+            return self.widget('html', {
+                'html': f'<img src="{ASSETS}/{src}" {attrs}/>',
+                '_css_classes': self.classes(node, 'w-image'),
+            })
+        name = os.path.basename(src)
         self.media.append(name)
         return self.widget('image', {
             'image': {'__media__': name, 'alt': node.attrs.get('alt', '')},
@@ -225,6 +237,8 @@ class Converter:
         if tag == 'a' and set(node.classes) & BUTTON_CLASSES and self.inline_only(node):
             return self.button(node)
         if tag in HTML_TAGS or 'data-photo' in node.attrs or node.attrs.get('id') in JS_WIDGET_IDS:
+            return self.html(node)
+        if set(node.classes) & RAW_HTML_CLASSES:
             return self.html(node)
         if tag in LIST_TAGS:
             return self.text(node)
