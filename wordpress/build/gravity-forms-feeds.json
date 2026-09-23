@@ -10,30 +10,276 @@
     "requestFormat": "json",
     "requestBodyType": "select_fields",
     "requestHeaders": [
-     { "key": "Accept", "custom_key": "", "value": "gf_custom", "custom_value": "*/*" },
-     { "key": "Host", "custom_key": "", "value": "gf_custom", "custom_value": "webhooks.creatio.com" },
-     { "key": "Accept-Encoding", "custom_key": "", "value": "gf_custom", "custom_value": "gzip, deflate" },
-     { "key": "Content-Type", "custom_key": "", "value": "gf_custom", "custom_value": "application/json" }
+     {
+      "key": "Accept",
+      "custom_key": "",
+      "value": "gf_custom",
+      "custom_value": "*/*"
+     },
+     {
+      "key": "Host",
+      "custom_key": "",
+      "value": "gf_custom",
+      "custom_value": "webhooks.creatio.com"
+     },
+     {
+      "key": "Accept-Encoding",
+      "custom_key": "",
+      "value": "gf_custom",
+      "custom_value": "gzip, deflate"
+     },
+     {
+      "key": "Content-Type",
+      "custom_key": "",
+      "value": "gf_custom",
+      "custom_value": "application/json"
+     }
     ],
     "fieldValues": [
-     { "key": "gf_custom", "custom_key": "UsrFirstName", "value": "1.3", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "UsrLastName", "value": "1.6", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "Email", "value": "2", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "EntityName", "value": "gf_custom", "custom_value": "Lead" },
-     { "key": "gf_custom", "custom_key": "FormSubmit", "value": "16", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "UsrPhoneNumber", "value": "5", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "UsrColumn114id", "value": "8", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "UsrYearsServed", "value": "6", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "UsrAgeCategory", "value": "10", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "Usrclaimssubmittedbefore", "value": "15", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "UsrSource", "value": "12", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "UsrCampaign", "value": "17", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "UsrMedium", "value": "13", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "UsrTerm", "value": "14", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "UsrcommsId", "value": "gf_custom", "custom_value": "f1fac855-0e0b-42bc-9cf7-a9cae7b35ac5" },
-     { "key": "gf_custom", "custom_key": "UsrEventType", "value": "gf_custom", "custom_value": "4a60c880-23da-456e-8836-eae47ece5eba" },
-     { "key": "gf_custom", "custom_key": "Commentary", "value": "20", "custom_value": "" },
-     { "key": "gf_custom", "custom_key": "UsrCommsMethod", "value": "21", "custom_value": "" }
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrFirstName",
+      "value": "1.3",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrLastName",
+      "value": "1.6",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "Email",
+      "value": "2",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "EntityName",
+      "value": "gf_custom",
+      "custom_value": "Lead"
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "FormSubmit",
+      "value": "16",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrPhoneNumber",
+      "value": "5",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrColumn114id",
+      "value": "8",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrYearsServed",
+      "value": "6",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrAgeCategory",
+      "value": "10",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "Usrclaimssubmittedbefore",
+      "value": "15",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrSource",
+      "value": "12",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrCampaign",
+      "value": "17",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrMedium",
+      "value": "13",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrTerm",
+      "value": "14",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrcommsId",
+      "value": "gf_custom",
+      "custom_value": "f1fac855-0e0b-42bc-9cf7-a9cae7b35ac5"
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrEventType",
+      "value": "gf_custom",
+      "custom_value": "4a60c880-23da-456e-8836-eae47ece5eba"
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "Commentary",
+      "value": "20",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrCommsMethod",
+      "value": "21",
+      "custom_value": ""
+     }
+    ],
+    "feedCondition": "0",
+    "feed_condition_conditional_logic": 0
+   }
+  },
+  "contact": {
+   "addon": "gravityformswebhooks",
+   "meta": {
+    "feedName": "Creatio Webhook - Contact Form",
+    "requestURL": "https://webhooks.creatio.com/webhooks/461829e2-98f9-4ddd-91ae-f96561a18360",
+    "requestMethod": "POST",
+    "requestFormat": "json",
+    "requestBodyType": "select_fields",
+    "requestHeaders": [
+     {
+      "key": "Accept",
+      "custom_key": "",
+      "value": "gf_custom",
+      "custom_value": "*/*"
+     },
+     {
+      "key": "Host",
+      "custom_key": "",
+      "value": "gf_custom",
+      "custom_value": "webhooks.creatio.com"
+     },
+     {
+      "key": "Accept-Encoding",
+      "custom_key": "",
+      "value": "gf_custom",
+      "custom_value": "gzip, deflate"
+     },
+     {
+      "key": "Content-Type",
+      "custom_key": "",
+      "value": "gf_custom",
+      "custom_value": "application/json"
+     }
+    ],
+    "fieldValues": [
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrFirstName",
+      "value": "1.3",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrLastName",
+      "value": "1.6",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "Email",
+      "value": "2",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "EntityName",
+      "value": "gf_custom",
+      "custom_value": "Lead"
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "FormSubmit",
+      "value": "16",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrPhoneNumber",
+      "value": "5",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrColumn114id",
+      "value": "8",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrAgeCategory",
+      "value": "10",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrSource",
+      "value": "12",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrCampaign",
+      "value": "17",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrMedium",
+      "value": "13",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrTerm",
+      "value": "14",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrcommsId",
+      "value": "gf_custom",
+      "custom_value": "f1fac855-0e0b-42bc-9cf7-a9cae7b35ac5"
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrEventType",
+      "value": "gf_custom",
+      "custom_value": "a6d50b0c-c570-4219-bb07-07602794c0db"
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "Commentary",
+      "value": "20",
+      "custom_value": ""
+     },
+     {
+      "key": "gf_custom",
+      "custom_key": "UsrCommsMethod",
+      "value": "21",
+      "custom_value": ""
+     }
     ],
     "feedCondition": "0",
     "feed_condition_conditional_logic": 0
