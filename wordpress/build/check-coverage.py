@@ -7,7 +7,7 @@ import re
 import sys
 import urllib.request
 
-from pages import PAGES, path_for
+from pages import PAGES, LANDING_PAGES, path_for
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 BASE = os.environ.get('W270_URL', 'http://270-west.local')
@@ -26,14 +26,29 @@ def norm(s):
     return s.split()
 
 
-def prototype_words(src_file):
+def strip_forms(s):
+    """WordPress renders the team's Gravity Form where the prototype has a mockup, and the two
+    ask for different things by design. Drop the fields on both sides so the check still compares
+    the copy around the form, which is what it is for. The reassurance line that trails the
+    prototype's submit button is kept, because WordPress keeps it as a sibling of the form."""
+    def keep_note(m):
+        after = m.group(0).rsplit('</button>', 1)
+        return ' ' + after[1] if len(after) == 2 else ' '
+    s = re.sub(r'<div[^>]*class="[^"]*gform_wrapper[\s\S]*?</form>\s*</div>', ' ', s)
+    return re.sub(r'<form\b[\s\S]*?</form>', keep_note, s)
+
+
+def prototype_words(src_file, landing=False):
     with open(os.path.join(ROOT, src_file), encoding='utf-8') as f:
         s = f.read()
     s = s[s.index('<body'):]
-    s = re.sub(r'<header\b[\s\S]*?</header>', ' ', s, count=1)
-    s = re.sub(r'<nav class="mobile-nav">[\s\S]*?</nav>', ' ', s, count=1)
-    s = re.sub(r'<footer\b[\s\S]*?</footer>', ' ', s, count=1)
-    return norm(s)
+    if not landing:
+        # The site header and footer are theme partials, so they are outside <main> in WordPress.
+        # A landing page carries its own lp-header/lp-footer in the content, so those stay.
+        s = re.sub(r'<header\b[\s\S]*?</header>', ' ', s, count=1)
+        s = re.sub(r'<nav class="mobile-nav">[\s\S]*?</nav>', ' ', s, count=1)
+        s = re.sub(r'<footer\b[\s\S]*?</footer>', ' ', s, count=1)
+    return norm(strip_forms(s))
 
 
 def wp_words(path):
@@ -43,7 +58,7 @@ def wp_words(path):
     m = re.search(r'<main\b[\s\S]*?</main>', s)
     if not m:
         raise RuntimeError(f'no <main> in {path}')
-    return norm(m.group(0))
+    return norm(strip_forms(m.group(0)))
 
 
 def article_words(html_text):
@@ -80,10 +95,11 @@ def check_extra(src, path, scope):
 def main(argv):
     only = set(argv)
     failed = False
-    for src, slug, _ in PAGES:
+    pages = [(f, sl, False) for f, sl, _ in PAGES] + [(f, sl, True) for f, sl in LANDING_PAGES]
+    for src, slug, landing in pages:
         if only and slug not in only:
             continue
-        a, b = prototype_words(src), wp_words(path_for(slug))
+        a, b = prototype_words(src, landing), wp_words(path_for(slug))
         if a == b:
             print(f'OK   {slug:30s} {len(a):5d} words')
             continue

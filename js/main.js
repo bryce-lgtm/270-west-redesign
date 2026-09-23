@@ -441,7 +441,23 @@ function initLeadTracking() {
   if (!data.referrer && document.referrer && !document.referrer.includes(location.host)) { data.referrer = document.referrer; fresh = true; }
   if (fresh) { try { sessionStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {} }
   document.querySelectorAll('[data-lead-field]').forEach(el => { el.value = data[el.dataset.leadField] || ''; });
+  fillGravityFormFields(data);
   return data;
+}
+
+// WordPress renders the team's Gravity Forms, whose hidden fields are named input_<form>_<id>.
+// The theme publishes the id -> parameter map; GF populates them from the query string on the
+// landing page itself, and this covers every later page, where the values live in sessionStorage.
+function fillGravityFormFields(data) {
+  const map = (window.W270 && window.W270.gfFields) || null;
+  if (!map) return;
+  const fill = () => Object.keys(map).forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.value) el.value = data[map[id]] || '';
+  });
+  fill();
+  // AJAX submissions and validation errors re-render the form, clearing the values.
+  if (window.jQuery) window.jQuery(document).on('gform_post_render', fill);
 }
 
 // ── Scheduler embed (Calendly today, our own booking plugin later) ──

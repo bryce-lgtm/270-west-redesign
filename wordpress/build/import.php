@@ -24,7 +24,15 @@ function w270_page_paths() {
 		'stories' => '/resources/stories/', 'guides' => '/resources/guides/', 'news' => '/resources/news/', 'vac-benefits-programs-guide' => '/resources/vac-benefits-programs-guide/',
 		'contact' => '/contact/', 'faq' => '/faq/', 'vac-status-checker' => '/vac-status-checker/', 'book-a-consult' => '/book-a-consult/',
 		'privacy' => '/privacy/', 'terms' => '/terms/', 'accessibility' => '/accessibility/',
+		// Advertising landing pages: noindex, no site chrome, never linked from a menu.
+		'vac-claim-help' => '/vac-claim-help/', 'vac-benefits-simplified' => '/vac-benefits-simplified/',
+		'what-to-expect' => '/what-to-expect/',
 	];
+}
+
+/** Slugs of the advertising landing pages, which the generator marks with "landing": true. */
+function w270_landing_slugs() {
+	return [ 'vac-claim-help', 'vac-benefits-simplified', 'what-to-expect' ];
 }
 
 function w270_page_by_slug( $slug ) {
@@ -126,12 +134,13 @@ function w270_import_media() {
 	}
 }
 
-/** Replace generator markers: __W270_ASSETS__ in strings, {"__media__": file} in image settings, site paths in link settings. */
+/** Replace generator markers: __W270_ASSETS__ and __W270_FORM__ in strings, {"__media__": file} in image settings, site paths in link settings. */
 function w270_resolve( array $elements, string $assets ) {
 	foreach ( $elements as &$el ) {
 		foreach ( $el['settings'] as $k => &$v ) {
 			if ( is_string( $v ) ) {
 				$v = str_replace( '__W270_ASSETS__', $assets, $v );
+				$v = w270_form_shortcodes( $v );
 			} elseif ( is_array( $v ) && isset( $v['__media__'] ) ) {
 				$id = w270_media_id( $v['__media__'] );
 				if ( ! $id ) { throw new RuntimeException( "media not imported: {$v['__media__']}" ); }
@@ -176,6 +185,11 @@ function w270_import_pages( $only = null ) {
 			update_post_meta( $pid, '_elementor_version', ELEMENTOR_VERSION );
 			update_post_meta( $pid, '_elementor_data', wp_slash( wp_json_encode( $elements, JSON_UNESCAPED_UNICODE ) ) );
 			update_post_meta( $pid, '_elementor_page_settings', $def['page_settings'] );
+			if ( ! empty( $def['landing'] ) ) {
+				update_post_meta( $pid, '_w270_landing', 1 );
+			} else {
+				delete_post_meta( $pid, '_w270_landing' );
+			}
 			delete_post_meta( $pid, '_elementor_css' );
 			echo "page {$slug}: #{$pid} " . get_permalink( $pid ) . "\n";
 		} catch ( Throwable $e ) {
@@ -224,6 +238,49 @@ function w270_media_urls( $html ) {
 		$id = w270_media_id( $m[1] );
 		if ( ! $id ) { throw new RuntimeException( "media not imported: {$m[1]}" ); }
 		return wp_get_attachment_url( $id );
+	}, $html );
+}
+
+/**
+ * Imports the team's exported Gravity Forms and records key -> form id in the w270_form_ids
+ * option. Forms that already exist are left untouched: they are the client's to edit in wp-admin,
+ * unlike our generated pages, so re-running the importer must never clobber their changes.
+ */
+function w270_import_forms() {
+	if ( ! class_exists( 'GFAPI' ) ) {
+		echo "forms: Gravity Forms not active — skipped\n";
+		return;
+	}
+	$export = json_decode( file_get_contents( __DIR__ . '/gravity-forms.json' ), true, 512, JSON_THROW_ON_ERROR );
+	$by_title = [];
+	foreach ( GFAPI::get_forms( null ) as $f ) { $by_title[ $f['title'] ] = (int) $f['id']; }
+	$ids = [];
+	foreach ( $export['forms'] as $key => $form ) {
+		$title = $form['title'];
+		if ( isset( $by_title[ $title ] ) ) {
+			$ids[ $key ] = $by_title[ $title ];
+			echo "form {$key}: #{$ids[$key]} already present, left as-is\n";
+			continue;
+		}
+		unset( $form['id'] );
+		$id = GFAPI::add_form( $form );
+		if ( is_wp_error( $id ) ) {
+			echo "form {$key}: ERROR " . $id->get_error_message() . "\n";
+			$GLOBALS['w270_failed'] = true;
+			continue;
+		}
+		$ids[ $key ] = (int) $id;
+		echo "form {$key}: #{$id} created ({$title})\n";
+	}
+	update_option( 'w270_form_ids', $ids );
+}
+
+/** Replace __W270_FORM__:<key> markers with the Gravity Forms shortcode for that form. */
+function w270_form_shortcodes( $html ) {
+	return preg_replace_callback( '/__W270_FORM__:(\w+)/', function ( $m ) {
+		$ids = get_option( 'w270_form_ids', [] );
+		if ( empty( $ids[ $m[1] ] ) ) { throw new RuntimeException( "form not imported: {$m[1]} (is Gravity Forms active?)" ); }
+		return '[gravityform id="' . (int) $ids[ $m[1] ] . '" title="false" description="false" ajax="true"]';
 	}, $html );
 }
 
@@ -330,6 +387,7 @@ function w270_main( $argv ) {
 	foreach ( $argv as $a ) { if ( str_starts_with( $a, '--only=' ) ) { $only = substr( $a, 7 ); } }
 	$all = isset( $flags['all'] );
 	if ( $all || isset( $flags['media'] ) ) { function_exists( 'w270_import_media' ) && w270_import_media(); }
+	if ( $all || isset( $flags['forms'] ) ) { w270_import_forms(); }
 	if ( $all || isset( $flags['pages'] ) ) { function_exists( 'w270_import_pages' ) && w270_import_pages( $only ); }
 	if ( $all || isset( $flags['menus'] ) ) { w270_import_menus(); }
 	if ( $all || isset( $flags['resources'] ) ) { w270_import_resources(); }

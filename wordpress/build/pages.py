@@ -22,6 +22,15 @@ PAGES = [
     ('accessibility.html', 'accessibility', None),
 ]
 
+# Advertising landing pages. They carry their own header and footer instead of the site nav,
+# are noindex, and are deliberately not linked from any menu — traffic arrives from paid ads.
+# (source file, slug)
+LANDING_PAGES = [
+    ('lp-claims.html', 'vac-claim-help'),
+    ('lp-awareness.html', 'vac-benefits-simplified'),
+    ('lp-what-to-expect.html', 'what-to-expect'),
+]
+
 TITLE_SUFFIX = ' — 270 West Consulting'
 
 
@@ -30,6 +39,7 @@ def path_for(slug):
     if slug == 'home':
         return '/'
     parents = {s: p for _, s, p in PAGES}
+    parents.update({s: None for _, s in LANDING_PAGES})
     parts = []
     while slug:
         parts.append(slug)

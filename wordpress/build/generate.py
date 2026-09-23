@@ -3,6 +3,7 @@
 Usage: python3 generate.py [--only slug]   (run from wordpress/build)
 Writes out/<slug>.json for each page and ../theme/270west/assets/css/generated.css.
 """
+import html
 import json
 import os
 import re
@@ -10,7 +11,7 @@ import sys
 import uuid
 
 from htmldom import parse
-from pages import PAGES, LINK_MAP, TITLE_SUFFIX, path_for
+from pages import PAGES, LANDING_PAGES, LINK_MAP, TITLE_SUFFIX, path_for
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUT = os.path.join(os.path.dirname(__file__), 'out')
@@ -110,6 +111,7 @@ class Converter:
         self.styles = styles
         self.media = []
         self.warnings = []
+        self.forms = []
 
     # ── classification helpers ──
     def inline_only(self, node):
@@ -190,6 +192,38 @@ class Converter:
             '_css_classes': self.classes(node, 'w-image'),
         })
 
+    def form(self, node):
+        """The prototype's hand-built forms are mockups; WordPress renders the team's real Gravity
+        Form instead. The importer turns the marker into the shortcode once it knows the form id.
+        The reassurance line that sat beside the prototype's submit button is kept as a sibling,
+        because it is our copy rather than something the client maintains in the form builder."""
+        key = 'lead' if 'lp-form' in node.classes else 'contact'
+        self.forms.append(key)
+        form = self.widget('shortcode', {
+            'shortcode': f'__W270_FORM__:{key}',
+            '_css_classes': self.classes(node, 'w270-gf'),
+        })
+        note = self.form_note(node)
+        if not note:
+            return form
+        return {'id': new_id(), 'elType': 'container', 'isInner': True,
+                'settings': {'content_width': 'full', 'css_classes': 'w270-gf-wrap'},
+                'elements': [form, self.widget('text-editor', {
+                    'editor': f'<p>{note}</p>', '_css_classes': 'w-text w270-gf-note'})]}
+
+    def form_note(self, node):
+        """Text that followed the prototype's submit button, e.g. 'Confidential. We reply…'."""
+        buttons = [n for n in node.iter() if n.tag == 'button']
+        if not buttons:
+            return ''
+        last, after, seen = buttons[-1], [], False
+        for n in node.iter():
+            if n is last:
+                seen = True
+            elif seen and n.is_text and n not in last.iter():
+                after.append(n.text)
+        return html.unescape(' '.join(' '.join(after).split()))
+
     def html(self, node):
         attrs = dict(node.attrs)
         el_id = attrs.get('id')
@@ -236,6 +270,8 @@ class Converter:
             return self.heading(node)
         if tag == 'a' and set(node.classes) & BUTTON_CLASSES and self.inline_only(node):
             return self.button(node)
+        if tag == 'form':
+            return self.form(node)
         if tag in HTML_TAGS or 'data-photo' in node.attrs or node.attrs.get('id') in JS_WIDGET_IDS:
             return self.html(node)
         if set(node.classes) & RAW_HTML_CLASSES:
@@ -266,7 +302,7 @@ def convert_fragment(html_text, decor=None):
     return [conv.convert(n) for n in doc.root.elements()]
 
 
-def convert_page(src_file, slug, parent):
+def convert_page(src_file, slug, parent, landing=False):
     with open(os.path.join(ROOT, src_file), encoding='utf-8') as f:
         source = f.read()
     doc = parse(source)
@@ -276,8 +312,9 @@ def convert_page(src_file, slug, parent):
         decor.update(parse_decor(doc.inner_html(s)))
     conv = Converter(doc, decor)
     elements = []
+    skip = SKIP_TOP - {'header', 'footer'} if landing else SKIP_TOP
     for child in body.elements():
-        if child.tag in SKIP_TOP or (child.tag == 'nav' and 'mobile-nav' in child.classes):
+        if child.tag in skip or (child.tag == 'nav' and 'mobile-nav' in child.classes):
             continue
         elements.append(conv.convert_top(child))
     title = doc.title()
@@ -289,6 +326,7 @@ def convert_page(src_file, slug, parent):
         'path': path_for(slug),
         'title': title,
         'excerpt': doc.meta('description'),
+        'landing': landing,
         'page_settings': {'hide_title': 'yes'},
         'media': sorted(set(conv.media)),
         'elements': elements,
@@ -304,10 +342,10 @@ def _walk(elements):
 def main(argv):
     only = argv[argv.index('--only') + 1] if '--only' in argv else None
     os.makedirs(OUT, exist_ok=True)
-    for src, slug, parent in PAGES:
+    for src, slug, parent, landing in [(f, s, p, False) for f, s, p in PAGES] + [(f, s, None, True) for f, s in LANDING_PAGES]:
         if only and slug != only:
             continue
-        page, warnings = convert_page(src, slug, parent)
+        page, warnings = convert_page(src, slug, parent, landing)
         with open(os.path.join(OUT, f'{slug}.json'), 'w', encoding='utf-8') as f:
             json.dump(page, f, ensure_ascii=False, indent=1)
         n = sum(1 for _ in _walk(page['elements']))
