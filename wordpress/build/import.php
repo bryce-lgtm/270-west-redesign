@@ -273,6 +273,46 @@ function w270_import_forms() {
 		echo "form {$key}: #{$id} created ({$title})\n";
 	}
 	update_option( 'w270_form_ids', $ids );
+	w270_import_form_feeds();
+}
+
+/**
+ * Creates the Creatio webhook feeds transcribed from the production site. Like the forms
+ * themselves, an existing feed with the same name is left alone — the endpoint and the Creatio
+ * column mapping belong to the client, and a re-run must not overwrite a change they made.
+ */
+function w270_import_form_feeds() {
+	if ( ! class_exists( 'GFAPI' ) ) { return; }
+	$file = __DIR__ . '/gravity-forms-feeds.json';
+	if ( ! file_exists( $file ) ) { return; }
+	$export = json_decode( file_get_contents( $file ), true, 512, JSON_THROW_ON_ERROR );
+	$ids    = get_option( 'w270_form_ids', [] );
+	foreach ( $export['feeds'] as $key => $def ) {
+		if ( empty( $ids[ $key ] ) ) {
+			echo "feed {$key}: form not imported — skipped\n";
+			continue;
+		}
+		$form_id = (int) $ids[ $key ];
+		$addon   = $def['addon'];
+		if ( ! in_array( $addon, array_map( fn( $a ) => $a->get_slug(), GFAddOn::get_registered_addons( true ) ), true ) ) {
+			echo "feed {$key}: {$addon} not active — skipped\n";
+			$GLOBALS['w270_failed'] = true;
+			continue;
+		}
+		foreach ( GFAPI::get_feeds( null, $form_id, $addon, null ) ?: [] as $existing ) {
+			if ( rgars( $existing, 'meta/feedName' ) === $def['meta']['feedName'] ) {
+				echo "feed {$key}: #{$existing['id']} already present, left as-is\n";
+				continue 2;
+			}
+		}
+		$id = GFAPI::add_feed( $form_id, $def['meta'], $addon );
+		if ( is_wp_error( $id ) ) {
+			echo "feed {$key}: ERROR " . $id->get_error_message() . "\n";
+			$GLOBALS['w270_failed'] = true;
+			continue;
+		}
+		echo "feed {$key}: #{$id} created ({$def['meta']['feedName']} -> " . wp_parse_url( $def['meta']['requestURL'], PHP_URL_HOST ) . ")\n";
+	}
 }
 
 /** Replace __W270_FORM__:<key> markers with the Gravity Forms shortcode for that form. */
