@@ -400,13 +400,13 @@ function w270_import_resources() {
 			if ( isset( $r['read_time'] ) ) { update_post_meta( $pid, 'read_time', (int) $r['read_time'] ); }
 			update_post_meta( $pid, 'featured', empty( $r['featured'] ) ? 0 : 1 );
 			update_post_meta( $pid, 'seo_h1', $r['seo_h1'] ?? '' );
-			if ( 'guide' === $r['type'] ) {
+			if ( 'guides' === $subtype ) {
 				update_post_meta( $pid, 'show_toc', 1 );
 				if ( $is_article ) {
 					update_post_meta( $pid, 'callout', [ 'label' => $article['callout_label'], 'text' => $article['callout_text'] ] );
 				}
 			}
-			if ( 'checklist' === $r['type'] && ! empty( $r['items'] ) ) {
+			if ( 'checklists' === $subtype && ! empty( $r['items'] ) ) {
 				update_post_meta( $pid, 'items', array_map( fn( $i ) => [ 'item' => $i, 'note' => '' ], $r['items'] ) );
 			}
 			if ( $acf ) {
@@ -414,13 +414,13 @@ function w270_import_resources() {
 				if ( isset( $r['read_time'] ) ) { update_field( 'field_270w_read_time', (int) $r['read_time'], $pid ); }
 				update_field( 'field_270w_featured', empty( $r['featured'] ) ? 0 : 1, $pid );
 				update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $pid );
-				if ( 'guide' === $r['type'] ) {
+				if ( 'guides' === $subtype ) {
 					update_field( 'field_270w_show_toc', 1, $pid );
 					if ( $is_article ) {
 						update_field( 'field_270w_callout', [ 'field_270w_callout_label' => $article['callout_label'], 'field_270w_callout_text' => $article['callout_text'] ], $pid );
 					}
 				}
-				if ( 'checklist' === $r['type'] && ! empty( $r['items'] ) ) {
+				if ( 'checklists' === $subtype && ! empty( $r['items'] ) ) {
 					update_field( 'field_270w_items', array_map( fn( $i ) => [ 'field_270w_item' => $i, 'field_270w_item_note' => '' ], $r['items'] ), $pid );
 				}
 			}
