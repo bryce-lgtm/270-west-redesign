@@ -193,8 +193,8 @@ function initQuiz(containerId) {
     if (step === 0) {
       body = `
         <div class="quiz-step-label">Step 01 · Intake</div>
-        <div class="quiz-h3">See where you stand with&nbsp;VAC.</div>
-        <div class="quiz-lead">Five quick questions about your service and your history with VAC. About two minutes, confidential, no obligation. We'll come back with a clear next step.</div>
+        <div class="quiz-h3">Where are you in your VAC benefits process?</div>
+        <div class="quiz-lead">Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We'll get back to you with a clear next step.</div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <button class="quiz-start-btn" onclick="quizGo(1)">Start now →</button>
           <div class="quiz-badges"><span>● 2 MIN</span><span>● CONFIDENTIAL</span><span>● NO COST</span></div>
