@@ -371,20 +371,33 @@ function w270_import_resources() {
 				'order'       => 'ASC',
 			] );
 			$existing   = $found ? $found[0] : null;
+			if ( $existing ) {
+				// Seed-once: resource content belongs to wp-admin from here on, so a re-run
+				// must not overwrite an edit or resurrect a field value someone cleared.
+				$ids[ $r['slug'] ] = $existing->ID;
+				echo "resource {$r['slug']}: #{$existing->ID} already present, left as-is\n";
+				continue;
+			}
 			$post = [
 				'post_type' => 'resource', 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
 				'post_excerpt' => $summary, 'menu_order' => (int) $r['order'],
 				'post_content' => $is_article ? w270_media_urls( $article['content'] ) : '<p>Content coming soon.</p>',
 			];
-			$pid = $existing ? wp_update_post( $post + [ 'ID' => $existing->ID ], true ) : wp_insert_post( $post, true );
+			// News entries carry their own publication date; everything else uses "now".
+			if ( ! empty( $r['date'] ) ) { $post['post_date'] = $r['date'] . ' 09:00:00'; }
+			$pid = wp_insert_post( $post, true );
 			if ( is_wp_error( $pid ) ) { throw new RuntimeException( $pid->get_error_message() ); }
-			wp_set_object_terms( $pid, [ $topics[ $r['topic'] ] ], 'resource_topic' );
 			wp_set_object_terms( $pid, $subtype, 'resource_type', false );
+			if ( ! empty( $r['topic'] ) ) { wp_set_object_terms( $pid, [ $topics[ $r['topic'] ] ], 'resource_topic' ); }
+			if ( ! empty( $r['news_category'] ) ) { wp_set_object_terms( $pid, $r['news_category'], 'news_category', false ); }
+			foreach ( [ 'pull_quote', 'veteran_name', 'veteran_role', 'duration', 'story_number', 'external_link' ] as $k ) {
+				if ( isset( $r[ $k ] ) ) { update_post_meta( $pid, $k, $r[ $k ] ); }
+			}
 			if ( ! empty( $r['image'] ) && ( $mid = w270_media_id( $r['image'] ) ) ) { set_post_thumbnail( $pid, $mid ); }
 			// Plain post meta first so the theme renders without ACF; update_field() below
 			// overwrites these with ACF's own values (same meta keys) when the plugin is present.
 			update_post_meta( $pid, 'summary', $summary );
-			update_post_meta( $pid, 'read_time', (int) $r['read_time'] );
+			if ( isset( $r['read_time'] ) ) { update_post_meta( $pid, 'read_time', (int) $r['read_time'] ); }
 			update_post_meta( $pid, 'featured', empty( $r['featured'] ) ? 0 : 1 );
 			update_post_meta( $pid, 'seo_h1', $r['seo_h1'] ?? '' );
 			if ( 'guide' === $r['type'] ) {
@@ -398,7 +411,7 @@ function w270_import_resources() {
 			}
 			if ( $acf ) {
 				update_field( 'field_270w_summary', $summary, $pid );
-				update_field( 'field_270w_read_time', (int) $r['read_time'], $pid );
+				if ( isset( $r['read_time'] ) ) { update_field( 'field_270w_read_time', (int) $r['read_time'], $pid ); }
 				update_field( 'field_270w_featured', empty( $r['featured'] ) ? 0 : 1, $pid );
 				update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $pid );
 				if ( 'guide' === $r['type'] ) {
