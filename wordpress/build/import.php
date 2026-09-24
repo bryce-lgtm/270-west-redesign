@@ -3,6 +3,7 @@
  * 270 West importer. Usage:
  *   "$PHP" -c "$INI" wordpress/build/import.php --all
  *   "$PHP" -c "$INI" wordpress/build/import.php --pages --only=home
+ *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-resources=slug-a,slug-b   # re-seed named resources
  */
 if ( PHP_SAPI !== 'cli' ) { http_response_code( 403 ); exit; } // never runnable over HTTP
 $site = getenv( 'W270_SITE' ) ?: '/Users/Bryce/Local Sites/270-west/app/public';
@@ -68,7 +69,7 @@ function w270_menu_defs() {
 			[ 'Services', 'services' ], [ 'How It Works', 'how-it-works' ], [ 'About', 'about' ], [ 'Resources', 'resources' ], [ 'Contact', 'contact' ],
 		] ],
 		'Footer Services' => [ 'location' => 'footer-services', 'items' => [
-			[ 'Appeals', 'appeals' ], [ 'Claims', 'claims' ], [ 'Reassessments', 'reassessment' ], [ 'Support', 'support' ],
+			[ 'VAC appeals', 'appeals' ], [ 'VAC claims', 'claims' ], [ 'VAC reassessments', 'reassessment' ], [ 'Support', 'support' ],
 		] ],
 	];
 }
@@ -334,7 +335,7 @@ function w270_form_shortcodes( $html ) {
 	}, $html );
 }
 
-function w270_import_resources() {
+function w270_import_resources( array $refresh = [] ) {
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	$plugin = '270west-content/270west-content.php';
 	if ( ! is_plugin_active( $plugin ) ) {
@@ -381,6 +382,32 @@ function w270_import_resources() {
 				'order'       => 'ASC',
 			] );
 			$existing   = $found ? $found[0] : null;
+			// Body copy: the prototype article for the one seeded from it, a file under build/content/
+			// when the seed names one, otherwise a placeholder the editor replaces in wp-admin.
+			if ( $is_article ) {
+				$content = w270_media_urls( $article['content'] );
+			} elseif ( ! empty( $r['content'] ) ) {
+				$content = w270_media_urls( file_get_contents( __DIR__ . '/content/' . $r['content'] ) );
+			} else {
+				$content = '<p>Content coming soon.</p>';
+			}
+			if ( $existing && in_array( $r['slug'], $refresh, true ) ) {
+				// --refresh-resources=<slug>: an explicit request to re-seed copy from the repo.
+				// Only what the seed defines is rewritten; taxonomy, image and other fields stay.
+				$ids[ $r['slug'] ] = $existing->ID;
+				$u = wp_update_post( [ 'ID' => $existing->ID, 'post_title' => $r['title'], 'post_excerpt' => $summary, 'post_content' => $content ], true );
+				if ( is_wp_error( $u ) ) { throw new RuntimeException( $u->get_error_message() ); }
+				update_post_meta( $existing->ID, 'summary', $summary );
+				update_post_meta( $existing->ID, 'seo_h1', $r['seo_h1'] ?? '' );
+				if ( isset( $r['read_time'] ) ) { update_post_meta( $existing->ID, 'read_time', (int) $r['read_time'] ); }
+				if ( $acf ) {
+					update_field( 'field_270w_summary', $summary, $existing->ID );
+					update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $existing->ID );
+					if ( isset( $r['read_time'] ) ) { update_field( 'field_270w_read_time', (int) $r['read_time'], $existing->ID ); }
+				}
+				echo "resource {$r['slug']}: #{$existing->ID} refreshed from the seed\n";
+				continue;
+			}
 			if ( $existing ) {
 				// Seed-once: resource content belongs to wp-admin from here on, so a re-run
 				// must not overwrite an edit or resurrect a field value someone cleared.
@@ -391,7 +418,7 @@ function w270_import_resources() {
 			$post = [
 				'post_type' => 'resource', 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
 				'post_excerpt' => $summary, 'menu_order' => (int) $r['order'],
-				'post_content' => $is_article ? w270_media_urls( $article['content'] ) : '<p>Content coming soon.</p>',
+				'post_content' => $content,
 			];
 			// News entries carry their own publication date; everything else uses "now".
 			if ( ! empty( $r['date'] ) ) { $post['post_date'] = $r['date'] . ' 09:00:00'; }
@@ -534,13 +561,17 @@ function w270_import_resources() {
 function w270_main( $argv ) {
 	$flags = array_fill_keys( array_map( fn( $a ) => explode( '=', ltrim( $a, '-' ) )[0], array_slice( $argv, 1 ) ), true );
 	$only  = null;
-	foreach ( $argv as $a ) { if ( str_starts_with( $a, '--only=' ) ) { $only = substr( $a, 7 ); } }
+	$refresh = [];
+	foreach ( $argv as $a ) {
+		if ( str_starts_with( $a, '--only=' ) ) { $only = substr( $a, 7 ); }
+		if ( str_starts_with( $a, '--refresh-resources=' ) ) { $refresh = array_filter( explode( ',', substr( $a, 20 ) ) ); }
+	}
 	$all = isset( $flags['all'] );
 	if ( $all || isset( $flags['media'] ) ) { function_exists( 'w270_import_media' ) && w270_import_media(); }
 	if ( $all || isset( $flags['forms'] ) ) { w270_import_forms(); }
 	if ( $all || isset( $flags['pages'] ) ) { function_exists( 'w270_import_pages' ) && w270_import_pages( $only ); }
 	if ( $all || isset( $flags['menus'] ) ) { w270_import_menus(); }
-	if ( $all || isset( $flags['resources'] ) ) { w270_import_resources(); }
+	if ( $all || isset( $flags['resources'] ) || $refresh ) { w270_import_resources( $refresh ); }
 	if ( $all || isset( $flags['kit'] ) ) { function_exists( 'w270_import_kit' ) && w270_import_kit(); }
 	if ( $all || isset( $flags['settings'] ) ) { w270_import_settings(); }
 	if ( class_exists( '\Elementor\Plugin' ) ) { \Elementor\Plugin::$instance->files_manager->clear_cache(); }
