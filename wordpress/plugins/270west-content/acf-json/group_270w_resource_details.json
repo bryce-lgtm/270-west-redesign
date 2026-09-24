@@ -1,13 +1,73 @@
 {
-  "key": "group_270w_resource_details",
-  "title": "Resource details",
-  "fields": [
-    { "key": "field_270w_summary", "label": "Summary", "name": "summary", "type": "textarea", "required": 1, "rows": 3, "new_lines": "", "instructions": "One or two sentences. Shown on cards and as the intro paragraph of the article." },
-    { "key": "field_270w_read_time", "label": "Read time (minutes)", "name": "read_time", "type": "number", "min": 1, "step": 1, "default_value": 5 },
-    { "key": "field_270w_featured", "label": "Featured", "name": "featured", "type": "true_false", "ui": 1, "message": "Show in “Start here” on the Resources page" },
-    { "key": "field_270w_related", "label": "Related resources", "name": "related_resources", "type": "relationship", "post_type": ["resource"], "filters": ["search", "post_type"], "max": 4, "return_format": "id", "instructions": "Up to four. Leave empty to show the newest resources in the same topic." },
-    { "key": "field_270w_seo_h1", "label": "SEO H1", "name": "seo_h1", "type": "text", "instructions": "Keyword-led heading. When set it becomes the H1 and the post title renders as the H2 beneath it." }
-  ],
-  "location": [[{"param": "post_type", "operator": "==", "value": "resource"}]],
-  "menu_order": 0, "position": "normal", "style": "default", "label_placement": "top", "instruction_placement": "label", "active": true, "show_in_rest": 0
+    "key": "group_270w_resource_details",
+    "title": "Resource details",
+    "fields": [
+        {
+            "key": "field_270w_summary",
+            "label": "Summary",
+            "name": "summary",
+            "type": "textarea",
+            "required": 1,
+            "rows": 3,
+            "new_lines": "",
+            "instructions": "One or two sentences. Shown on cards and as the intro paragraph of the article."
+        },
+        {
+            "key": "field_270w_read_time",
+            "label": "Read time (minutes)",
+            "name": "read_time",
+            "type": "number",
+            "min": 1,
+            "step": 1,
+            "default_value": 5
+        },
+        {
+            "key": "field_270w_featured",
+            "label": "Featured",
+            "name": "featured",
+            "type": "true_false",
+            "ui": 1,
+            "message": "Show in “Start here” on the Resources page"
+        },
+        {
+            "key": "field_270w_related",
+            "label": "Related resources",
+            "name": "related_resources",
+            "type": "relationship",
+            "post_type": [
+                "resource"
+            ],
+            "filters": [
+                "search",
+                "post_type",
+                "taxonomy"
+            ],
+            "max": 4,
+            "return_format": "id",
+            "instructions": "Up to four. Leave empty to show the newest resources in the same topic."
+        },
+        {
+            "key": "field_270w_seo_h1",
+            "label": "SEO H1",
+            "name": "seo_h1",
+            "type": "text",
+            "instructions": "Keyword-led heading. When set it becomes the H1 and the post title renders as the H2 beneath it."
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "resource"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true,
+    "show_in_rest": 0
 }
