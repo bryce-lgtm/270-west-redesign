@@ -1,6 +1,7 @@
 # Unified Resource post type — design
 
 **Date:** 2026-09-24
+**Status:** Implemented 2026-09-24 (plan `2026-09-24-unified-resource-post-type.md`, Tasks 1–11) and verified on SiteGround: one `resource` type, 5 sub-types, 3 taxonomies, all 22 permalinks preserved, the three archives template-driven.
 **Supersedes parts of:** `2026-09-15-resource-post-types-design.md`
 
 ## Problem
