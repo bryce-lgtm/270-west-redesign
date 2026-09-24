@@ -35,6 +35,15 @@ function w270_landing_slugs() {
 	return [ 'vac-claim-help', 'vac-benefits-simplified', 'what-to-expect' ];
 }
 
+/**
+ * The three resource archives. They stay in w270_page_paths() so menus and slug lookups resolve,
+ * but they are template-driven pages created by w270_import_resources(), not generated from
+ * pages.py, so the page importer has no JSON for them and must skip them.
+ */
+function w270_archive_slugs() {
+	return [ 'stories', 'guides', 'news' ];
+}
+
 function w270_page_by_slug( $slug ) {
 	$paths = w270_page_paths();
 	$path  = trim( $paths[ $slug ] ?? $slug, '/' ) ?: 'home';
@@ -162,6 +171,7 @@ function w270_import_pages( $only = null ) {
 	$assets = get_stylesheet_directory_uri() . '/assets';
 	foreach ( array_keys( w270_page_paths() ) as $slug ) {
 		if ( $only && $only !== $slug ) { continue; }
+		if ( in_array( $slug, w270_archive_slugs(), true ) ) { continue; }
 		try {
 			$file = W270_OUT . "/{$slug}.json";
 			if ( ! file_exists( $file ) ) { throw new RuntimeException( "missing {$file} (run generate.py)" ); }
