@@ -216,7 +216,7 @@ printf '<?php\nif ( ! defined( "ABSPATH" ) ) { exit; }\n' > wordpress/plugins/27
 
 Expected: `OK   resource model: 1 post type, 5 sub-types, 3 taxonomies`.
 
-The 15 existing posts will now be invisible (their post type no longer exists) — that is expected and Task 3 fixes it. Other FAIL lines about resource permalinks are expected at this point.
+The 15 existing posts will now be invisible (their post type no longer exists) — that is expected and Task 2 fixes it. Other FAIL lines about resource permalinks are expected at this point.
 
 - [ ] **Step 6: Commit**
 
@@ -227,105 +227,11 @@ git commit -m "Resources: one post type with a resource_type sub-type taxonomy"
 
 ---
 
-## Task 2: Preserve every existing permalink
-
-**Files:**
-- Modify: `wordpress/plugins/270west-content/inc/permalinks.php`
-- Test: `wordpress/build/render-check.php`
-
-- [ ] **Step 1: Add the failing assertion**
-
-Add to `render-check.php`, after the resource-model block:
-
-```php
-// Permalinks: every sub-type keeps its /resources/<subtype>/<slug>/ shape and resolves.
-try {
-	$seen = [];
-	foreach ( get_posts( [ 'post_type' => 'resource', 'numberposts' => -1, 'post_status' => 'publish' ] ) as $p ) {
-		$terms = get_the_terms( $p, 'resource_type' );
-		$sub   = ( $terms && ! is_wp_error( $terms ) ) ? $terms[0]->slug : '(none)';
-		$path  = parse_url( get_permalink( $p ), PHP_URL_PATH );
-		$want  = "/resources/{$sub}/{$p->post_name}/";
-		if ( $path !== $want ) { throw new RuntimeException( "{$p->post_name}: {$path} != {$want}" ); }
-		if ( url_to_postid( get_permalink( $p ) ) !== $p->ID ) { throw new RuntimeException( "{$p->post_name}: permalink does not resolve" ); }
-		$seen[ $sub ] = ( $seen[ $sub ] ?? 0 ) + 1;
-	}
-	ksort( $seen );
-	$summary = implode( ', ', array_map( fn( $k, $v ) => "{$k}={$v}", array_keys( $seen ), $seen ) );
-	echo "OK   resource permalinks: {$summary}\n";
-} catch ( Throwable $e ) {
-	$fail = true;
-	printf( "FAIL resource permalinks: %s\n", $e->getMessage() );
-}
-```
-
-- [ ] **Step 2: Run it and watch it fail**
-
-```bash
-./wordpress/build/deploy-siteground.sh
-```
-
-Expected: `FAIL resource permalinks: …` (no posts yet, or a path mismatch).
-
-- [ ] **Step 3: Implement permalinks.php**
-
-Replace the stub with:
-
-```php
-<?php
-/**
- * Permalinks for the resource post type: /resources/<subtype>/<slug>/.
- *
- * Explicit rules rather than a %resource_type% tag in the rewrite slug. The tag approach makes
- * WP add a taxonomy query var to the single-post rule, which 404s whenever the term in the URL
- * and the term on the post disagree. These rules match on a fixed alternation instead, and the
- * second path segment keeps them clear of the archive pages at /resources/<subtype>/.
- */
-if ( ! defined( 'ABSPATH' ) ) { exit; }
-
-function w270c_permalink_rules() {
-	$subtypes = implode( '|', array_map( 'preg_quote', w270c_subtype_slugs() ) );
-	add_rewrite_rule(
-		'^resources/(' . $subtypes . ')/([^/]+)/?$',
-		'index.php?post_type=resource&name=$matches[2]',
-		'top'
-	);
-}
-add_action( 'init', 'w270c_permalink_rules', 20 );
-
-/** Builds the public URL from the post's sub-type term. */
-add_filter( 'post_type_link', function ( $link, $post ) {
-	if ( 'resource' !== $post->post_type ) { return $link; }
-	$terms = get_the_terms( $post, 'resource_type' );
-	$term  = ( $terms && ! is_wp_error( $terms ) ) ? $terms[0] : null;
-	// A post with no Type term still needs a valid URL; guides is the largest sub-type.
-	$sub = $term ? $term->slug : 'guides';
-	return home_url( user_trailingslashit( "resources/{$sub}/{$post->post_name}" ) );
-}, 10, 2 );
-```
-
-- [ ] **Step 4: Run and watch it pass**
-
-```bash
-./wordpress/build/deploy-siteground.sh
-```
-
-Expected: `OK   resource permalinks: …`. If it still fails with "permalink does not resolve", the rewrite rules are stale — `flush_rewrite_rules()` already runs at the end of `w270_import_resources()`.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add wordpress/plugins/270west-content/inc/permalinks.php wordpress/build/render-check.php
-git commit -m "Resources: explicit rewrite rules keep every existing resource URL"
-```
-
----
-
-## Task 3: Migrate the 15 existing posts in place
+## Task 2: Migrate the 15 existing posts in place
 
 **Files:**
 - Modify: `wordpress/plugins/270west-content/inc/migrate.php`
-- Test: `wordpress/build/render-check.php` (the Task 2 assertion already covers the result)
+- Test: `wordpress/build/render-check.php` (Task 3 adds the assertion that proves the URLs)
 
 - [ ] **Step 1: Implement the migration**
 
@@ -378,8 +284,10 @@ In `wordpress/build/import.php`, inside `w270_import_resources()`, immediately a
 ./wordpress/build/deploy-siteground.sh
 ```
 
-Expected on the first run: `migrated 15 legacy resource(s) to the resource post type`, then
-`OK   resource permalinks: checklists=2, explainers=7, guides=6`.
+Expected on the first run: `migrated 15 legacy resource(s) to the resource post type`.
+
+The posts now exist on the `resource` type but their URLs are still wrong — `rewrite` is false
+and nothing builds them yet. That is deliberate: Task 3 adds the assertion that catches it.
 
 - [ ] **Step 4: Deploy again to prove idempotence**
 
@@ -387,7 +295,7 @@ Expected on the first run: `migrated 15 legacy resource(s) to the resource post 
 ./wordpress/build/deploy-siteground.sh
 ```
 
-Expected: no `migrated …` line, and the same `OK   resource permalinks:` counts.
+Expected: no `migrated …` line — the second run finds no legacy rows.
 
 - [ ] **Step 5: Confirm ACF values and related links survived**
 
@@ -409,6 +317,106 @@ Expected: `read_time=18 callout=yes related=3 topic=VAC eligibility & programs`.
 ```bash
 git add wordpress/plugins/270west-content/inc/migrate.php wordpress/build/import.php
 git commit -m "Resources: migrate the legacy post types in place, preserving IDs"
+```
+
+---
+
+## Task 3: Preserve every existing permalink
+
+**Files:**
+- Modify: `wordpress/plugins/270west-content/inc/permalinks.php`
+- Test: `wordpress/build/render-check.php`
+
+- [ ] **Step 1: Add the failing assertion**
+
+Add to `render-check.php`, after the resource-model block:
+
+```php
+// Permalinks: every sub-type keeps its /resources/<subtype>/<slug>/ shape and resolves.
+try {
+	$seen = [];
+	foreach ( get_posts( [ 'post_type' => 'resource', 'numberposts' => -1, 'post_status' => 'publish' ] ) as $p ) {
+		$terms = get_the_terms( $p, 'resource_type' );
+		$sub   = ( $terms && ! is_wp_error( $terms ) ) ? $terms[0]->slug : '(none)';
+		$path  = parse_url( get_permalink( $p ), PHP_URL_PATH );
+		$want  = "/resources/{$sub}/{$p->post_name}/";
+		if ( $path !== $want ) { throw new RuntimeException( "{$p->post_name}: {$path} != {$want}" ); }
+		if ( url_to_postid( get_permalink( $p ) ) !== $p->ID ) { throw new RuntimeException( "{$p->post_name}: permalink does not resolve" ); }
+		$seen[ $sub ] = ( $seen[ $sub ] ?? 0 ) + 1;
+	}
+	if ( ! $seen ) { throw new RuntimeException( 'no published resources found' ); }
+	ksort( $seen );
+	$summary = implode( ', ', array_map( fn( $k, $v ) => "{$k}={$v}", array_keys( $seen ), $seen ) );
+	echo "OK   resource permalinks: {$summary}\n";
+} catch ( Throwable $e ) {
+	$fail = true;
+	printf( "FAIL resource permalinks: %s\n", $e->getMessage() );
+}
+```
+
+- [ ] **Step 2: Run it and watch it fail**
+
+```bash
+./wordpress/build/deploy-siteground.sh
+```
+
+Expected: `FAIL resource permalinks: <slug>: / != /resources/guides/<slug>/` — the 15 posts
+migrated in Task 2 exist, but nothing builds their URLs yet.
+
+The `if ( ! $seen )` guard matters: without it this assertion passes vacuously whenever the
+query returns nothing, which is exactly the blind spot that let Task 1 report green while all
+15 resources were orphaned.
+
+- [ ] **Step 3: Implement permalinks.php**
+
+Replace the stub with:
+
+```php
+<?php
+/**
+ * Permalinks for the resource post type: /resources/<subtype>/<slug>/.
+ *
+ * Explicit rules rather than a %resource_type% tag in the rewrite slug. The tag approach makes
+ * WP add a taxonomy query var to the single-post rule, which 404s whenever the term in the URL
+ * and the term on the post disagree. These rules match on a fixed alternation instead, and the
+ * second path segment keeps them clear of the archive pages at /resources/<subtype>/.
+ */
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+function w270c_permalink_rules() {
+	$subtypes = implode( '|', array_map( 'preg_quote', w270c_subtype_slugs() ) );
+	add_rewrite_rule(
+		'^resources/(' . $subtypes . ')/([^/]+)/?$',
+		'index.php?post_type=resource&name=$matches[2]',
+		'top'
+	);
+}
+add_action( 'init', 'w270c_permalink_rules', 20 );
+
+/** Builds the public URL from the post's sub-type term. */
+add_filter( 'post_type_link', function ( $link, $post ) {
+	if ( 'resource' !== $post->post_type ) { return $link; }
+	$terms = get_the_terms( $post, 'resource_type' );
+	$term  = ( $terms && ! is_wp_error( $terms ) ) ? $terms[0] : null;
+	// A post with no Type term still needs a valid URL; guides is the largest sub-type.
+	$sub = $term ? $term->slug : 'guides';
+	return home_url( user_trailingslashit( "resources/{$sub}/{$post->post_name}" ) );
+}, 10, 2 );
+```
+
+- [ ] **Step 4: Run and watch it pass**
+
+```bash
+./wordpress/build/deploy-siteground.sh
+```
+
+Expected: `OK   resource permalinks: …`. If it still fails with "permalink does not resolve", the rewrite rules are stale — `flush_rewrite_rules()` already runs at the end of `w270_import_resources()`.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add wordpress/plugins/270west-content/inc/permalinks.php wordpress/build/render-check.php
+git commit -m "Resources: explicit rewrite rules keep every existing resource URL"
 ```
 
 ---
@@ -1477,7 +1485,7 @@ git push
 
 ## Notes and known risks
 
-- **Old resource URLs are unchanged**, so no redirects are needed. If Task 2's assertion ever
+- **Old resource URLs are unchanged**, so no redirects are needed. If Task 3's assertion ever
   reports a path mismatch, the cause is a post with no Type term — the filter falls back to
   `guides`, which is a valid URL but the wrong one. Assign the term rather than changing the fallback.
 - **Story card CSS already exists** in `css/styles.css` (`.story-card*`), as does `.news-entry*`
