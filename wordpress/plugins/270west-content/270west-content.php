@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: 270 West Content
- * Description: Resource post types (Guides, Checklists, Explainers), the Topic taxonomy and their ACF field groups.
+ * Description: The Resource post type, its Type/Topic/News category taxonomies and their ACF field groups.
  * Version: 1.0.0
  * Author: 270 West Consulting
  * Text Domain: 270west
@@ -26,7 +26,10 @@ const W270C_SUBTYPES = [
 
 const W270C_NEWS_CATEGORIES = [ 'Campaign', 'Community', 'Sponsorship', 'New guide', 'Team' ];
 
-/** The single post type. Kept as a function so callers never hard-code the string. */
+const W270C_TERMS_VERSION = 1;
+
+/** The single post type slug. w270c_register() owns the literal; every other caller
+ *  should go through this helper instead of repeating the string. */
 function w270c_types() {
 	return [ 'resource' ];
 }
@@ -79,7 +82,13 @@ function w270c_register() {
 		'rewrite'           => false,
 	] );
 
-	w270c_seed_terms();
+	// Seeding is a one-off, but must re-run whenever the fixed term set changes. Bump
+	// W270C_TERMS_VERSION to trigger it; an unconditional call would cost a term lookup on
+	// every front-end request forever.
+	if ( (int) get_option( 'w270c_terms_version' ) !== W270C_TERMS_VERSION ) {
+		w270c_seed_terms();
+		update_option( 'w270c_terms_version', W270C_TERMS_VERSION );
+	}
 }
 add_action( 'init', 'w270c_register' );
 
@@ -87,12 +96,14 @@ add_action( 'init', 'w270c_register' );
 function w270c_seed_terms() {
 	foreach ( W270C_SUBTYPES as $slug => [ $singular, $plural ] ) {
 		if ( ! term_exists( $slug, 'resource_type' ) ) {
-			wp_insert_term( $singular, 'resource_type', [ 'slug' => $slug ] );
+			$r = wp_insert_term( $singular, 'resource_type', [ 'slug' => $slug ] );
+			if ( is_wp_error( $r ) ) { error_log( "w270c_seed_terms: resource_type {$slug}: " . $r->get_error_message() ); }
 		}
 	}
 	foreach ( W270C_NEWS_CATEGORIES as $name ) {
-		if ( ! term_exists( $name, 'news_category' ) ) {
-			wp_insert_term( $name, 'news_category' );
+		if ( ! term_exists( sanitize_title( $name ), 'news_category' ) ) {
+			$r = wp_insert_term( $name, 'news_category', [ 'slug' => sanitize_title( $name ) ] );
+			if ( is_wp_error( $r ) ) { error_log( "w270c_seed_terms: news_category {$name}: " . $r->get_error_message() ); }
 		}
 	}
 }
