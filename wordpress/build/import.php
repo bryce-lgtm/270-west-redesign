@@ -332,6 +332,10 @@ function w270_import_resources() {
 		if ( is_wp_error( $r ) ) { echo "resources: cannot activate plugin: " . $r->get_error_message() . "\n"; $GLOBALS['w270_failed'] = true; return; }
 		echo "plugin 270west-content: activated\n";
 	}
+	if ( function_exists( 'w270c_migrate_legacy_resources' ) ) {
+		$moved = w270c_migrate_legacy_resources();
+		if ( $moved ) { echo "migrated {$moved} legacy resource(s) to the resource post type\n"; }
+	}
 	$acf = function_exists( 'update_field' );
 	if ( ! $acf ) { echo "acf: missing — fields skipped (install ACF Pro and re-run --resources)\n"; }
 	$seed    = json_decode( file_get_contents( __DIR__ . '/seed-resources.json' ), true, 512, JSON_THROW_ON_ERROR );

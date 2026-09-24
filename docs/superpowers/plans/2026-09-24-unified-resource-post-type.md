@@ -278,7 +278,49 @@ In `wordpress/build/import.php`, inside `w270_import_resources()`, immediately a
 	}
 ```
 
-- [ ] **Step 3: Deploy and confirm the migration reports 15**
+- [ ] **Step 3: Teach the importer to resolve by `resource` + sub-type term**
+
+Migrating the rows and fixing the importer's type resolution are inseparable. The moment a row
+becomes a `resource`, the importer's existing lookup — `get_page_by_path( $r['slug'], OBJECT,
+$r['type'] )` with `$r['type']` still `'guide'` — stops finding it and inserts a fresh duplicate
+on the legacy type, which the next deploy migrates, which the next deploy duplicates again. It
+is a self-perpetuating loop, not a one-off, and it is how 30 junk rows appeared on staging the
+first time this task was attempted. Fix both together.
+
+In `w270_import_resources()`, replace:
+
+```php
+			$existing   = get_page_by_path( $r['slug'], OBJECT, $r['type'] );
+			$post = [
+				'post_type' => $r['type'], 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
+```
+
+with:
+
+```php
+			// The seed's "type" is the sub-type, not a WP post type. Accept both the legacy
+			// singular names and the plural term slugs the seed moves to in Task 6.
+			$subtype    = W270C_LEGACY_SUBTYPES[ $r['type'] ] ?? $r['type'];
+			$existing   = get_page_by_path( $r['slug'], OBJECT, 'resource' );
+			$post = [
+				'post_type' => 'resource', 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
+```
+
+and immediately after the existing `wp_set_object_terms( $pid, [ $topics[ $r['topic'] ] ], 'resource_topic' );` line, add:
+
+```php
+			wp_set_object_terms( $pid, $subtype, 'resource_type', false );
+```
+
+Add the map to `wordpress/plugins/270west-content/270west-content.php`, beside `W270C_SUBTYPES`:
+
+```php
+/** Legacy post-type name => sub-type term slug. Lets the importer read a seed file written
+ *  before the types were unified; harmless once the seed uses term slugs directly. */
+const W270C_LEGACY_SUBTYPES = [ 'guide' => 'guides', 'checklist' => 'checklists', 'explainer' => 'explainers' ];
+```
+
+- [ ] **Step 4: Deploy and confirm the migration reports 15**
 
 ```bash
 ./wordpress/build/deploy-siteground.sh
@@ -289,15 +331,22 @@ Expected on the first run: `migrated 15 legacy resource(s) to the resource post 
 The posts now exist on the `resource` type but their URLs are still wrong — `rewrite` is false
 and nothing builds them yet. That is deliberate: Task 3 adds the assertion that catches it.
 
-- [ ] **Step 4: Deploy again to prove idempotence**
+- [ ] **Step 5: Deploy again to prove idempotence**
 
 ```bash
 ./wordpress/build/deploy-siteground.sh
 ```
 
-Expected: no `migrated …` line — the second run finds no legacy rows.
+Expected: no `migrated …` line, **and still exactly 15 published resources**. Verify:
 
-- [ ] **Step 5: Confirm ACF values and related links survived**
+```bash
+ssh -p 18765 u3253-6bupzx4ihm7m@giowm1228.siteground.biz "cd /home/customer/www/brycec57.sg-host.com/public_html && wp post list --post_type=resource --post_status=publish --format=count"
+```
+
+Anything above 15 means the importer is still duplicating — stop and report rather than
+deploying a third time.
+
+- [ ] **Step 6: Confirm ACF values and related links survived**
 
 ```bash
 ssh -p 18765 u3253-6bupzx4ihm7m@giowm1228.siteground.biz "cd /home/customer/www/brycec57.sg-host.com/public_html && wp eval '
@@ -312,10 +361,10 @@ printf(\"read_time=%s callout=%s related=%d topic=%s\n\",
 
 Expected: `read_time=18 callout=yes related=3 topic=VAC eligibility & programs`.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
-git add wordpress/plugins/270west-content/inc/migrate.php wordpress/build/import.php
+git add wordpress/plugins/270west-content wordpress/build/import.php
 git commit -m "Resources: migrate the legacy post types in place, preserving IDs"
 ```
 
