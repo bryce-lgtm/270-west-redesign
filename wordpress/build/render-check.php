@@ -103,6 +103,11 @@ try {
 		}
 		$types = array_filter( (array) get_post_meta( $page->ID, 'archive_types', true ) );
 		if ( ! $types ) { throw new RuntimeException( "/{$path}/ lists no sub-types" ); }
+		// Without a hero H1 the template falls back to the page title, which is the SEO <title>
+		// complete with its "| 270 West Consulting" suffix.
+		if ( '' === (string) get_post_meta( $page->ID, 'hero_h1', true ) ) {
+			throw new RuntimeException( "/{$path}/ has no hero_h1 (H1 would print the SEO title)" );
+		}
 		$n = count( get_posts( [
 			'post_type' => 'resource', 'numberposts' => -1, 'post_status' => 'publish',
 			'tax_query' => [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => $types ] ],

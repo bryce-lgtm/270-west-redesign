@@ -462,14 +462,24 @@ function w270_import_resources() {
 	if ( $old ) { wp_trash_post( $old->ID ); echo "old article page #{$old->ID}: trashed\n"; }
 
 	// The three archives are template-driven pages. Created once, then left to wp-admin like
-	// every other piece of resource content.
+	// every other piece of resource content. The hero copy is the prototype's (guides.html,
+	// stories.html, news.html): the H1 is the SEO heading, the lead is the marketing line.
 	$archives = [
-		'stories' => [ 'Stories', 'resources/stories', [ 'stories' ], 'stories', 'none',
-			'Veteran stories in their own words' ],
-		'guides'  => [ 'Guides', 'resources/guides', [ 'guides', 'checklists', 'explainers' ], 'library', 'topic',
-			'VAC guides, checklists and explainers' ],
-		'news'    => [ 'News', 'resources/news', [ 'news' ], 'news', 'news_category',
-			'News and updates from 270 West' ],
+		'stories' => [ 'Stories', 'resources/stories', [ 'stories' ], 'stories', 'none', [
+			'hero_h1'   => 'Canadian veteran stories about the VAC claims process',
+			'hero_lead' => 'Real veterans. Real stories.',
+			'hero_sub'  => 'Veterans share what their service meant, what the VAC process was like, and what changed once someone was in their corner. Each story is shared with their permission.',
+		] ],
+		'guides'  => [ 'Guides', 'resources/guides', [ 'guides', 'checklists', 'explainers' ], 'library', 'topic', [
+			'hero_h1'   => 'VAC guides and checklists for Canadian veterans',
+			'hero_lead' => 'Know what VAC needs before you apply.',
+			'hero_sub'  => 'Free explainers and checklists on Veterans Affairs Canada programs, paperwork and timelines, whether you work with us or not.',
+		] ],
+		'news'    => [ 'News', 'resources/news', [ 'news' ], 'news', 'news_category', [
+			'hero_h1'   => '270 West news and updates for Canadian veterans',
+			'hero_lead' => "What we're working on.",
+			'hero_sub'  => "Where you'll find us, new guides as they're published, and updates from the team.",
+		] ],
 	];
 	$parent = w270_page_by_slug( 'resources' );
 	foreach ( $archives as $slug => [ $title, $path, $types, $layout, $filter, $hero ] ) {
@@ -480,11 +490,16 @@ function w270_import_resources() {
 				'post_name' => $slug, 'post_parent' => $parent ? $parent->ID : 0,
 			], true );
 			if ( is_wp_error( $pid ) ) { echo "archive {$slug}: ERROR " . $pid->get_error_message() . "\n"; $GLOBALS['w270_failed'] = true; continue; }
-			update_post_meta( $pid, 'hero_h1', $hero );
 			echo "archive {$slug}: #{$pid} created\n";
 		} else {
 			$pid = $page->ID;
 			echo "archive {$slug}: #{$pid} already present, settings refreshed\n";
+		}
+		// Hero copy is content: seed it only where the field is empty, so an edit made in
+		// wp-admin is never overwritten, while a page that predates these fields gets a real H1
+		// instead of falling back to its SEO title.
+		foreach ( $hero as $key => $value ) {
+			if ( '' === (string) get_post_meta( $pid, $key, true ) ) { update_post_meta( $pid, $key, $value ); }
 		}
 		// The template and its wiring are structure, not content, so they are always re-applied.
 		update_post_meta( $pid, '_wp_page_template', 'template-resource-archive.php' );
