@@ -450,6 +450,41 @@ function w270_import_resources() {
 	}
 	$old = get_page_by_path( 'resources/vac-benefits-programs-guide', OBJECT, 'page' );
 	if ( $old ) { wp_trash_post( $old->ID ); echo "old article page #{$old->ID}: trashed\n"; }
+
+	// The three archives are template-driven pages. Created once, then left to wp-admin like
+	// every other piece of resource content.
+	$archives = [
+		'stories' => [ 'Stories', 'resources/stories', [ 'stories' ], 'stories', 'none',
+			'Veteran stories in their own words' ],
+		'guides'  => [ 'Guides', 'resources/guides', [ 'guides', 'checklists', 'explainers' ], 'library', 'topic',
+			'VAC guides, checklists and explainers' ],
+		'news'    => [ 'News', 'resources/news', [ 'news' ], 'news', 'news_category',
+			'News and updates from 270 West' ],
+	];
+	$parent = w270_page_by_slug( 'resources' );
+	foreach ( $archives as $slug => [ $title, $path, $types, $layout, $filter, $hero ] ) {
+		$page = get_page_by_path( $path, OBJECT, 'page' );
+		if ( ! $page ) {
+			$pid = wp_insert_post( [
+				'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $title,
+				'post_name' => $slug, 'post_parent' => $parent ? $parent->ID : 0,
+			], true );
+			if ( is_wp_error( $pid ) ) { echo "archive {$slug}: ERROR " . $pid->get_error_message() . "\n"; $GLOBALS['w270_failed'] = true; continue; }
+			update_post_meta( $pid, 'hero_h1', $hero );
+			echo "archive {$slug}: #{$pid} created\n";
+		} else {
+			$pid = $page->ID;
+			echo "archive {$slug}: #{$pid} already present, settings refreshed\n";
+		}
+		// The template and its wiring are structure, not content, so they are always re-applied.
+		update_post_meta( $pid, '_wp_page_template', 'template-resource-archive.php' );
+		update_post_meta( $pid, 'archive_types', $types );
+		update_post_meta( $pid, 'archive_layout', $layout );
+		update_post_meta( $pid, 'archive_filter', $filter );
+		delete_post_meta( $pid, '_elementor_data' );
+		delete_post_meta( $pid, '_elementor_edit_mode' );
+	}
+
 	flush_rewrite_rules();
 }
 

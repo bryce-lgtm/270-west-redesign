@@ -9,9 +9,6 @@ PAGES = [
     ('how-it-works.html', 'how-it-works', None),
     ('about.html', 'about', None),
     ('resources.html', 'resources', None),
-    ('stories.html', 'stories', 'resources'),
-    ('guides.html', 'guides', 'resources'),
-    ('news.html', 'news', 'resources'),
     ('article.html', 'vac-benefits-programs-guide', 'resources'),
     ('contact.html', 'contact', None),
     ('faq.html', 'faq', None),
@@ -50,8 +47,13 @@ def path_for(slug):
 # Prototype files that aren't pages of their own in WordPress.
 # story.html is the sample veteran story: it becomes a `story` post once that post type
 # exists, so for now its links point at the Stories archive.
+# stories.html/guides.html/news.html are the three resource archives: template-driven pages
+# created by the importer (w270_import_resources), not generated from PAGES.
 EXTRA_LINKS = {
     'story.html': '/resources/stories/',
+    'stories.html': '/resources/stories/',
+    'guides.html': '/resources/guides/',
+    'news.html': '/resources/news/',
 }
 
 # prototype file -> site path

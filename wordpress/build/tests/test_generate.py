@@ -122,5 +122,14 @@ class GenerateTests(unittest.TestCase):
         self.assertIn(f'.{a}.{a}.{a}.{a}{{margin-top:26px}}', reg.css())
         self.assertIn(f'.{c}.{c}.{c} img{{object-position:center 30%}}', reg.css())
 
+    def test_archive_pages_are_not_generated_but_still_link_correctly(self):
+        from pages import PAGES, LINK_MAP
+        slugs = {slug for _, slug, _ in PAGES}
+        for gone in ('stories', 'guides', 'news'):
+            self.assertNotIn(gone, slugs, f'{gone} should be template-driven, not generated')
+        self.assertEqual(LINK_MAP['stories.html'], '/resources/stories/')
+        self.assertEqual(LINK_MAP['guides.html'], '/resources/guides/')
+        self.assertEqual(LINK_MAP['news.html'], '/resources/news/')
+
 if __name__ == '__main__':
     unittest.main()

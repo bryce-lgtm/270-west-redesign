@@ -16,6 +16,12 @@ QUOTES = {'’': "'", '‘': "'", '“': '"', '”': '"', '—': '-', '–': '-'
 # compared as a bag of words (the callout moves to the end of the article in WordPress).
 EXTRA_CHECKS = [('article.html', '/resources/guides/vac-benefits-programs-guide/', 'article')]
 
+# The archives are template-driven now, so their card lists are dynamic. Assert they render
+# a plausible number of entries rather than matching the prototype word for word.
+ARCHIVE_MINIMUMS = [('/resources/guides/', 'guide-card', 13),
+                    ('/resources/stories/', 'story-card', 2),
+                    ('/resources/news/', 'news-entry', 5)]
+
 
 def norm(s):
     s = re.sub(r'<(script|style|svg|noscript)\b[\s\S]*?</\1>', ' ', s)
@@ -92,6 +98,16 @@ def check_extra(src, path, scope):
     return ok
 
 
+def check_archives():
+    ok = True
+    for path, marker, minimum in ARCHIVE_MINIMUMS:
+        n = fetch(path).count(f'class="{marker}"')
+        good = n >= minimum
+        ok = ok and good
+        print(f'{"OK  " if good else "DIFF"} {path:45s} {n:5d} {marker} (expected >= {minimum})')
+    return ok
+
+
 def main(argv):
     only = set(argv)
     failed = False
@@ -110,6 +126,7 @@ def main(argv):
     if not only:
         for src, path, scope in EXTRA_CHECKS:
             failed = (not check_extra(src, path, scope)) or failed
+        failed = (not check_archives()) or failed
     sys.exit(1 if failed else 0)
 
 

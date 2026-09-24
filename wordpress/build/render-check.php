@@ -93,4 +93,25 @@ if ( function_exists( 'acf_get_field_groups' ) ) {
 } else {
 	echo "WARN acf not installed: field groups not checked\n";
 }
+// The three archives must be template-driven and list live entries, not a hand-built list.
+try {
+	foreach ( [ 'resources/guides' => 13, 'resources/stories' => 2, 'resources/news' => 5 ] as $path => $min ) {
+		$page = get_page_by_path( $path, OBJECT, 'page' );
+		if ( ! $page ) { throw new RuntimeException( "no page at /{$path}/" ); }
+		if ( 'template-resource-archive.php' !== get_post_meta( $page->ID, '_wp_page_template', true ) ) {
+			throw new RuntimeException( "/{$path}/ is not using the archive template" );
+		}
+		$types = array_filter( (array) get_post_meta( $page->ID, 'archive_types', true ) );
+		if ( ! $types ) { throw new RuntimeException( "/{$path}/ lists no sub-types" ); }
+		$n = count( get_posts( [
+			'post_type' => 'resource', 'numberposts' => -1, 'post_status' => 'publish',
+			'tax_query' => [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => $types ] ],
+		] ) );
+		if ( $n < $min ) { throw new RuntimeException( "/{$path}/ would list {$n}, expected at least {$min}" ); }
+	}
+	echo "OK   resource archives: guides/stories/news all template-driven\n";
+} catch ( Throwable $e ) {
+	$fail = true;
+	printf( "FAIL resource archives: %s\n", $e->getMessage() );
+}
 exit( $fail ? 1 : 0 );
