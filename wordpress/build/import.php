@@ -495,6 +495,23 @@ function w270_import_resources() {
 		delete_post_meta( $pid, '_elementor_edit_mode' );
 	}
 
+	// ACF Local JSON groups are invisible in the Field Groups list until they exist in the
+	// database; without this they sit under "Sync available" and look like nothing was installed.
+	// The presence test queries the database directly: acf_get_field_group() answers from Local
+	// JSON first and reports ID 0 even when a row exists, which would re-import on every deploy.
+	if ( function_exists( 'acf_get_local_json_files' ) && function_exists( 'acf_import_field_group' ) ) {
+		$synced = 0;
+		foreach ( acf_get_local_json_files() as $key => $file ) {
+			$in_db = get_posts( [ 'post_type' => 'acf-field-group', 'name' => $key, 'post_status' => 'any', 'numberposts' => 1, 'fields' => 'ids' ] );
+			if ( $in_db ) { continue; }
+			$group = json_decode( file_get_contents( $file ), true );
+			if ( ! $group ) { continue; }
+			acf_import_field_group( $group );
+			$synced++;
+		}
+		if ( $synced ) { echo "acf: synced {$synced} field group(s) into the database\n"; }
+	}
+
 	flush_rewrite_rules();
 }
 

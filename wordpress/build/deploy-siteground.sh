@@ -33,7 +33,10 @@ mkdir -p "$DEST/build"
 rsync -a --delete --exclude 'tests' --exclude '__pycache__' --exclude '*.py' --exclude 'spike.php' --exclude 'deploy-*.sh' --exclude 'build.sh' --exclude 'sync-assets.sh' --exclude 'layout-diff.js' "$ROOT/wordpress/build/" "$DEST/build/"
 PDEST="$CLONE/wp-content/plugins/270west-content"
 mkdir -p "$PDEST"
-rsync -a --delete "$ROOT/wordpress/plugins/270west-content/" "$PDEST/"
+# acf-json is excluded from --delete: ACF writes field-group edits made in wp-admin back into
+# this folder, and those belong to the client. New group files are still copied up.
+rsync -a --delete --exclude 'acf-json' "$ROOT/wordpress/plugins/270west-content/" "$PDEST/"
+rsync -a "$ROOT/wordpress/plugins/270west-content/acf-json/" "$PDEST/acf-json/"
 git -C "$CLONE" add -A wp-content/plugins/270west-content
 git -C "$CLONE" add -A wp-content/themes/270west
 if git -C "$CLONE" diff --cached --quiet; then echo "theme unchanged on SiteGround"; else
