@@ -77,8 +77,19 @@ try {
 }
 if ( function_exists( 'acf_get_field_groups' ) ) {
 	$n = count( acf_get_field_groups() );
-	printf( "%s acf field groups: %d\n", 4 === $n ? 'OK  ' : 'FAIL', $n );
-	if ( 4 !== $n ) { $fail = true; }
+	printf( "%s acf field groups: %d\n", 6 === $n ? 'OK  ' : 'FAIL', $n );
+	if ( 6 !== $n ) { $fail = true; }
+	// A Story must offer the story fields and not the guide fields.
+	$story = get_posts( [ 'post_type' => 'resource', 'numberposts' => 1, 'tax_query' => [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => 'stories' ] ] ] );
+	if ( $story ) {
+		$titles = wp_list_pluck( acf_get_field_groups( [ 'post_id' => $story[0]->ID ] ), 'title' );
+		if ( ! in_array( 'Story details', $titles, true ) || in_array( 'Guide extras', $titles, true ) ) {
+			$fail = true;
+			printf( "FAIL story field groups: %s\n", implode( ', ', $titles ) );
+		} else {
+			echo "OK   story field groups: " . implode( ', ', $titles ) . "\n";
+		}
+	}
 } else {
 	echo "WARN acf not installed: field groups not checked\n";
 }

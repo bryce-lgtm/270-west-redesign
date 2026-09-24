@@ -1,0 +1,11 @@
+{
+ "key": "group_270w_news_details",
+ "title": "News details",
+ "fields": [
+  {"key": "field_270w_external_link", "label": "External link", "name": "external_link", "type": "url", "instructions": "Optional. When set, the card links here instead of to this entry's own page."}
+ ],
+ "location": [[{"param": "post_type", "operator": "==", "value": "resource"},
+               {"param": "post_taxonomy", "operator": "==", "value": "resource_type:news"}]],
+ "menu_order": 0,
+ "active": true
+}

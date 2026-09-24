@@ -8,6 +8,7 @@
     ] },
     { "key": "field_270w_download_pdf", "label": "PDF download", "name": "download_pdf", "type": "file", "return_format": "id", "mime_types": "pdf", "instructions": "Optional printable version of this checklist." }
   ],
-  "location": [ [ { "param": "post_type", "operator": "==", "value": "checklist" } ] ],
+  "location": [[{"param": "post_type", "operator": "==", "value": "resource"},
+                {"param": "post_taxonomy", "operator": "==", "value": "resource_type:checklists"}]],
   "menu_order": 1, "position": "normal", "style": "default", "label_placement": "top", "instruction_placement": "label", "active": true, "show_in_rest": 0
 }

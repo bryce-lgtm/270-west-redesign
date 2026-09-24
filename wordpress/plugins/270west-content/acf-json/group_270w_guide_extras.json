@@ -8,6 +8,7 @@
       { "key": "field_270w_callout_text", "label": "Text", "name": "text", "type": "textarea", "rows": 3, "new_lines": "" }
     ] }
   ],
-  "location": [ [ { "param": "post_type", "operator": "==", "value": "guide" } ] ],
+  "location": [[{"param": "post_type", "operator": "==", "value": "resource"},
+                {"param": "post_taxonomy", "operator": "==", "value": "resource_type:guides"}]],
   "menu_order": 1, "position": "normal", "style": "default", "label_placement": "top", "instruction_placement": "label", "active": true, "show_in_rest": 0
 }

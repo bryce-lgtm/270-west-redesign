@@ -1,11 +1,11 @@
 {
   "key": "group_270w_resources_landing",
-  "title": "Resources landing",
+  "title": "Archive hero",
   "fields": [
     { "key": "field_270w_hero_h1", "label": "Hero heading (H1)", "name": "hero_h1", "type": "text", "instructions": "Falls back to the page title." },
     { "key": "field_270w_hero_lead", "label": "Hero lead", "name": "hero_lead", "type": "text" },
     { "key": "field_270w_hero_sub", "label": "Hero sub-copy", "name": "hero_sub", "type": "textarea", "rows": 3, "new_lines": "" }
   ],
-  "location": [ [ { "param": "page_template", "operator": "==", "value": "template-resources.php" } ] ],
+  "location": [[{"param": "page_template", "operator": "==", "value": "template-resource-archive.php"}]],
   "menu_order": 0, "position": "normal", "style": "default", "label_placement": "top", "instruction_placement": "label", "active": true, "show_in_rest": 0
 }
