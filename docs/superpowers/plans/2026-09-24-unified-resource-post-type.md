@@ -384,7 +384,11 @@ Replace the stub with:
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 function w270c_permalink_rules() {
-	$subtypes = implode( '|', array_map( 'preg_quote', w270c_subtype_slugs() ) );
+	// Built from the live terms, not the W270C_SUBTYPES constant: resource_type is editable in
+	// wp-admin, and a sub-type someone adds there must route rather than 404 silently.
+	$slugs = get_terms( [ 'taxonomy' => 'resource_type', 'hide_empty' => false, 'fields' => 'slugs' ] );
+	if ( is_wp_error( $slugs ) || ! $slugs ) { $slugs = w270c_subtype_slugs(); }
+	$subtypes = implode( '|', array_map( 'preg_quote', $slugs ) );
 	add_rewrite_rule(
 		'^resources/(' . $subtypes . ')/([^/]+)/?$',
 		'index.php?post_type=resource&name=$matches[2]',
@@ -1485,6 +1489,10 @@ git push
 
 ## Notes and known risks
 
+- **A sub-type added in wp-admin routes correctly.** `resource_type` is a non-hierarchical
+  taxonomy, so the admin UI lets an editor type a new one. The rewrite alternation is therefore
+  built from the live terms, and `w270c_permalink_rules()` must run after the terms are seeded.
+  If a new sub-type ever 404s, the cause is stale rewrite rules — re-save Permalinks.
 - **Old resource URLs are unchanged**, so no redirects are needed. If Task 3's assertion ever
   reports a path mismatch, the cause is a post with no Type term — the filter falls back to
   `guides`, which is a valid URL but the wrong one. Assign the term rather than changing the fallback.
