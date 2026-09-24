@@ -12,16 +12,26 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 function w270c_migrate_legacy_resources() {
 	global $wpdb;
-	$map  = [ 'guide' => 'guides', 'checklist' => 'checklists', 'explainer' => 'explainers' ];
 	$rows = $wpdb->get_results(
 		"SELECT ID, post_type FROM {$wpdb->posts} WHERE post_type IN ('guide','checklist','explainer')"
 	);
 	if ( ! $rows ) { return 0; }
+	$moved = 0;
 	foreach ( $rows as $row ) {
-		$wpdb->update( $wpdb->posts, [ 'post_type' => 'resource' ], [ 'ID' => (int) $row->ID ] );
-		wp_set_object_terms( (int) $row->ID, $map[ $row->post_type ], 'resource_type', false );
+		$ok = $wpdb->update( $wpdb->posts, [ 'post_type' => 'resource' ], [ 'ID' => (int) $row->ID ] );
+		if ( false === $ok ) {
+			error_log( "w270c migrate: failed to update post {$row->ID}: {$wpdb->last_error}" );
+			$GLOBALS['w270_failed'] = true;
+			continue;
+		}
+		$terms = wp_set_object_terms( (int) $row->ID, W270C_LEGACY_SUBTYPES[ $row->post_type ], 'resource_type', false );
+		if ( is_wp_error( $terms ) ) {
+			error_log( "w270c migrate: failed to set sub-type on post {$row->ID}: " . $terms->get_error_message() );
+			$GLOBALS['w270_failed'] = true;
+		}
 		clean_post_cache( (int) $row->ID );
+		$moved++;
 	}
-	flush_rewrite_rules();
-	return count( $rows );
+	if ( $moved ) { flush_rewrite_rules(); }
+	return $moved;
 }

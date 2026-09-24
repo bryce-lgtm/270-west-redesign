@@ -359,7 +359,18 @@ function w270_import_resources() {
 			// The seed's "type" is the sub-type, not a WP post type. Accept both the legacy
 			// singular names and the plural term slugs the seed moves to in Task 6.
 			$subtype    = W270C_LEGACY_SUBTYPES[ $r['type'] ] ?? $r['type'];
-			$existing   = get_page_by_path( $r['slug'], OBJECT, 'resource' );
+			// Scoped to live statuses and oldest-first: WordPress strips the __trashed suffix
+			// when a post is restored, so a revived duplicate could otherwise share this slug
+			// and be mistaken for the canonical row.
+			$found      = get_posts( [
+				'post_type'   => 'resource',
+				'name'        => $r['slug'],
+				'post_status' => [ 'publish', 'draft', 'pending', 'private' ],
+				'numberposts' => 1,
+				'orderby'     => 'ID',
+				'order'       => 'ASC',
+			] );
+			$existing   = $found ? $found[0] : null;
 			$post = [
 				'post_type' => 'resource', 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
 				'post_excerpt' => $summary, 'menu_order' => (int) $r['order'],
