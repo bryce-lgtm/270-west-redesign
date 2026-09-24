@@ -24,6 +24,10 @@ const W270C_SUBTYPES = [
 	'news'       => [ 'News', 'News' ],
 ];
 
+/** Legacy post-type name => sub-type term slug. Lets the importer read a seed file written
+ *  before the types were unified; harmless once the seed uses term slugs directly. */
+const W270C_LEGACY_SUBTYPES = [ 'guide' => 'guides', 'checklist' => 'checklists', 'explainer' => 'explainers' ];
+
 const W270C_NEWS_CATEGORIES = [ 'Campaign', 'Community', 'Sponsorship', 'New guide', 'Team' ];
 
 const W270C_TERMS_VERSION = 1;

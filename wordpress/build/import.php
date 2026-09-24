@@ -356,15 +356,19 @@ function w270_import_resources() {
 			// The one resource with real body copy takes its summary from the prototype article
 			// itself, so the two cannot drift apart; the rest use the seed file.
 			$summary    = ( $is_article && ! empty( $article['summary'] ) ) ? $article['summary'] : $r['summary'];
-			$existing   = get_page_by_path( $r['slug'], OBJECT, $r['type'] );
+			// The seed's "type" is the sub-type, not a WP post type. Accept both the legacy
+			// singular names and the plural term slugs the seed moves to in Task 6.
+			$subtype    = W270C_LEGACY_SUBTYPES[ $r['type'] ] ?? $r['type'];
+			$existing   = get_page_by_path( $r['slug'], OBJECT, 'resource' );
 			$post = [
-				'post_type' => $r['type'], 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
+				'post_type' => 'resource', 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
 				'post_excerpt' => $summary, 'menu_order' => (int) $r['order'],
 				'post_content' => $is_article ? w270_media_urls( $article['content'] ) : '<p>Content coming soon.</p>',
 			];
 			$pid = $existing ? wp_update_post( $post + [ 'ID' => $existing->ID ], true ) : wp_insert_post( $post, true );
 			if ( is_wp_error( $pid ) ) { throw new RuntimeException( $pid->get_error_message() ); }
 			wp_set_object_terms( $pid, [ $topics[ $r['topic'] ] ], 'resource_topic' );
+			wp_set_object_terms( $pid, $subtype, 'resource_type', false );
 			if ( ! empty( $r['image'] ) && ( $mid = w270_media_id( $r['image'] ) ) ) { set_post_thumbnail( $pid, $mid ); }
 			// Plain post meta first so the theme renders without ACF; update_field() below
 			// overwrites these with ACF's own values (same meta keys) when the plugin is present.
