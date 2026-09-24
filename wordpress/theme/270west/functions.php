@@ -78,6 +78,11 @@ add_filter( 'style_loader_tag', function ( $tag, $handle, $href ) {
 // company ("About 270 West Consulting — …") must not get the site name appended again.
 add_filter( 'document_title_separator', fn() => '—' );
 add_filter( 'document_title_parts', function ( $parts ) {
+	// The front page's <title> is its own page title, generated from the prototype's <title>
+	// (e.g. "VAC benefits consultants | 270 West Consulting"), not WordPress's "Site — Tagline".
+	if ( is_front_page() && ( $front = (int) get_option( 'page_on_front' ) ) && ( $t = get_the_title( $front ) ) ) {
+		return [ 'title' => $t ];
+	}
 	if ( is_singular() && ! empty( $parts['title'] ) && ! empty( $parts['site'] ) && false !== stripos( $parts['title'], $parts['site'] ) ) {
 		unset( $parts['site'] );
 	}
