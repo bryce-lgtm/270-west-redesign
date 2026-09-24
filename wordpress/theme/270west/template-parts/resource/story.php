@@ -1,20 +1,42 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+if ( ! function_exists( 'w270_embed_url' ) ) {
+	/**
+	 * Normalises the pasted URL to an embeddable one. Editors paste watch/share links far more
+	 * often than embed links, and a raw watch link renders as a silent blank frame because the
+	 * provider refuses to be framed.
+	 */
+	function w270_embed_url( $url ) {
+		$url = trim( (string) $url );
+		if ( '' === $url ) { return ''; }
+		if ( preg_match( '~youtube\.com/watch\?(?:.*&)?v=([\w-]+)~i', $url, $m )
+			|| preg_match( '~youtu\.be/([\w-]+)~i', $url, $m ) ) {
+			return 'https://www.youtube.com/embed/' . $m[1];
+		}
+		if ( preg_match( '~vimeo\.com/(?:video/)?(\d+)~i', $url, $m ) ) {
+			return 'https://player.vimeo.com/video/' . $m[1];
+		}
+		// Already an embed URL, or a provider we do not know: pass it through if it is https.
+		return preg_match( '~^https://~i', $url ) ? $url : '';
+	}
+}
+
 $quote    = w270_field( 'pull_quote' );
 $name     = w270_field( 'veteran_name' );
 $role     = w270_field( 'veteran_role' ) ?: 'Canadian Armed Forces Veteran';
-$video    = w270_field( 'video_url' );
+$video    = w270_embed_url( w270_field( 'video_url' ) );
 $duration = w270_field( 'duration' );
 ?>
 <main id="content" <?php post_class( 'site-main' ); ?>>
 	<section class="page-hero">
 		<div class="page-hero-kicker"><span class="page-hero-kicker-rule"></span>Veteran story</div>
-		<h1 class="page-hero-h1"><?php echo esc_html( get_the_title() ); ?></h1>
+		<h1 class="page-hero-h1"><?php echo esc_html( w270_field( 'seo_h1' ) ?: get_the_title() ); ?></h1>
 	</section>
 	<section class="story-single">
 		<?php if ( $video ) : ?>
 			<div class="story-single-video">
-				<iframe src="<?php echo esc_url( $video ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>"
+				<iframe src="<?php echo esc_url( $video, [ 'https' ] ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>"
 					loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
 					allowfullscreen></iframe>
 			</div>
