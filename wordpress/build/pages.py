@@ -9,7 +9,6 @@ PAGES = [
     ('how-it-works.html', 'how-it-works', None),
     ('about.html', 'about', None),
     ('resources.html', 'resources', None),
-    ('article.html', 'vac-benefits-programs-guide', 'resources'),
     ('contact.html', 'contact', None),
     ('faq.html', 'faq', None),
     ('vac-status-checker.html', 'vac-status-checker', None),
@@ -58,6 +57,7 @@ EXTRA_LINKS = {
 
 # prototype file -> site path
 LINK_MAP = {src: path_for(slug) for src, slug, _ in PAGES}
-# The article became the featured Guide post (seeded by import.php --resources); prototype links still point at it.
+# article.html became the featured Guide resource (seeded once by import.php --resources), so it is
+# not a page of its own; prototype links to it point at the resource.
 LINK_MAP['article.html'] = '/resources/guides/vac-benefits-programs-guide/'
 LINK_MAP.update(EXTRA_LINKS)

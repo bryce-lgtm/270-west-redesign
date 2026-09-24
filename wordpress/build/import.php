@@ -21,7 +21,7 @@ function w270_page_paths() {
 		'home' => '/', 'services' => '/services/', 'claims' => '/services/claims/', 'appeals' => '/services/appeals/',
 		'reassessment' => '/services/reassessment/', 'support' => '/services/support/', 'how-it-works' => '/how-it-works/',
 		'about' => '/about/', 'resources' => '/resources/',
-		'stories' => '/resources/stories/', 'guides' => '/resources/guides/', 'news' => '/resources/news/', 'vac-benefits-programs-guide' => '/resources/vac-benefits-programs-guide/',
+		'stories' => '/resources/stories/', 'guides' => '/resources/guides/', 'news' => '/resources/news/',
 		'contact' => '/contact/', 'faq' => '/faq/', 'vac-status-checker' => '/vac-status-checker/', 'book-a-consult' => '/book-a-consult/',
 		'privacy' => '/privacy/', 'terms' => '/terms/', 'accessibility' => '/accessibility/',
 		// Advertising landing pages: noindex, no site chrome, never linked from a menu.
@@ -458,6 +458,7 @@ function w270_import_resources() {
 		delete_post_meta( $page->ID, '_wp_page_template' );
 		echo "resources page: prototype hub content\n";
 	}
+	// Legacy clean-up: the article used to be generated as a page before it became a resource.
 	$old = get_page_by_path( 'resources/vac-benefits-programs-guide', OBJECT, 'page' );
 	if ( $old ) { wp_trash_post( $old->ID ); echo "old article page #{$old->ID}: trashed\n"; }
 
