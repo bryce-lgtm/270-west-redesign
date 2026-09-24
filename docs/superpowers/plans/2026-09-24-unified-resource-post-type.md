@@ -680,7 +680,22 @@ $cats = wp_get_object_terms( get_the_ID(), 'news_category', [ 'fields' => 'names
 </main>
 ```
 
-- [ ] **Step 5: Delete the three legacy single templates**
+- [ ] **Step 5: Fix the last two legacy post-type checks**
+
+`template-parts/resource/body.php` still branches on `get_post_type()` against the old singular
+names, so the checklist items and the guide callout would never render. These are the only two
+left in the theme — verified by grepping for `get_post_type()` and the legacy names. Replace
+lines 7 and 9:
+
+```php
+	<?php if ( 'checklists' === w270_subtype_slug() ) { get_template_part( 'template-parts/resource/checklist-items' ); } ?>
+```
+
+```php
+	<?php if ( 'guides' === w270_subtype_slug() ) { get_template_part( 'template-parts/resource/callout' ); } ?>
+```
+
+- [ ] **Step 6: Delete the three legacy single templates**
 
 ```bash
 git rm wordpress/theme/270west/single-guide.php \
@@ -688,7 +703,7 @@ git rm wordpress/theme/270west/single-guide.php \
        wordpress/theme/270west/single-explainer.php
 ```
 
-- [ ] **Step 6: Deploy and confirm guides still render and nothing 500s**
+- [ ] **Step 7: Deploy and confirm guides still render and nothing 500s**
 
 ```bash
 ./wordpress/build/deploy-siteground.sh
@@ -697,7 +712,7 @@ curl -s -o /dev/null -w '%{http_code}\n' https://brycec57.sg-host.com/resources/
 
 Expected: deploy passes; curl prints `200`.
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add -A wordpress/theme/270west
