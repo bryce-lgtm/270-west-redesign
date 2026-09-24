@@ -55,6 +55,26 @@ try {
 	$fail = true;
 	printf( "FAIL resource model: %s\n", $e->getMessage() );
 }
+// Permalinks: every sub-type keeps its /resources/<subtype>/<slug>/ shape and resolves.
+try {
+	$seen = [];
+	foreach ( get_posts( [ 'post_type' => 'resource', 'numberposts' => -1, 'post_status' => 'publish' ] ) as $p ) {
+		$terms = get_the_terms( $p, 'resource_type' );
+		$sub   = ( $terms && ! is_wp_error( $terms ) ) ? $terms[0]->slug : '(none)';
+		$path  = parse_url( get_permalink( $p ), PHP_URL_PATH );
+		$want  = "/resources/{$sub}/{$p->post_name}/";
+		if ( $path !== $want ) { throw new RuntimeException( "{$p->post_name}: {$path} != {$want}" ); }
+		if ( url_to_postid( get_permalink( $p ) ) !== $p->ID ) { throw new RuntimeException( "{$p->post_name}: permalink does not resolve" ); }
+		$seen[ $sub ] = ( $seen[ $sub ] ?? 0 ) + 1;
+	}
+	if ( ! $seen ) { throw new RuntimeException( 'no published resources found' ); }
+	ksort( $seen );
+	$summary = implode( ', ', array_map( fn( $k, $v ) => "{$k}={$v}", array_keys( $seen ), $seen ) );
+	echo "OK   resource permalinks: {$summary}\n";
+} catch ( Throwable $e ) {
+	$fail = true;
+	printf( "FAIL resource permalinks: %s\n", $e->getMessage() );
+}
 if ( function_exists( 'acf_get_field_groups' ) ) {
 	$n = count( acf_get_field_groups() );
 	printf( "%s acf field groups: %d\n", 4 === $n ? 'OK  ' : 'FAIL', $n );
