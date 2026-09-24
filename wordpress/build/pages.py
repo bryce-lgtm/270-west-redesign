@@ -9,7 +9,6 @@ PAGES = [
     ('how-it-works.html', 'how-it-works', None),
     ('about.html', 'about', None),
     ('resources.html', 'resources', None),
-    ('article.html', 'vac-benefits-programs-guide', 'resources'),
     ('contact.html', 'contact', None),
     ('faq.html', 'faq', None),
     ('vac-status-checker.html', 'vac-status-checker', None),
@@ -17,6 +16,15 @@ PAGES = [
     ('privacy.html', 'privacy', None),
     ('terms.html', 'terms', None),
     ('accessibility.html', 'accessibility', None),
+]
+
+# Advertising landing pages. They carry their own header and footer instead of the site nav,
+# are noindex, and are deliberately not linked from any menu — traffic arrives from paid ads.
+# (source file, slug)
+LANDING_PAGES = [
+    ('lp-claims.html', 'vac-claim-help'),
+    ('lp-awareness.html', 'vac-benefits-simplified'),
+    ('lp-what-to-expect.html', 'what-to-expect'),
 ]
 
 TITLE_SUFFIX = ' — 270 West Consulting'
@@ -27,6 +35,7 @@ def path_for(slug):
     if slug == 'home':
         return '/'
     parents = {s: p for _, s, p in PAGES}
+    parents.update({s: None for _, s in LANDING_PAGES})
     parts = []
     while slug:
         parts.append(slug)
@@ -34,5 +43,21 @@ def path_for(slug):
     return '/' + '/'.join(reversed(parts)) + '/'
 
 
+# Prototype files that aren't pages of their own in WordPress.
+# story.html is the sample veteran story: it becomes a `story` post once that post type
+# exists, so for now its links point at the Stories archive.
+# stories.html/guides.html/news.html are the three resource archives: template-driven pages
+# created by the importer (w270_import_resources), not generated from PAGES.
+EXTRA_LINKS = {
+    'story.html': '/resources/stories/',
+    'stories.html': '/resources/stories/',
+    'guides.html': '/resources/guides/',
+    'news.html': '/resources/news/',
+}
+
 # prototype file -> site path
 LINK_MAP = {src: path_for(slug) for src, slug, _ in PAGES}
+# article.html became the featured Guide resource (seeded once by import.php --resources), so it is
+# not a page of its own; prototype links to it point at the resource.
+LINK_MAP['article.html'] = '/resources/guides/vac-benefits-programs-guide/'
+LINK_MAP.update(EXTRA_LINKS)

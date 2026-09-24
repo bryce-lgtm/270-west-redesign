@@ -4,24 +4,44 @@
  *   "$PHP" -c "$INI" wordpress/build/import.php --all
  *   "$PHP" -c "$INI" wordpress/build/import.php --pages --only=home
  */
+if ( PHP_SAPI !== 'cli' ) { http_response_code( 403 ); exit; } // never runnable over HTTP
 $site = getenv( 'W270_SITE' ) ?: '/Users/Bryce/Local Sites/270-west/app/public';
 define( 'WP_USE_THEMES', false );
-$_SERVER['HTTP_HOST'] = '270-west.local';
+$_SERVER['HTTP_HOST'] = getenv( 'W270_HOST' ) ?: '270-west.local';
 require $site . '/wp-load.php';
 wp_set_current_user( 1 );
 
 const W270_OUT = __DIR__ . '/out';
-const W270_IMG = __DIR__ . '/../../img';
+// Source photos: the repo's img/ when running from the repo, else the theme's synced copy (server deploys).
+define( 'W270_IMG', is_dir( __DIR__ . '/../../img' ) ? __DIR__ . '/../../img' : __DIR__ . '/../assets/img' );
 
 /** Site paths per slug. Mirrors pages.py (parents before children). */
 function w270_page_paths() {
 	return [
 		'home' => '/', 'services' => '/services/', 'claims' => '/services/claims/', 'appeals' => '/services/appeals/',
 		'reassessment' => '/services/reassessment/', 'support' => '/services/support/', 'how-it-works' => '/how-it-works/',
-		'about' => '/about/', 'resources' => '/resources/', 'vac-benefits-programs-guide' => '/resources/vac-benefits-programs-guide/',
+		'about' => '/about/', 'resources' => '/resources/',
+		'stories' => '/resources/stories/', 'guides' => '/resources/guides/', 'news' => '/resources/news/',
 		'contact' => '/contact/', 'faq' => '/faq/', 'vac-status-checker' => '/vac-status-checker/', 'book-a-consult' => '/book-a-consult/',
 		'privacy' => '/privacy/', 'terms' => '/terms/', 'accessibility' => '/accessibility/',
+		// Advertising landing pages: noindex, no site chrome, never linked from a menu.
+		'vac-claim-help' => '/vac-claim-help/', 'vac-benefits-simplified' => '/vac-benefits-simplified/',
+		'what-to-expect' => '/what-to-expect/',
 	];
+}
+
+/** Slugs of the advertising landing pages, which the generator marks with "landing": true. */
+function w270_landing_slugs() {
+	return [ 'vac-claim-help', 'vac-benefits-simplified', 'what-to-expect' ];
+}
+
+/**
+ * The three resource archives. They stay in w270_page_paths() so menus and slug lookups resolve,
+ * but they are template-driven pages created by w270_import_resources(), not generated from
+ * pages.py, so the page importer has no JSON for them and must skip them.
+ */
+function w270_archive_slugs() {
+	return [ 'stories', 'guides', 'news' ];
 }
 
 function w270_page_by_slug( $slug ) {
@@ -34,9 +54,11 @@ function w270_page_by_slug( $slug ) {
 /** Menu definition items: [title, slug, classes, children]. */
 function w270_menu_defs() {
 	$services_children = [ [ 'Claims', 'claims' ], [ 'Appeals', 'appeals' ], [ 'Reassessment', 'reassessment' ], [ 'Support', 'support' ] ];
+	$resources_children = [ [ 'Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ] ];
 	$main = [
 		[ 'Services', 'services', '', $services_children ],
-		[ 'How It Works', 'how-it-works' ], [ 'About', 'about' ], [ 'Resources', 'resources' ], [ 'Contact', 'contact' ],
+		[ 'How It Works', 'how-it-works' ], [ 'About', 'about' ],
+		[ 'Resources', 'resources', '', $resources_children ], [ 'Contact', 'contact' ],
 		[ 'Book a Consult', 'book-a-consult', 'nav-cta' ],
 	];
 	return [
@@ -121,12 +143,13 @@ function w270_import_media() {
 	}
 }
 
-/** Replace generator markers: __W270_ASSETS__ in strings, {"__media__": file} in image settings, site paths in link settings. */
+/** Replace generator markers: __W270_ASSETS__ and __W270_FORM__ in strings, {"__media__": file} in image settings, site paths in link settings. */
 function w270_resolve( array $elements, string $assets ) {
 	foreach ( $elements as &$el ) {
 		foreach ( $el['settings'] as $k => &$v ) {
 			if ( is_string( $v ) ) {
 				$v = str_replace( '__W270_ASSETS__', $assets, $v );
+				$v = w270_form_shortcodes( $v );
 			} elseif ( is_array( $v ) && isset( $v['__media__'] ) ) {
 				$id = w270_media_id( $v['__media__'] );
 				if ( ! $id ) { throw new RuntimeException( "media not imported: {$v['__media__']}" ); }
@@ -148,6 +171,7 @@ function w270_import_pages( $only = null ) {
 	$assets = get_stylesheet_directory_uri() . '/assets';
 	foreach ( array_keys( w270_page_paths() ) as $slug ) {
 		if ( $only && $only !== $slug ) { continue; }
+		if ( in_array( $slug, w270_archive_slugs(), true ) ) { continue; }
 		try {
 			$file = W270_OUT . "/{$slug}.json";
 			if ( ! file_exists( $file ) ) { throw new RuntimeException( "missing {$file} (run generate.py)" ); }
@@ -171,6 +195,11 @@ function w270_import_pages( $only = null ) {
 			update_post_meta( $pid, '_elementor_version', ELEMENTOR_VERSION );
 			update_post_meta( $pid, '_elementor_data', wp_slash( wp_json_encode( $elements, JSON_UNESCAPED_UNICODE ) ) );
 			update_post_meta( $pid, '_elementor_page_settings', $def['page_settings'] );
+			if ( ! empty( $def['landing'] ) ) {
+				update_post_meta( $pid, '_w270_landing', 1 );
+			} else {
+				delete_post_meta( $pid, '_w270_landing' );
+			}
 			delete_post_meta( $pid, '_elementor_css' );
 			echo "page {$slug}: #{$pid} " . get_permalink( $pid ) . "\n";
 		} catch ( Throwable $e ) {
@@ -191,16 +220,16 @@ function w270_import_kit() {
 			[ '_id' => 'primary', 'title' => 'Primary', 'color' => '#1A3A3F' ],
 			[ '_id' => 'secondary', 'title' => 'Secondary', 'color' => '#4E757B' ],
 			[ '_id' => 'text', 'title' => 'Text', 'color' => '#1A3A3F' ],
-			[ '_id' => 'accent', 'title' => 'Accent', 'color' => '#A32222' ],
+			[ '_id' => 'accent', 'title' => 'Accent', 'color' => '#A22222' ],
 		],
 		'custom_colors' => [
-			[ '_id' => 'w270blu', 'title' => 'Pale blue', 'color' => '#A1B6C2' ],
-			[ '_id' => 'w270tan', 'title' => 'Taupe', 'color' => '#ADA799' ],
-			[ '_id' => 'w270snd', 'title' => 'Light warm grey', 'color' => '#DFE1DE' ],
+			[ '_id' => 'w270blu', 'title' => 'Pale blue', 'color' => '#A0B5C1' ],
+			[ '_id' => 'w270tan', 'title' => 'Taupe', 'color' => '#ACA698' ],
+			[ '_id' => 'w270snd', 'title' => 'Light warm grey', 'color' => '#DEE0DD' ],
 			[ '_id' => 'w270bkg', 'title' => 'Page background', 'color' => '#F2F1EE' ],
 		],
 		'system_typography' => [
-			$typo( 'primary', 'Primary', 'League Spartan', '600' ),
+			$typo( 'primary', 'Primary', 'Inter Tight', '500' ),
 			$typo( 'secondary', 'Secondary', 'Crimson Text', '400' ),
 			$typo( 'text', 'Text', 'Inter Tight', '400' ),
 			$typo( 'accent', 'Accent', 'Inter Tight', '600' ),
@@ -213,14 +242,305 @@ function w270_import_kit() {
 	echo "kit: ok\n";
 }
 
+/** Replace __W270_MEDIA__:<file> markers with Media Library URLs. */
+function w270_media_urls( $html ) {
+	return preg_replace_callback( '/__W270_MEDIA__:([\w.-]+)/', function ( $m ) {
+		$id = w270_media_id( $m[1] );
+		if ( ! $id ) { throw new RuntimeException( "media not imported: {$m[1]}" ); }
+		return wp_get_attachment_url( $id );
+	}, $html );
+}
+
+/**
+ * Imports the team's exported Gravity Forms and records key -> form id in the w270_form_ids
+ * option. Forms that already exist are left untouched: they are the client's to edit in wp-admin,
+ * unlike our generated pages, so re-running the importer must never clobber their changes.
+ */
+function w270_import_forms() {
+	if ( ! class_exists( 'GFAPI' ) ) {
+		echo "forms: Gravity Forms not active — skipped\n";
+		return;
+	}
+	$export = json_decode( file_get_contents( __DIR__ . '/gravity-forms.json' ), true, 512, JSON_THROW_ON_ERROR );
+	$by_title = [];
+	foreach ( GFAPI::get_forms( null ) as $f ) { $by_title[ $f['title'] ] = (int) $f['id']; }
+	$ids = [];
+	foreach ( $export['forms'] as $key => $form ) {
+		$title = $form['title'];
+		if ( isset( $by_title[ $title ] ) ) {
+			$ids[ $key ] = $by_title[ $title ];
+			echo "form {$key}: #{$ids[$key]} already present, left as-is\n";
+			continue;
+		}
+		unset( $form['id'] );
+		$id = GFAPI::add_form( $form );
+		if ( is_wp_error( $id ) ) {
+			echo "form {$key}: ERROR " . $id->get_error_message() . "\n";
+			$GLOBALS['w270_failed'] = true;
+			continue;
+		}
+		$ids[ $key ] = (int) $id;
+		echo "form {$key}: #{$id} created ({$title})\n";
+	}
+	update_option( 'w270_form_ids', $ids );
+	w270_import_form_feeds();
+}
+
+/**
+ * Creates the Creatio webhook feeds transcribed from the production site. Like the forms
+ * themselves, an existing feed with the same name is left alone — the endpoint and the Creatio
+ * column mapping belong to the client, and a re-run must not overwrite a change they made.
+ */
+function w270_import_form_feeds() {
+	if ( ! class_exists( 'GFAPI' ) ) { return; }
+	$file = __DIR__ . '/gravity-forms-feeds.json';
+	if ( ! file_exists( $file ) ) { return; }
+	$export = json_decode( file_get_contents( $file ), true, 512, JSON_THROW_ON_ERROR );
+	$ids    = get_option( 'w270_form_ids', [] );
+	foreach ( $export['feeds'] as $key => $def ) {
+		if ( empty( $ids[ $key ] ) ) {
+			echo "feed {$key}: form not imported — skipped\n";
+			continue;
+		}
+		$form_id = (int) $ids[ $key ];
+		$addon   = $def['addon'];
+		if ( ! in_array( $addon, array_map( fn( $a ) => $a->get_slug(), GFAddOn::get_registered_addons( true ) ), true ) ) {
+			echo "feed {$key}: {$addon} not active — skipped\n";
+			$GLOBALS['w270_failed'] = true;
+			continue;
+		}
+		foreach ( GFAPI::get_feeds( null, $form_id, $addon, null ) ?: [] as $existing ) {
+			if ( rgars( $existing, 'meta/feedName' ) === $def['meta']['feedName'] ) {
+				echo "feed {$key}: #{$existing['id']} already present, left as-is\n";
+				continue 2;
+			}
+		}
+		$id = GFAPI::add_feed( $form_id, $def['meta'], $addon );
+		if ( is_wp_error( $id ) ) {
+			echo "feed {$key}: ERROR " . $id->get_error_message() . "\n";
+			$GLOBALS['w270_failed'] = true;
+			continue;
+		}
+		echo "feed {$key}: #{$id} created ({$def['meta']['feedName']} -> " . wp_parse_url( $def['meta']['requestURL'], PHP_URL_HOST ) . ")\n";
+	}
+}
+
+/** Replace __W270_FORM__:<key> markers with the Gravity Forms shortcode for that form. */
+function w270_form_shortcodes( $html ) {
+	return preg_replace_callback( '/__W270_FORM__:(\w+)/', function ( $m ) {
+		$ids = get_option( 'w270_form_ids', [] );
+		if ( empty( $ids[ $m[1] ] ) ) { throw new RuntimeException( "form not imported: {$m[1]} (is Gravity Forms active?)" ); }
+		return '[gravityform id="' . (int) $ids[ $m[1] ] . '" title="false" description="false" ajax="true"]';
+	}, $html );
+}
+
+function w270_import_resources() {
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	$plugin = '270west-content/270west-content.php';
+	if ( ! is_plugin_active( $plugin ) ) {
+		$r = activate_plugin( $plugin );
+		if ( is_wp_error( $r ) ) { echo "resources: cannot activate plugin: " . $r->get_error_message() . "\n"; $GLOBALS['w270_failed'] = true; return; }
+		echo "plugin 270west-content: activated\n";
+	}
+	if ( function_exists( 'w270c_migrate_legacy_resources' ) ) {
+		$moved = w270c_migrate_legacy_resources();
+		if ( $moved ) { echo "migrated {$moved} legacy resource(s) to the resource post type\n"; }
+	}
+	$acf = function_exists( 'update_field' );
+	if ( ! $acf ) { echo "acf: missing — fields skipped (install ACF Pro and re-run --resources)\n"; }
+	$seed    = json_decode( file_get_contents( __DIR__ . '/seed-resources.json' ), true, 512, JSON_THROW_ON_ERROR );
+	$article = json_decode( file_get_contents( W270_OUT . '/seed-article.json' ), true, 512, JSON_THROW_ON_ERROR );
+
+	$topics = [];
+	foreach ( $seed['topics'] as $name ) {
+		$t = term_exists( $name, 'resource_topic' );
+		if ( ! $t ) { $t = wp_insert_term( $name, 'resource_topic' ); if ( is_wp_error( $t ) ) { throw new RuntimeException( $t->get_error_message() ); } }
+		$topics[ $name ] = (int) $t['term_id'];
+	}
+	echo 'topics: ' . implode( ', ', array_keys( $topics ) ) . "\n";
+
+	$ids = [];
+	foreach ( $seed['resources'] as $r ) {
+		try {
+			$is_article = $r['slug'] === $article['slug'];
+			// The one resource with real body copy takes its summary from the prototype article
+			// itself, so the two cannot drift apart; the rest use the seed file.
+			$summary    = ( $is_article && ! empty( $article['summary'] ) ) ? $article['summary'] : $r['summary'];
+			// The seed's "type" is the sub-type, not a WP post type. Accept both the legacy
+			// singular names and the plural term slugs the seed moves to in Task 6.
+			$subtype    = W270C_LEGACY_SUBTYPES[ $r['type'] ] ?? $r['type'];
+			// Scoped to live statuses and oldest-first: WordPress strips the __trashed suffix
+			// when a post is restored, so a revived duplicate could otherwise share this slug
+			// and be mistaken for the canonical row.
+			$found      = get_posts( [
+				'post_type'   => 'resource',
+				'name'        => $r['slug'],
+				'post_status' => [ 'publish', 'draft', 'pending', 'private' ],
+				'numberposts' => 1,
+				'orderby'     => 'ID',
+				'order'       => 'ASC',
+			] );
+			$existing   = $found ? $found[0] : null;
+			if ( $existing ) {
+				// Seed-once: resource content belongs to wp-admin from here on, so a re-run
+				// must not overwrite an edit or resurrect a field value someone cleared.
+				$ids[ $r['slug'] ] = $existing->ID;
+				echo "resource {$r['slug']}: #{$existing->ID} already present, left as-is\n";
+				continue;
+			}
+			$post = [
+				'post_type' => 'resource', 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
+				'post_excerpt' => $summary, 'menu_order' => (int) $r['order'],
+				'post_content' => $is_article ? w270_media_urls( $article['content'] ) : '<p>Content coming soon.</p>',
+			];
+			// News entries carry their own publication date; everything else uses "now".
+			if ( ! empty( $r['date'] ) ) { $post['post_date'] = $r['date'] . ' 09:00:00'; }
+			$pid = wp_insert_post( $post, true );
+			if ( is_wp_error( $pid ) ) { throw new RuntimeException( $pid->get_error_message() ); }
+			wp_set_object_terms( $pid, $subtype, 'resource_type', false );
+			if ( ! empty( $r['topic'] ) ) { wp_set_object_terms( $pid, [ $topics[ $r['topic'] ] ], 'resource_topic' ); }
+			if ( ! empty( $r['news_category'] ) ) { wp_set_object_terms( $pid, $r['news_category'], 'news_category', false ); }
+			foreach ( [ 'pull_quote', 'veteran_name', 'veteran_role', 'duration', 'story_number', 'external_link' ] as $k ) {
+				if ( isset( $r[ $k ] ) ) { update_post_meta( $pid, $k, $r[ $k ] ); }
+			}
+			if ( ! empty( $r['image'] ) && ( $mid = w270_media_id( $r['image'] ) ) ) { set_post_thumbnail( $pid, $mid ); }
+			// Plain post meta first so the theme renders without ACF; update_field() below
+			// overwrites these with ACF's own values (same meta keys) when the plugin is present.
+			update_post_meta( $pid, 'summary', $summary );
+			if ( isset( $r['read_time'] ) ) { update_post_meta( $pid, 'read_time', (int) $r['read_time'] ); }
+			update_post_meta( $pid, 'featured', empty( $r['featured'] ) ? 0 : 1 );
+			update_post_meta( $pid, 'seo_h1', $r['seo_h1'] ?? '' );
+			if ( 'guides' === $subtype ) {
+				update_post_meta( $pid, 'show_toc', 1 );
+				if ( $is_article ) {
+					update_post_meta( $pid, 'callout', [ 'label' => $article['callout_label'], 'text' => $article['callout_text'] ] );
+				}
+			}
+			if ( 'checklists' === $subtype && ! empty( $r['items'] ) ) {
+				update_post_meta( $pid, 'items', array_map( fn( $i ) => [ 'item' => $i, 'note' => '' ], $r['items'] ) );
+			}
+			if ( $acf ) {
+				update_field( 'field_270w_summary', $summary, $pid );
+				if ( isset( $r['read_time'] ) ) { update_field( 'field_270w_read_time', (int) $r['read_time'], $pid ); }
+				update_field( 'field_270w_featured', empty( $r['featured'] ) ? 0 : 1, $pid );
+				update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $pid );
+				if ( 'guides' === $subtype ) {
+					update_field( 'field_270w_show_toc', 1, $pid );
+					if ( $is_article ) {
+						update_field( 'field_270w_callout', [ 'field_270w_callout_label' => $article['callout_label'], 'field_270w_callout_text' => $article['callout_text'] ], $pid );
+					}
+				}
+				if ( 'checklists' === $subtype && ! empty( $r['items'] ) ) {
+					update_field( 'field_270w_items', array_map( fn( $i ) => [ 'field_270w_item' => $i, 'field_270w_item_note' => '' ], $r['items'] ), $pid );
+				}
+			}
+			$ids[ $r['slug'] ] = $pid;
+			echo "resource {$r['type']}/{$r['slug']}: #{$pid}\n";
+		} catch ( Throwable $e ) {
+			echo "resource {$r['slug']}: ERROR " . $e->getMessage() . "\n";
+			$GLOBALS['w270_failed'] = true;
+		}
+	}
+	foreach ( $seed['resources'] as $r ) {
+		if ( empty( $r['related'] ) || empty( $ids[ $r['slug'] ] ) ) { continue; }
+		$related = array_values( array_filter( array_map( fn( $s ) => $ids[ $s ] ?? 0, $r['related'] ) ) );
+		update_post_meta( $ids[ $r['slug'] ], 'related_resources', $related );
+		if ( $acf ) { update_field( 'field_270w_related', $related, $ids[ $r['slug'] ] ); }
+	}
+
+	// /resources/ renders the approved prototype hub (Stories / Guides / News previews) from its
+	// generated Elementor content, like every other page. template-resources.php predates that
+	// redesign and would replace the content with the older "browse by topic" archive, so the
+	// override is cleared rather than assigned. The child archives at /resources/{stories,guides,news}/
+	// carry the topic filtering, and the CPT singles keep their own single-*.php templates.
+	$page = w270_page_by_slug( 'resources' );
+	if ( $page ) {
+		delete_post_meta( $page->ID, '_wp_page_template' );
+		echo "resources page: prototype hub content\n";
+	}
+	// Legacy clean-up: the article used to be generated as a page before it became a resource.
+	$old = get_page_by_path( 'resources/vac-benefits-programs-guide', OBJECT, 'page' );
+	if ( $old ) { wp_trash_post( $old->ID ); echo "old article page #{$old->ID}: trashed\n"; }
+
+	// The three archives are template-driven pages. Created once, then left to wp-admin like
+	// every other piece of resource content. The hero copy is the prototype's (guides.html,
+	// stories.html, news.html): the H1 is the SEO heading, the lead is the marketing line.
+	$archives = [
+		'stories' => [ 'Stories', 'resources/stories', [ 'stories' ], 'stories', 'none', [
+			'hero_h1'   => 'Canadian veteran stories about the VAC claims process',
+			'hero_lead' => 'Real veterans. Real stories.',
+			'hero_sub'  => 'Veterans share what their service meant, what the VAC process was like, and what changed once someone was in their corner. Each story is shared with their permission.',
+		] ],
+		'guides'  => [ 'Guides', 'resources/guides', [ 'guides', 'checklists', 'explainers' ], 'library', 'topic', [
+			'hero_h1'   => 'VAC guides and checklists for Canadian veterans',
+			'hero_lead' => 'Know what VAC needs before you apply.',
+			'hero_sub'  => 'Free explainers and checklists on Veterans Affairs Canada programs, paperwork and timelines, whether you work with us or not.',
+		] ],
+		'news'    => [ 'News', 'resources/news', [ 'news' ], 'news', 'news_category', [
+			'hero_h1'   => '270 West news and updates for Canadian veterans',
+			'hero_lead' => "What we're working on.",
+			'hero_sub'  => "Where you'll find us, new guides as they're published, and updates from the team.",
+		] ],
+	];
+	$parent = w270_page_by_slug( 'resources' );
+	foreach ( $archives as $slug => [ $title, $path, $types, $layout, $filter, $hero ] ) {
+		$page = get_page_by_path( $path, OBJECT, 'page' );
+		if ( ! $page ) {
+			$pid = wp_insert_post( [
+				'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $title,
+				'post_name' => $slug, 'post_parent' => $parent ? $parent->ID : 0,
+			], true );
+			if ( is_wp_error( $pid ) ) { echo "archive {$slug}: ERROR " . $pid->get_error_message() . "\n"; $GLOBALS['w270_failed'] = true; continue; }
+			echo "archive {$slug}: #{$pid} created\n";
+		} else {
+			$pid = $page->ID;
+			echo "archive {$slug}: #{$pid} already present, settings refreshed\n";
+		}
+		// Hero copy is content: seed it only where the field is empty, so an edit made in
+		// wp-admin is never overwritten, while a page that predates these fields gets a real H1
+		// instead of falling back to its SEO title.
+		foreach ( $hero as $key => $value ) {
+			if ( '' === (string) get_post_meta( $pid, $key, true ) ) { update_post_meta( $pid, $key, $value ); }
+		}
+		// The template and its wiring are structure, not content, so they are always re-applied.
+		update_post_meta( $pid, '_wp_page_template', 'template-resource-archive.php' );
+		update_post_meta( $pid, 'archive_types', $types );
+		update_post_meta( $pid, 'archive_layout', $layout );
+		update_post_meta( $pid, 'archive_filter', $filter );
+		delete_post_meta( $pid, '_elementor_data' );
+		delete_post_meta( $pid, '_elementor_edit_mode' );
+	}
+
+	// ACF Local JSON groups are invisible in the Field Groups list until they exist in the
+	// database; without this they sit under "Sync available" and look like nothing was installed.
+	// The presence test queries the database directly: acf_get_field_group() answers from Local
+	// JSON first and reports ID 0 even when a row exists, which would re-import on every deploy.
+	if ( function_exists( 'acf_get_local_json_files' ) && function_exists( 'acf_import_field_group' ) ) {
+		$synced = 0;
+		foreach ( acf_get_local_json_files() as $key => $file ) {
+			$in_db = get_posts( [ 'post_type' => 'acf-field-group', 'name' => $key, 'post_status' => 'any', 'numberposts' => 1, 'fields' => 'ids' ] );
+			if ( $in_db ) { continue; }
+			$group = json_decode( file_get_contents( $file ), true );
+			if ( ! $group ) { continue; }
+			acf_import_field_group( $group );
+			$synced++;
+		}
+		if ( $synced ) { echo "acf: synced {$synced} field group(s) into the database\n"; }
+	}
+
+	flush_rewrite_rules();
+}
+
 function w270_main( $argv ) {
 	$flags = array_fill_keys( array_map( fn( $a ) => explode( '=', ltrim( $a, '-' ) )[0], array_slice( $argv, 1 ) ), true );
 	$only  = null;
 	foreach ( $argv as $a ) { if ( str_starts_with( $a, '--only=' ) ) { $only = substr( $a, 7 ); } }
 	$all = isset( $flags['all'] );
 	if ( $all || isset( $flags['media'] ) ) { function_exists( 'w270_import_media' ) && w270_import_media(); }
+	if ( $all || isset( $flags['forms'] ) ) { w270_import_forms(); }
 	if ( $all || isset( $flags['pages'] ) ) { function_exists( 'w270_import_pages' ) && w270_import_pages( $only ); }
 	if ( $all || isset( $flags['menus'] ) ) { w270_import_menus(); }
+	if ( $all || isset( $flags['resources'] ) ) { w270_import_resources(); }
 	if ( $all || isset( $flags['kit'] ) ) { function_exists( 'w270_import_kit' ) && w270_import_kit(); }
 	if ( $all || isset( $flags['settings'] ) ) { w270_import_settings(); }
 	if ( class_exists( '\Elementor\Plugin' ) ) { \Elementor\Plugin::$instance->files_manager->clear_cache(); }

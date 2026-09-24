@@ -1,0 +1,14 @@
+{
+  "key": "group_270w_guide_extras",
+  "title": "Guide extras",
+  "fields": [
+    { "key": "field_270w_show_toc", "label": "Show table of contents", "name": "show_toc", "type": "true_false", "ui": 1, "default_value": 1, "instructions": "Built from the H2 headings in the content. Hidden automatically when there are fewer than two." },
+    { "key": "field_270w_callout", "label": "Callout box", "name": "callout", "type": "group", "layout": "block", "sub_fields": [
+      { "key": "field_270w_callout_label", "label": "Label", "name": "label", "type": "text", "default_value": "Helpful tip" },
+      { "key": "field_270w_callout_text", "label": "Text", "name": "text", "type": "textarea", "rows": 3, "new_lines": "" }
+    ] }
+  ],
+  "location": [[{"param": "post_type", "operator": "==", "value": "resource"},
+                {"param": "post_taxonomy", "operator": "==", "value": "resource_type:guides"}]],
+  "menu_order": 1, "position": "normal", "style": "default", "label_placement": "top", "instruction_placement": "label", "active": true, "show_in_rest": 0
+}

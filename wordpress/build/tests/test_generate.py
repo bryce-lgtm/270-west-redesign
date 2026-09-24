@@ -96,6 +96,8 @@ class GenerateTests(unittest.TestCase):
                          '<a href="/services/claims/#x">c</a> <img src="__W270_ASSETS__/img/a.svg">')
         self.assertEqual(rewrite_links('<a href="index.html">h</a>'), '<a href="/">h</a>')
         self.assertEqual(rewrite_links('<a href="mailto:x@y.z">m</a>'), '<a href="mailto:x@y.z">m</a>')
+        self.assertEqual(rewrite_links('<a href="index.html#quiz">q</a> <a href="index.html#consult">c</a>'),
+                         '<a href="/vac-status-checker/">q</a> <a href="/book-a-consult/">c</a>')
 
     def test_parse_decor(self):
         js = ("document.getElementById('about-maple').innerHTML = brandMarkSVG(260, 'currentColor');"
@@ -119,6 +121,15 @@ class GenerateTests(unittest.TestCase):
         self.assertNotEqual(a, c)
         self.assertIn(f'.{a}.{a}.{a}.{a}{{margin-top:26px}}', reg.css())
         self.assertIn(f'.{c}.{c}.{c} img{{object-position:center 30%}}', reg.css())
+
+    def test_archive_pages_are_not_generated_but_still_link_correctly(self):
+        from pages import PAGES, LINK_MAP
+        slugs = {slug for _, slug, _ in PAGES}
+        for gone in ('stories', 'guides', 'news'):
+            self.assertNotIn(gone, slugs, f'{gone} should be template-driven, not generated')
+        self.assertEqual(LINK_MAP['stories.html'], '/resources/stories/')
+        self.assertEqual(LINK_MAP['guides.html'], '/resources/guides/')
+        self.assertEqual(LINK_MAP['news.html'], '/resources/news/')
 
 if __name__ == '__main__':
     unittest.main()

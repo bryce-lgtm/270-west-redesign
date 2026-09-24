@@ -66,3 +66,103 @@ body:not(.elementor-editor-active) :where(.w-image, .w-html) { display: contents
 /* 8. Elementor resets the prototype relied on the UA for. */
 :where(.elementor a) { text-decoration: revert; }
 :where(.elementor img) { height: revert; border-radius: revert; }
+
+/* 9. Gravity Forms — dressed as the prototype's .contact-form.
+   GF's own stylesheets sit in the `gforms` cascade layer (see functions.php), so these
+   unlayered rules win without needing !important or selector escalation. */
+.w270-gf .gform_wrapper { margin: 0; }
+.w270-gf .gform_fields { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 20px; row-gap: 0; }
+.w270-gf .gfield { grid-column: 1 / -1; padding: 0 0 20px; border: none; min-width: 0; }
+.w270-gf .gfield--width-half { grid-column: span 6; }
+@media (max-width: 700px) { .w270-gf .gfield--width-half { grid-column: 1 / -1; } }
+
+.w270-gf .gfield_label,
+.w270-gf .gform-field-label {
+  display: block; font-family: var(--font-sans); font-size: 16px; font-weight: 600;
+  letter-spacing: 0; text-transform: none; color: var(--ink); margin: 0 0 8px; padding: 0;
+}
+.w270-gf legend.gfield_label { float: none; width: auto; }
+.w270-gf .gfield_required { color: var(--muted); font-weight: 400; }
+.w270-gf .gfield_required_text { font-size: 14px; }
+.w270-gf .gfield_description { font-size: 15px; line-height: 1.5; color: var(--muted); padding: 6px 0 0; }
+
+/* Sub-labels (First / Last) sit under their input, small and quiet. */
+.w270-gf .ginput_complex { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+.w270-gf .ginput_complex > span { display: block; min-width: 0; }
+.w270-gf .ginput_complex label {
+  font-size: 14px; font-weight: 400; color: var(--muted); margin: 6px 0 0; text-transform: none; letter-spacing: 0;
+}
+@media (max-width: 700px) { .w270-gf .ginput_complex { grid-template-columns: 1fr; } }
+
+.w270-gf input[type="text"], .w270-gf input[type="email"], .w270-gf input[type="tel"],
+.w270-gf input[type="number"], .w270-gf input[type="url"], .w270-gf select, .w270-gf textarea {
+  display: block; width: 100%; box-sizing: border-box; padding: 14px 16px;
+  border: 1.5px solid #7C8C8F; border-radius: 6px; background: #fff;
+  font: inherit; font-size: 17px; line-height: 1.4; color: var(--ink); height: auto;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.w270-gf input::placeholder, .w270-gf textarea::placeholder { color: #66777A; }
+.w270-gf input:hover, .w270-gf select:hover, .w270-gf textarea:hover { border-color: var(--ink); }
+.w270-gf input:focus, .w270-gf select:focus, .w270-gf textarea:focus {
+  outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(162,34,34,0.28);
+}
+.w270-gf select {
+  -webkit-appearance: none; appearance: none; padding-right: 44px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%231A3A3F' stroke-width='1.8'/%3E%3C/svg%3E") no-repeat right 16px center;
+}
+.w270-gf textarea { resize: vertical; min-height: 140px; }
+
+/* Consent: checkbox beside its wrapping sentence, not stacked. */
+.w270-gf .ginput_container_consent { display: flex; align-items: flex-start; gap: 12px; }
+.w270-gf .ginput_container_consent input[type="checkbox"] {
+  flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--ink);
+}
+.w270-gf .gfield_consent_label, .w270-gf .gform-field-label--type-inline {
+  font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--muted); margin: 0;
+}
+
+/* Submit: the prototype's .btn-accent. */
+.w270-gf .gform_footer { margin: 4px 0 0; padding: 0; }
+.w270-gf .gform_button {
+  background: var(--accent); color: #fff; padding: 18px 32px; width: auto;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; border: none; border-radius: 0; cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--dur) var(--ease), box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.w270-gf .gform_button:hover { background: var(--accent-deep); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.w270-gf .gform_button:active { transform: translateY(0); }
+.w270-gf .gform_button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+/* Validation + confirmation in the brand voice rather than GF's default red slab. */
+.w270-gf .gform_validation_errors {
+  background: rgba(162,34,34,0.06); border: 1px solid var(--accent); border-radius: 6px;
+  padding: 16px 20px; margin: 0 0 24px; box-shadow: none;
+}
+.w270-gf .gform_validation_errors h2 { font-family: var(--font-sans); font-size: 16px; font-weight: 600; color: var(--accent); margin: 0; }
+.w270-gf .gfield_error input, .w270-gf .gfield_error select, .w270-gf .gfield_error textarea { border-color: var(--accent); }
+.w270-gf .validation_message {
+  background: none; border: none; padding: 6px 0 0; font-size: 15px; color: var(--accent);
+}
+.w270-gf .gform_confirmation_message {
+  font-family: var(--font-serif); font-size: 24px; line-height: 1.35; color: var(--ink); padding: 8px 0;
+}
+
+/* The landing-page form card is tighter than the full-width contact page. */
+.lp-form.w270-gf .gfield { padding-bottom: 16px; }
+.lp-form.w270-gf .gform_button { width: 100%; justify-content: center; }
+
+/* Reserve two lines for every half-width label, so one that wraps ("Province of Residence")
+   keeps its input level with the field beside it — in the error state too, where uneven
+   validation messages would otherwise knock a row out of step. */
+.w270-gf .gfield_label, .w270-gf .gform-field-label { line-height: 1.3; }
+@media (min-width: 701px) {
+  .w270-gf .gfield--width-half > .gfield_label { min-height: 2.6em; }
+}
+
+/* GF places the name sub-labels above the inputs on these forms. */
+.w270-gf .field_sublabel_above .ginput_complex label { margin: 0 0 6px; }
+.w270-gf .field_sublabel_below .ginput_complex label { margin: 6px 0 0; }
+
+/* The reassurance line the prototype ran beside the submit button. */
+.w270-gf-note p { font-size: 15px; line-height: 1.5; color: var(--muted); margin: 14px 0 0; }

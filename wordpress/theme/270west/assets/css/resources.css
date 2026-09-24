@@ -1,0 +1,18 @@
+/* Resource singles + Resources landing: classes for what the prototype styled inline. */
+.res-header { padding: 60px 80px 40px; border-bottom: 1px solid var(--rule); }
+.res-crumb { display: flex; gap: 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; }
+.res-crumb a { color: inherit; text-decoration: none; }
+.res-crumb-current { color: var(--accent); }
+.res-title { font-family: var(--font-serif); font-size: 64px; font-weight: 500; line-height: 1.05; letter-spacing: -0.025em; margin: 0 0 24px; max-width: 1100px; }
+.res-meta { display: flex; gap: 32px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.article-body figure.photo { margin: 0 0 28px; }
+.article-blockquote p { margin: 0; font: inherit; line-height: inherit; color: inherit; }
+.res-checklist { list-style: none; padding: 0; margin: 0 0 32px; }
+.res-checklist li { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--rule); font-size: 17px; line-height: 1.55; }
+.res-check { width: 22px; height: 22px; border: 1.5px solid var(--ink); border-radius: 4px; flex: none; margin-top: 3px; }
+.res-checklist-note { display: block; font-size: 15px; color: var(--muted); margin-top: 4px; }
+.res-pdf { margin: 0 0 32px; }
+.res-start-h { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin: 0 0 24px; font-weight: 500; }
+.res-library { background: var(--bg2); border-top: 1px solid var(--rule); }
+.res-library-head { display: grid; grid-template-columns: 1fr 2fr; gap: 64px; margin-bottom: 56px; }
+.res-library-h { font-family: var(--font-serif); font-size: 44px; font-weight: 500; line-height: 1.1; letter-spacing: -0.02em; margin: 0; max-width: 720px; }

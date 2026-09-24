@@ -1,0 +1,16 @@
+{
+ "key": "group_270w_story_details",
+ "title": "Story details",
+ "fields": [
+  {"key": "field_270w_pull_quote", "label": "Pull quote", "name": "pull_quote", "type": "textarea", "rows": 3, "required": 1},
+  {"key": "field_270w_veteran_name", "label": "Veteran name", "name": "veteran_name", "type": "text", "required": 1},
+  {"key": "field_270w_veteran_role", "label": "Rank / branch", "name": "veteran_role", "type": "text", "default_value": "Canadian Armed Forces Veteran"},
+  {"key": "field_270w_video_url", "label": "Video embed URL", "name": "video_url", "type": "url", "instructions": "Leave empty to show the featured image instead."},
+  {"key": "field_270w_duration", "label": "Duration (minutes)", "name": "duration", "type": "number", "min": 1},
+  {"key": "field_270w_story_number", "label": "Story number", "name": "story_number", "type": "number", "min": 1, "instructions": "Shown on the card as \"Story 01\"."}
+ ],
+ "location": [[{"param": "post_type", "operator": "==", "value": "resource"},
+               {"param": "post_taxonomy", "operator": "==", "value": "resource_type:stories"}]],
+ "menu_order": 0,
+ "active": true
+}

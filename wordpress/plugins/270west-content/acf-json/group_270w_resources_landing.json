@@ -1,0 +1,17 @@
+{
+  "key": "group_270w_resources_landing",
+  "title": "Archive hero",
+  "fields": [
+    { "key": "field_270w_hero_h1", "label": "Hero heading (H1)", "name": "hero_h1", "type": "text", "instructions": "Falls back to the page title." },
+    { "key": "field_270w_hero_lead", "label": "Hero lead", "name": "hero_lead", "type": "text" },
+    { "key": "field_270w_hero_sub", "label": "Hero sub-copy", "name": "hero_sub", "type": "textarea", "rows": 3, "new_lines": "" },
+    {"key": "field_270w_archive_types", "label": "Types listed", "name": "archive_types", "type": "taxonomy",
+     "taxonomy": "resource_type", "field_type": "checkbox", "return_format": "object", "save_terms": 0, "add_term": 0},
+    {"key": "field_270w_archive_layout", "label": "Card layout", "name": "archive_layout", "type": "select",
+     "choices": {"library": "Library cards", "stories": "Story cards", "news": "News list"}, "default_value": "library"},
+    {"key": "field_270w_archive_filter", "label": "Filter chips", "name": "archive_filter", "type": "select",
+     "choices": {"none": "None", "topic": "Topics", "news_category": "News categories"}, "default_value": "none"}
+  ],
+  "location": [[{"param": "page_template", "operator": "==", "value": "template-resource-archive.php"}]],
+  "menu_order": 0, "position": "normal", "style": "default", "label_placement": "top", "instruction_placement": "label", "active": true, "show_in_rest": 0
+}
