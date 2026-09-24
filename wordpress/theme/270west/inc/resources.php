@@ -10,8 +10,20 @@ function w270_resource_types() {
 
 /** The resource_type term for a post, or null. */
 function w270_subtype( $post_id = null ) {
-	$terms = get_the_terms( $post_id ?: get_the_ID(), 'resource_type' );
-	return ( $terms && ! is_wp_error( $terms ) ) ? $terms[0] : null;
+	$post_id = $post_id ?: get_the_ID();
+	$terms   = get_the_terms( $post_id, 'resource_type' );
+	if ( ! $terms || is_wp_error( $terms ) ) { return null; }
+	// resource_type is non-hierarchical, so a post can carry several terms and get_the_terms()
+	// returns them in no guaranteed order. Pick the lowest term_id so the label, the TOC gate
+	// and the body branches are at least stable and explainable rather than cache-dependent.
+	if ( count( $terms ) > 1 ) {
+		usort( $terms, fn( $a, $b ) => $a->term_id <=> $b->term_id );
+		error_log( sprintf(
+			'w270: post %d has %d resource_type terms (%s); rendering as "%s"',
+			$post_id, count( $terms ), implode( ', ', wp_list_pluck( $terms, 'slug' ) ), $terms[0]->slug
+		) );
+	}
+	return $terms[0];
 }
 
 /** 'guides' | 'checklists' | 'explainers' | 'stories' | 'news' | '' */
@@ -32,11 +44,10 @@ function w270_field( $name, $post_id = null ) {
 	return ( '' === $v || [] === $v ) ? null : $v;
 }
 
-function w270_type_label( $post_id, $featured = false ) {
-	if ( function_exists( 'w270c_type_label' ) ) { return w270c_type_label( $post_id, $featured ); }
-	$term = w270_subtype( $post_id );
-	if ( ! $term ) { return 'Resource'; }
-	return ( $featured && 'guides' === $term->slug ) ? 'Featured guide' : $term->name;
+function w270_type_label( int $post_id, bool $featured = false ) {
+	// The plugin owns this rule; the theme only needs a sane answer if it is ever deactivated,
+	// in which case no resource content renders anyway.
+	return function_exists( 'w270c_type_label' ) ? w270c_type_label( $post_id, $featured ) : 'Resource';
 }
 
 function w270_read_time( $post_id ) {
