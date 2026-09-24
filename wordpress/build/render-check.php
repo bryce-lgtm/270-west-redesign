@@ -37,6 +37,24 @@ foreach ( get_posts( [ 'post_type' => $types ?: 'nonexistent', 'numberposts' => 
 		printf( "OK   %-45s %s topic=%s\n", $p->post_type . '/' . $p->post_name, parse_url( $url, PHP_URL_PATH ), $terms ? $terms[0] : '-' );
 	} catch ( Throwable $e ) { $fail = true; printf( "FAIL %s: %s\n", $p->post_name, $e->getMessage() ); }
 }
+// Resource model: one post type, five sub-types, taxonomies attached.
+try {
+	if ( ! post_type_exists( 'resource' ) ) { throw new RuntimeException( 'post type resource not registered' ); }
+	foreach ( [ 'guide', 'checklist', 'explainer' ] as $legacy ) {
+		if ( post_type_exists( $legacy ) ) { throw new RuntimeException( "legacy post type still registered: {$legacy}" ); }
+	}
+	foreach ( [ 'resource_type', 'resource_topic', 'news_category' ] as $tax ) {
+		if ( ! taxonomy_exists( $tax ) ) { throw new RuntimeException( "taxonomy missing: {$tax}" ); }
+	}
+	$subtypes = wp_list_pluck( get_terms( [ 'taxonomy' => 'resource_type', 'hide_empty' => false ] ), 'slug' );
+	sort( $subtypes );
+	$want = [ 'checklists', 'explainers', 'guides', 'news', 'stories' ];
+	if ( $subtypes !== $want ) { throw new RuntimeException( 'sub-types are ' . implode( ',', $subtypes ) ); }
+	echo "OK   resource model: 1 post type, 5 sub-types, 3 taxonomies\n";
+} catch ( Throwable $e ) {
+	$fail = true;
+	printf( "FAIL resource model: %s\n", $e->getMessage() );
+}
 if ( function_exists( 'acf_get_field_groups' ) ) {
 	$n = count( acf_get_field_groups() );
 	printf( "%s acf field groups: %d\n", 4 === $n ? 'OK  ' : 'FAIL', $n );
