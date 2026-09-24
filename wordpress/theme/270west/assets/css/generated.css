@@ -44,22 +44,18 @@
 .w270-s43.w270-s43.w270-s43.w270-s43{font-family:var(--font-serif);font-size:52px;font-weight:400;line-height:1.18;letter-spacing:-0.025em;margin:0;position:relative}
 .w270-s44.w270-s44.w270-s44.w270-s44{max-width:820px}
 .w270-s45.w270-s45.w270-s45.w270-s45{background:var(--bg2);border-top:1px solid var(--rule)}
-.w270-s46.w270-s46.w270-s46.w270-s46{padding:60px 80px 40px;border-bottom:1px solid var(--rule)}
-.w270-s47.w270-s47.w270-s47.w270-s47{display:flex;gap:8px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
-.w270-s48.w270-s48.w270-s48.w270-s48{font-family:var(--font-serif);font-size:64px;font-weight:400;line-height:1.05;letter-spacing:-0.025em;margin:0 0 24px;max-width:1100px}
-.w270-s49.w270-s49.w270-s49.w270-s49{display:flex;gap:32px;font-family:var(--font-mono);font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
-.w270-s50.w270-s50.w270-s50.w270-s50{font-family:var(--font-serif);font-size:36px;font-weight:400;line-height:1.1;letter-spacing:-0.02em;margin:0 0 32px}
-.w270-s51.w270-s51.w270-s51.w270-s51{font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--olive);margin-bottom:14px}
-.w270-s52.w270-s52.w270-s52.w270-s52{font-family:var(--font-serif);font-size:28px;font-weight:400;line-height:1.15;margin:0 0 32px}
-.w270-s53.w270-s53.w270-s53.w270-s53{font-family:var(--font-serif);font-size:48px;font-weight:400;line-height:1.1;letter-spacing:-0.025em;margin:0;position:relative}
-.w270-s54.w270-s54.w270-s54.w270-s54{font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
-.w270-s55.w270-s55.w270-s55.w270-s55{font-size:36px;font-weight:400;line-height:1.1;letter-spacing:-0.02em;margin:0 0 20px}
-.w270-s56.w270-s56.w270-s56.w270-s56{font-size:16px;line-height:1.6;color:var(--muted);margin:0 0 32px}
-.w270-s57.w270-s57.w270-s57.w270-s57{display:grid;gap:16px}
-.w270-s58.w270-s58.w270-s58.w270-s58{display:flex;gap:14px;align-items:flex-start;padding:16px;background:var(--bg2);border:1px solid var(--rule)}
-.w270-s59.w270-s59.w270-s59.w270-s59{color:var(--accent);margin-top:2px;flex-shrink:0}
-.w270-s60.w270-s60.w270-s60.w270-s60{font-size:14px;font-weight:600;margin-bottom:4px}
-.w270-s61.w270-s61.w270-s61.w270-s61{font-size:13px;color:var(--muted);line-height:1.5}
-.w270-s62.w270-s62.w270-s62.w270-s62{margin-top:32px;padding:20px 24px;background:var(--bg2);border-left:2px solid var(--olive)}
-.w270-s63.w270-s63.w270-s63.w270-s63{font-size:13px;color:var(--muted);line-height:1.55;font-style:italic}
-.w270-s64.w270-s64.w270-s64.w270-s64{margin-top:40px}
+.w270-s46.w270-s46.w270-s46.w270-s46{font-family:var(--font-serif);font-size:36px;font-weight:400;line-height:1.1;letter-spacing:-0.02em;margin:0 0 32px}
+.w270-s47.w270-s47.w270-s47.w270-s47{font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--olive);margin-bottom:14px}
+.w270-s48.w270-s48.w270-s48.w270-s48{font-family:var(--font-serif);font-size:28px;font-weight:400;line-height:1.15;margin:0 0 32px}
+.w270-s49.w270-s49.w270-s49.w270-s49{font-family:var(--font-serif);font-size:48px;font-weight:400;line-height:1.1;letter-spacing:-0.025em;margin:0;position:relative}
+.w270-s50.w270-s50.w270-s50.w270-s50{font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
+.w270-s51.w270-s51.w270-s51.w270-s51{font-size:36px;font-weight:400;line-height:1.1;letter-spacing:-0.02em;margin:0 0 20px}
+.w270-s52.w270-s52.w270-s52.w270-s52{font-size:16px;line-height:1.6;color:var(--muted);margin:0 0 32px}
+.w270-s53.w270-s53.w270-s53.w270-s53{display:grid;gap:16px}
+.w270-s54.w270-s54.w270-s54.w270-s54{display:flex;gap:14px;align-items:flex-start;padding:16px;background:var(--bg2);border:1px solid var(--rule)}
+.w270-s55.w270-s55.w270-s55.w270-s55{color:var(--accent);margin-top:2px;flex-shrink:0}
+.w270-s56.w270-s56.w270-s56.w270-s56{font-size:14px;font-weight:600;margin-bottom:4px}
+.w270-s57.w270-s57.w270-s57.w270-s57{font-size:13px;color:var(--muted);line-height:1.5}
+.w270-s58.w270-s58.w270-s58.w270-s58{margin-top:32px;padding:20px 24px;background:var(--bg2);border-left:2px solid var(--olive)}
+.w270-s59.w270-s59.w270-s59.w270-s59{font-size:13px;color:var(--muted);line-height:1.55;font-style:italic}
+.w270-s60.w270-s60.w270-s60.w270-s60{margin-top:40px}
