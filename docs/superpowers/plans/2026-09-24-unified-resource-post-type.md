@@ -826,42 +826,62 @@ Expected: `OK`, 22 tests.
 
 - [ ] **Step 5: Make the resource import seed-once**
 
-In `w270_import_resources()`, replace the insert/update block so an existing post is skipped
-entirely rather than updated:
+**Do not paste a replacement block wholesale — Tasks 2 and 3 have changed this code since the
+plan was written.** The lookup is now a status-scoped, oldest-first `get_posts()` call that
+deliberately ignores trashed rows; reverting it to `get_page_by_path()` would undo a fix. Make
+these three edits in place instead.
+
+**5a.** Immediately after the existing line `$existing   = $found ? $found[0] : null;`, insert:
 
 ```php
-			$existing = get_page_by_path( $r['slug'], OBJECT, 'resource' );
 			if ( $existing ) {
 				// Seed-once: resource content belongs to wp-admin from here on, so a re-run
-				// must not overwrite an edit, and must not resurrect a deleted field value.
+				// must not overwrite an edit or resurrect a field value someone cleared.
 				$ids[ $r['slug'] ] = $existing->ID;
 				echo "resource {$r['slug']}: #{$existing->ID} already present, left as-is\n";
 				continue;
 			}
-			$post = [
-				'post_type' => 'resource', 'post_status' => 'publish', 'post_title' => $r['title'],
-				'post_name' => $r['slug'], 'post_excerpt' => $summary, 'menu_order' => (int) $r['order'],
-				'post_content' => $is_article ? w270_media_urls( $article['content'] ) : '<p>Content coming soon.</p>',
-			];
-			if ( ! empty( $r['date'] ) ) { $post['post_date'] = $r['date'] . ' 09:00:00'; }
-			$pid = wp_insert_post( $post, true );
-			if ( is_wp_error( $pid ) ) { throw new RuntimeException( $pid->get_error_message() ); }
-			wp_set_object_terms( $pid, $r['type'], 'resource_type', false );
-			if ( ! empty( $r['topic'] ) ) { wp_set_object_terms( $pid, [ $topics[ $r['topic'] ] ], 'resource_topic' ); }
-			if ( ! empty( $r['news_category'] ) ) { wp_set_object_terms( $pid, $r['news_category'], 'news_category', false ); }
 ```
 
-Then, still inside the `if ( ! $existing )` path, write the sub-type-specific meta:
+**5b.** Add the News publication date to the `$post` array, and change the insert/update line so
+it only ever inserts. Replace:
 
 ```php
+			$pid = $existing ? wp_update_post( $post + [ 'ID' => $existing->ID ], true ) : wp_insert_post( $post, true );
+```
+
+with:
+
+```php
+			// News entries carry their own publication date; everything else uses "now".
+			if ( ! empty( $r['date'] ) ) { $post['post_date'] = $r['date'] . ' 09:00:00'; }
+			$pid = wp_insert_post( $post, true );
+```
+
+**5c.** After the existing `wp_set_object_terms( $pid, $subtype, 'resource_type', false );` line,
+add the topic guard and the News category, then the sub-type-specific meta. The existing
+unconditional `resource_topic` assignment must become conditional, because Stories and News have
+no topic:
+
+```php
+			if ( ! empty( $r['topic'] ) ) { wp_set_object_terms( $pid, [ $topics[ $r['topic'] ] ], 'resource_topic' ); }
+			if ( ! empty( $r['news_category'] ) ) { wp_set_object_terms( $pid, $r['news_category'], 'news_category', false ); }
 			foreach ( [ 'pull_quote', 'veteran_name', 'veteran_role', 'duration', 'story_number', 'external_link' ] as $k ) {
 				if ( isset( $r[ $k ] ) ) { update_post_meta( $pid, $k, $r[ $k ] ); }
 			}
 ```
 
-Leave the existing `update_post_meta`/`update_field` calls for `summary`, `read_time`,
-`featured`, `seo_h1`, `show_toc`, `callout` and `items` as they are — they now run only for
-newly created posts.
+Remove the old unconditional `wp_set_object_terms( $pid, [ $topics[ $r['topic'] ] ], 'resource_topic' );`
+line so the topic is not assigned twice.
+
+Also guard the `read_time` meta the same way — Stories and News have no read time:
+
+```php
+			if ( isset( $r['read_time'] ) ) { update_post_meta( $pid, 'read_time', (int) $r['read_time'] ); }
+```
+
+Leave the remaining `update_post_meta`/`update_field` calls for `summary`, `featured`, `seo_h1`,
+`show_toc`, `callout` and `items` as they are — they now run only for newly created posts.
 
 - [ ] **Step 6: Deploy and confirm 7 new entries appear and the 15 are untouched**
 
