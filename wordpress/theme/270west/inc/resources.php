@@ -5,7 +5,19 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 function w270_resource_types() {
-	return function_exists( 'w270c_types' ) ? w270c_types() : [ 'guide', 'checklist', 'explainer' ];
+	return function_exists( 'w270c_types' ) ? w270c_types() : [ 'resource' ];
+}
+
+/** The resource_type term for a post, or null. */
+function w270_subtype( $post_id = null ) {
+	$terms = get_the_terms( $post_id ?: get_the_ID(), 'resource_type' );
+	return ( $terms && ! is_wp_error( $terms ) ) ? $terms[0] : null;
+}
+
+/** 'guides' | 'checklists' | 'explainers' | 'stories' | 'news' | '' */
+function w270_subtype_slug( $post_id = null ) {
+	$term = w270_subtype( $post_id );
+	return $term ? $term->slug : '';
 }
 
 /** ACF field value, or null when ACF is not installed. */
@@ -20,10 +32,11 @@ function w270_field( $name, $post_id = null ) {
 	return ( '' === $v || [] === $v ) ? null : $v;
 }
 
-function w270_type_label( $type, $featured = false ) {
-	if ( function_exists( 'w270c_type_label' ) ) { return w270c_type_label( $type, $featured ); }
-	$labels = [ 'guide' => 'Guide', 'checklist' => 'Checklist', 'explainer' => 'Explainer' ];
-	return ( $featured && 'guide' === $type ) ? 'Featured guide' : ( $labels[ $type ] ?? 'Resource' );
+function w270_type_label( $post_id, $featured = false ) {
+	if ( function_exists( 'w270c_type_label' ) ) { return w270c_type_label( $post_id, $featured ); }
+	$term = w270_subtype( $post_id );
+	if ( ! $term ) { return 'Resource'; }
+	return ( $featured && 'guides' === $term->slug ) ? 'Featured guide' : $term->name;
 }
 
 function w270_read_time( $post_id ) {
@@ -73,7 +86,7 @@ function w270_toc( $content ) {
 }
 
 function w270_is_resource_view() {
-	return is_singular( w270_resource_types() ) || is_page_template( 'template-resources.php' );
+	return is_singular( w270_resource_types() ) || is_page_template( 'template-resource-archive.php' );
 }
 
 add_action( 'wp_enqueue_scripts', function () {

@@ -2,12 +2,12 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 $p       = $args['post'];
 $main    = ! empty( $args['main'] );
-$type    = get_post_type( $p );
+$sub     = w270_subtype_slug( $p->ID );
 $minutes = w270_read_time( $p->ID );
 $cls     = $main ? 'resource-card-main' : 'resource-card-sm';
 $tag     = $main
-	? w270_type_label( $type, true ) . ( $minutes ? " · {$minutes} min read" : '' )
-	: w270_type_label( $type ) . ( $minutes ? " · {$minutes} min" : '' );
+	? w270_type_label( $p->ID, true ) . ( $minutes ? " · {$minutes} min read" : '' )
+	: w270_type_label( $p->ID ) . ( $minutes ? " · {$minutes} min" : '' );
 ?>
 <a href="<?php echo esc_url( get_permalink( $p ) ); ?>" class="<?php echo esc_attr( $cls ); ?>">
 	<?php if ( has_post_thumbnail( $p ) ) : ?>
@@ -17,7 +17,7 @@ $tag     = $main
 		<?php if ( $main ) : ?>
 			<div class="resource-card-main-tag"><?php echo esc_html( $tag ); ?></div>
 			<h3 class="resource-card-main-h"><?php echo esc_html( get_the_title( $p ) ); ?></h3>
-			<div class="resource-card-main-link">Read<?php echo 'guide' === $type ? ' guide' : ''; ?> →</div>
+			<div class="resource-card-main-link">Read<?php echo 'guides' === $sub ? ' guide' : ''; ?> →</div>
 		<?php else : ?>
 			<div>
 				<div class="resource-card-sm-tag"><?php echo esc_html( $tag ); ?></div>
