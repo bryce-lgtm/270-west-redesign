@@ -66,7 +66,7 @@ add_filter( 'style_loader_tag', function ( $tag, $handle, $href ) {
 	}
 	// Gravity Forms' orbital theme is layered for the same reason: the prototype form styling in
 	// elementor-bridge.css is unlayered, so it wins without a specificity war or !important.
-	foreach ( [ 'elementor' => '/^(elementor-frontend|elementor-icons|widget-|base-|e-|swiper)/', 'gforms' => '/^(gform_basic|gform_theme|gravity_forms_theme)/' ] as $layer => $re ) {
+	foreach ( [ 'elementor' => '/^(elementor-frontend|elementor-icons|elementor-pro|widget-|base-|e-|swiper|font-awesome)/', 'gforms' => '/^(gform_basic|gform_theme|gravity_forms_theme)/' ] as $layer => $re ) {
 		if ( preg_match( $re, $handle ) ) {
 			return '<style id="' . esc_attr( $handle ) . '-css">@import url("' . esc_url( $href ) . '") layer(' . $layer . ');</style>' . "\n";
 		}
