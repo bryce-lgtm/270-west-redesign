@@ -78,7 +78,9 @@ function w270_related( $post_id ) {
 
 /** Adds the prototype's article classes and h-N ids to resource content (runs after wpautop). */
 function w270_article_classes( $content ) {
-	if ( ! is_singular( w270_resource_types() ) || ! in_the_loop() ) { return $content; }
+	// The queried resource's own body, whether rendered by the PHP loop or by an Elementor Pro
+	// single template (which runs outside the loop, so in_the_loop() would be false there).
+	if ( ! is_singular( w270_resource_types() ) || get_the_ID() !== get_queried_object_id() ) { return $content; }
 	$i = 0;
 	$content = preg_replace_callback( '/<h2\b([^>]*)>/i', function ( $m ) use ( &$i ) {
 		$attrs = $m[1];
