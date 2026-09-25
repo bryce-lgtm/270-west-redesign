@@ -4,6 +4,7 @@
  *   "$PHP" -c "$INI" wordpress/build/import.php --all
  *   "$PHP" -c "$INI" wordpress/build/import.php --pages --only=home
  *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-resources=slug-a,slug-b   # re-seed named resources
+ *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-templates               # re-seed the Pro header/footer
  */
 if ( PHP_SAPI !== 'cli' ) { http_response_code( 403 ); exit; } // never runnable over HTTP
 $site = getenv( 'W270_SITE' ) ?: '/Users/Bryce/Local Sites/270-west/app/public';
@@ -560,6 +561,52 @@ function w270_import_resources( array $refresh = [] ) {
 	flush_rewrite_rules();
 }
 
+/**
+ * Elementor Pro Theme Builder templates (header, footer), generated from the prototype's chrome.
+ * Seed-once like resources: created if absent, then owned by wp-admin. --refresh-templates
+ * (deploy: W270_SG_REFRESH_TEMPLATES=1) re-seeds them from the repo.
+ */
+function w270_import_templates( $refresh = false ) {
+	if ( ! class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) { echo "templates: Elementor Pro not active, skipped\n"; return; }
+	$source  = \Elementor\Plugin::$instance->templates_manager->get_source( 'local' );
+	$manager = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager();
+	$assets  = get_stylesheet_directory_uri() . '/assets';
+	foreach ( glob( W270_OUT . '/tpl-*.json' ) as $file ) {
+		try {
+			$def      = json_decode( file_get_contents( $file ), true, 512, JSON_THROW_ON_ERROR );
+			$found    = get_posts( [ 'post_type' => 'elementor_library', 'name' => $def['slug'], 'post_status' => 'any', 'numberposts' => 1 ] );
+			$existing = $found ? $found[0] : null;
+			if ( $existing && ! $refresh ) { echo "template {$def['slug']}: #{$existing->ID} already present, left as-is\n"; continue; }
+			$elements = w270_resolve( $def['elements'], $assets );
+			if ( $existing ) {
+				$id = $existing->ID;
+				$r  = $source->update_item( [ 'id' => $id, 'title' => $def['title'], 'content' => $elements ] );
+			} else {
+				$r  = $source->save_item( [ 'title' => $def['title'], 'type' => $def['type'], 'content' => $elements, 'page_settings' => [] ] );
+				$id = $r;
+			}
+			if ( is_wp_error( $r ) ) { throw new RuntimeException( $r->get_error_message() ); }
+			if ( ! $existing ) { wp_update_post( [ 'ID' => $id, 'post_name' => $def['slug'] ] ); }
+			// Display conditions: everywhere, except the advertising landing pages, which carry
+			// their own header and footer inside the page.
+			$conditions = [];
+			foreach ( $def['conditions'] as $c ) { $conditions[] = array_pad( explode( '/', $c ), 4, '' ); }
+			if ( ! empty( $def['exclude_landing'] ) ) {
+				foreach ( w270_landing_slugs() as $slug ) {
+					$p = w270_page_by_slug( $slug );
+					if ( $p ) { $conditions[] = [ 'exclude', 'singular', 'page', (string) $p->ID ]; }
+				}
+			}
+			$manager->save_conditions( $id, $conditions );
+			delete_post_meta( $id, '_elementor_css' );
+			echo "template {$def['slug']}: #{$id} " . ( $existing ? 'refreshed' : 'created' ) . ' (' . count( $conditions ) . " conditions)\n";
+		} catch ( Throwable $e ) {
+			echo 'template ' . basename( $file ) . ': ERROR ' . $e->getMessage() . "\n";
+			$GLOBALS['w270_failed'] = true;
+		}
+	}
+}
+
 function w270_main( $argv ) {
 	$flags = array_fill_keys( array_map( fn( $a ) => explode( '=', ltrim( $a, '-' ) )[0], array_slice( $argv, 1 ) ), true );
 	$only  = null;
@@ -574,6 +621,7 @@ function w270_main( $argv ) {
 	if ( $all || isset( $flags['pages'] ) ) { function_exists( 'w270_import_pages' ) && w270_import_pages( $only ); }
 	if ( $all || isset( $flags['menus'] ) ) { w270_import_menus(); }
 	if ( $all || isset( $flags['resources'] ) || $refresh ) { w270_import_resources( $refresh ); }
+	if ( $all || isset( $flags['templates'] ) || isset( $flags['refresh-templates'] ) ) { w270_import_templates( isset( $flags['refresh-templates'] ) ); }
 	if ( $all || isset( $flags['kit'] ) ) { function_exists( 'w270_import_kit' ) && w270_import_kit(); }
 	if ( $all || isset( $flags['settings'] ) ) { w270_import_settings(); }
 	if ( class_exists( '\Elementor\Plugin' ) ) { \Elementor\Plugin::$instance->files_manager->clear_cache(); }

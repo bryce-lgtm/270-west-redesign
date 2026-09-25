@@ -119,4 +119,23 @@ try {
 	$fail = true;
 	printf( "FAIL resource archives: %s\n", $e->getMessage() );
 }
+// Elementor Pro Theme Builder: the header and footer templates exist and resolve for their locations.
+if ( class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) {
+	try {
+		$manager = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager();
+		foreach ( [ 'header' => 'w270-header', 'footer' => 'w270-footer' ] as $location => $slug ) {
+			$t = get_posts( [ 'post_type' => 'elementor_library', 'name' => $slug, 'numberposts' => 1 ] );
+			if ( ! $t ) { throw new RuntimeException( "no {$location} template ({$slug})" ); }
+			$conditions = (array) get_post_meta( $t[0]->ID, '_elementor_conditions', true );
+			if ( ! in_array( 'include/general', $conditions, true ) ) { throw new RuntimeException( "{$location} template lacks include/general" ); }
+			if ( ! $manager->get_location_templates( $location ) ) { throw new RuntimeException( "nothing resolves for location {$location}" ); }
+		}
+		echo "OK   theme builder: header and footer templates resolve\n";
+	} catch ( Throwable $e ) {
+		$fail = true;
+		printf( "FAIL theme builder: %s\n", $e->getMessage() );
+	}
+} else {
+	echo "WARN Elementor Pro not active: header/footer templates not checked\n";
+}
 exit( $fail ? 1 : 0 );

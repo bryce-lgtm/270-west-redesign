@@ -318,6 +318,66 @@ def convert_fragment(html_text, decor=None):
     return [conv.convert(n) for n in doc.root.elements()]
 
 
+# ── Theme Builder templates (Elementor Pro) ──
+# The site chrome is generated from index.html's <header> and <footer>, so the prototype's
+# .site-header/.site-footer rules keep applying. The navigation is handed to Pro's Nav Menu widget
+# on the WordPress menus the importer maintains, and Pro's own toggle replaces the mobile button.
+FOOTER_MENUS = {'Explore': 'footer-explore', 'Services': 'footer-services'}
+TEMPLATES = [
+    ('header', 'w270-header', '270 West header'),
+    ('footer', 'w270-footer', '270 West footer'),
+]
+
+
+class TemplateConverter(Converter):
+    def nav_menu(self, menu, layout):
+        settings = {
+            'menu': menu,
+            'layout': layout,
+            'pointer': 'none',
+            'submenu_icon': {'value': 'fas fa-chevron-down', 'library': 'fa-solid'},
+            '_css_classes': f'w-nav w-nav-{menu}',
+        }
+        if layout == 'horizontal':
+            settings.update({'dropdown': 'tablet', 'full_width': 'stretch', 'toggle': 'burger', 'text_align': 'aside'})
+        else:
+            settings['dropdown'] = 'none'
+        return self.widget('nav-menu', settings)
+
+    def convert(self, node):
+        if node.tag == 'nav' and not node.classes:
+            return self.nav_menu('primary', 'horizontal')  # the site header's navigation
+        if node.tag == 'button' and 'mobile-menu-btn' in node.classes:
+            return None  # Pro's hamburger toggle replaces it
+        return super().convert(node)
+
+    def container(self, node):
+        el = super().container(node)
+        kids = node.elements()
+        # A footer column whose label names a WordPress menu: its link list becomes a vertical
+        # Nav Menu widget on that menu, so the links are edited under Appearance → Menus.
+        if len(kids) == 2 and 'footer-col-label' in kids[0].classes and 'footer-col-items' in kids[1].classes:
+            label = html.unescape(self.doc.inner_html(kids[0]).strip())
+            if label in FOOTER_MENUS:
+                el['elements'] = [el['elements'][0], self.nav_menu(FOOTER_MENUS[label], 'vertical')]
+        el['elements'] = [e for e in el['elements'] if e is not None]
+        return el
+
+
+def convert_templates():
+    with open(os.path.join(ROOT, 'index.html'), encoding='utf-8') as f:
+        doc = parse(f.read())
+    conv = TemplateConverter(doc, {})
+    nodes = {n.tag: n for n in doc.body().elements() if n.tag in ('header', 'footer')}
+    out = []
+    for kind, slug, title in TEMPLATES:
+        el = conv.convert_top(nodes[kind])
+        out.append({'type': kind, 'slug': slug, 'title': title,
+                    'conditions': ['include/general'], 'exclude_landing': True,
+                    'media': sorted(set(conv.media)), 'elements': [el]})
+    return out, conv.warnings
+
+
 def convert_page(src_file, slug, parent, landing=False):
     with open(os.path.join(ROOT, src_file), encoding='utf-8') as f:
         source = f.read()
@@ -368,6 +428,13 @@ def main(argv):
         print(f'{slug:28s} {len(page["elements"]):2d} sections {n:4d} elements' + (f'  ⚠ {len(warnings)} warnings' if warnings else ''))
         for w in warnings:
             print('   ', w)
+    templates, warnings = convert_templates()
+    for t in templates:
+        with open(os.path.join(OUT, f"tpl-{t['type']}.json"), 'w', encoding='utf-8') as f:
+            json.dump(t, f, ensure_ascii=False, indent=1)
+        print(f"tpl-{t['type']:24s} {sum(1 for _ in _walk(t['elements'])):4d} elements")
+    for w in warnings:
+        print('   ', w)
     with open(GENERATED_CSS, 'w', encoding='utf-8') as f:
         f.write(STYLES.css())
     print(f'generated.css: {len(STYLES.rules)} rules')
