@@ -192,6 +192,7 @@ function w270_import_pages( $only = null ) {
 			$pid = $existing ? wp_update_post( $post + [ 'ID' => $existing->ID ], true ) : wp_insert_post( $post, true );
 			if ( is_wp_error( $pid ) ) { throw new RuntimeException( $pid->get_error_message() ); }
 			$elements = w270_resolve( $def['elements'], $assets );
+			if ( function_exists( 'w270_resolve_placeholders' ) ) { $elements = w270_resolve_placeholders( $elements ); }
 			update_post_meta( $pid, '_elementor_edit_mode', 'builder' );
 			update_post_meta( $pid, '_elementor_template_type', 'wp-page' );
 			update_post_meta( $pid, '_elementor_version', ELEMENTOR_VERSION );
@@ -665,6 +666,23 @@ function w270_import_templates( $refresh = false ) {
 	}
 }
 
+/** Re-saves the header/footer display conditions (structure, not content): landing-page exclusions need page IDs. */
+function w270_refresh_chrome_conditions() {
+	if ( ! class_exists( '\\ElementorPro\\Modules\\ThemeBuilder\\Module' ) ) { return; }
+	$manager = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager();
+	foreach ( [ 'w270-header', 'w270-footer' ] as $slug ) {
+		$id = w270_template_id( $slug );
+		if ( ! $id ) { continue; }
+		$conditions = [ [ 'include', 'general', '', '' ] ];
+		foreach ( w270_landing_slugs() as $lp ) {
+			$p = w270_page_by_slug( $lp );
+			if ( $p ) { $conditions[] = [ 'exclude', 'singular', 'page', (string) $p->ID ]; }
+		}
+		$manager->save_conditions( $id, $conditions );
+	}
+	echo "templates: header/footer conditions refreshed\n";
+}
+
 function w270_main( $argv ) {
 	$flags = array_fill_keys( array_map( fn( $a ) => explode( '=', ltrim( $a, '-' ) )[0], array_slice( $argv, 1 ) ), true );
 	$only  = null;
@@ -676,11 +694,14 @@ function w270_main( $argv ) {
 	$all = isset( $flags['all'] );
 	if ( $all || isset( $flags['media'] ) ) { function_exists( 'w270_import_media' ) && w270_import_media(); }
 	if ( $all || isset( $flags['forms'] ) ) { w270_import_forms(); }
-	if ( $all || isset( $flags['pages'] ) ) { function_exists( 'w270_import_pages' ) && w270_import_pages( $only ); }
-	if ( $all || isset( $flags['menus'] ) ) { w270_import_menus(); }
+	// Templates before pages: the Resources hub's Loop Grids name their loop-item templates.
 	$GLOBALS['w270_refresh_templates'] = isset( $flags['refresh-templates'] );
 	if ( $all || isset( $flags['templates'] ) || isset( $flags['refresh-templates'] ) ) { w270_import_templates( isset( $flags['refresh-templates'] ) ); }
+	if ( $all || isset( $flags['pages'] ) ) { function_exists( 'w270_import_pages' ) && w270_import_pages( $only ); }
+	if ( $all || isset( $flags['menus'] ) ) { w270_import_menus(); }
 	if ( $all || isset( $flags['resources'] ) || $refresh || isset( $flags['refresh-templates'] ) ) { w270_import_resources( $refresh ); }
+	// The header/footer exclude the landing pages by ID, which only exist once pages are imported.
+	if ( $all || isset( $flags['templates'] ) || isset( $flags['refresh-templates'] ) ) { w270_refresh_chrome_conditions(); }
 	if ( $all || isset( $flags['kit'] ) ) { function_exists( 'w270_import_kit' ) && w270_import_kit(); }
 	if ( $all || isset( $flags['settings'] ) ) { w270_import_settings(); }
 	if ( class_exists( '\Elementor\Plugin' ) ) { \Elementor\Plugin::$instance->files_manager->clear_cache(); }

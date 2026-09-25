@@ -128,6 +128,82 @@ def card_news():
     ])
 
 
+def card_hub_main():
+    """The Resources hub's featured guide (resource-card-main)."""
+    return con('resource-card-main', [
+        con('resource-card-main-body', [
+            sc('[w270_card_tag main="1" class="resource-card-main-tag"]'),
+            heading('', 'h3', 'resource-card-main-h', dynamic=tag('post-title')),
+            text('', 'resource-card-main-p', dynamic=tag('post-excerpt')),
+            text('Read guide →', 'resource-card-main-link'),
+        ]),
+    ], html_tag='a', link='post')
+
+
+def card_hub_sm():
+    """The hub's small guide cards (resource-card-sm)."""
+    return con('resource-card-sm', [
+        con('resource-card-sm-body', [
+            con('', [
+                sc('[w270_card_tag class="resource-card-sm-tag"]'),
+                heading('', 'h3', 'resource-card-sm-h', dynamic=tag('post-title')),
+            ]),
+            text('Read →', 'resource-card-sm-link'),
+        ]),
+    ], html_tag='a', link='post')
+
+
+def card_hub_news():
+    """The hub's news rows (news-item: month, category, title, summary, arrow)."""
+    return con('news-item', [
+        sc('[w270_date format="F Y" class="news-item-date"]'),
+        con('', [
+            sc('[w270_terms taxonomy="news_category" class="news-item-tag"]'),
+            heading('', 'h3', 'news-item-h', dynamic=tag('post-title')),
+            text('', 'news-item-p', dynamic=tag('post-excerpt')),
+        ]),
+        text('→', 'news-item-arrow'),
+    ], html_tag='a', link='post')
+
+
+def loop_grid(card, types=(), columns=(3, 2, 1), gap=20, per_page=60, orderby='menu_order', order='ASC', query_id='', classes='', grid_id=None):
+    settings = {
+        '_skin': 'post',
+        'template_id': f'__W270_TPL__:{card}',
+        'columns': str(columns[0]), 'columns_tablet': str(columns[1]), 'columns_mobile': str(columns[2]),
+        'posts_per_page': per_page,
+        'column_gap': {'unit': 'px', 'size': gap, 'sizes': []},
+        'row_gap': {'unit': 'px', 'size': gap, 'sizes': []},
+        'post_query_post_type': 'resource',
+        'post_query_orderby': orderby,
+        'post_query_order': order,
+        'post_query_ignore_sticky_posts': 'yes',
+        '_css_classes': ('w-loop ' + classes).strip(),
+    }
+    if types:
+        settings['post_query_include'] = ['terms']
+        settings['post_query_include_term_ids'] = [f'__W270_TERM__:resource_type:{t}' for t in types]
+    if query_id:
+        settings['post_query_query_id'] = query_id
+    return {'id': grid_id or new_id(), 'elType': 'widget', 'widgetType': 'loop-grid', 'settings': settings, 'elements': []}
+
+
+def hub_loop(name, classes=''):
+    """The Resources hub's live blocks (see data-loop in resources.html)."""
+    if name == 'stories':
+        return loop_grid('w270-card-story', types=['stories'], columns=(2, 2, 1), gap=24, per_page=2, classes='w-loop-stories')
+    if name == 'guides':
+        # Featured guide on the left, the next two on the right: two grids inside the
+        # prototype's three-column .resources-featured (see elementor-bridge.css).
+        return con(classes, [
+            loop_grid('w270-card-hub-main', columns=(1, 1, 1), gap=24, per_page=1, query_id='w270_hub_featured', classes='w-loop-hub-main'),
+            loop_grid('w270-card-hub-sm', columns=(2, 2, 1), gap=24, per_page=2, query_id='w270_hub_guides', classes='w-loop-hub-sm'),
+        ])
+    if name == 'news':
+        return loop_grid('w270-card-hub-news', types=['news'], columns=(1, 1, 1), gap=0, per_page=3, orderby='post_date', order='DESC', classes='w-loop-news ' + classes)
+    raise ValueError(f'unknown data-loop block: {name}')
+
+
 # ── singles ──
 def hero_kicker(label):
     return raw(f'<div class="page-hero-kicker"><span class="page-hero-kicker-rule"></span>{label}</div>')
@@ -269,6 +345,9 @@ def build(out_dir):
         ('loop-item', 'w270-card-guide', 'Resource card: guide', [card_guide()], []),
         ('loop-item', 'w270-card-story', 'Resource card: story', [card_story()], []),
         ('loop-item', 'w270-card-news', 'Resource card: news', [card_news()], []),
+        ('loop-item', 'w270-card-hub-main', 'Resources hub: featured guide', [card_hub_main()], []),
+        ('loop-item', 'w270-card-hub-sm', 'Resources hub: guide card', [card_hub_sm()], []),
+        ('loop-item', 'w270-card-hub-news', 'Resources hub: news row', [card_hub_news()], []),
         ('single', 'w270-single-library', 'Resource: guide, checklist, explainer', [single_library()], ['include/singular/resource']),
         # Pro resolves sub-conditions from a flat registry: include/singular/in_resource_type/<term id>.
         ('single', 'w270-single-story', 'Resource: story', [single_story()], ['include/singular/in_resource_type:stories']),

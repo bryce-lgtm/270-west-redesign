@@ -149,6 +149,14 @@ body:not(.elementor-editor-active) :where(.w-image, .w-html, .w-list) { display:
 .archive-toolbar .e-filter-item[aria-pressed="true"], .archive-toolbar .e-filter-item.e-active { background: var(--ink); border-color: var(--ink); color: #fff; }
 .archive-toolbar .e-filter-item:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .archive-news .e-loop-item + .e-loop-item .news-entry { padding-top: 0; }
+/* Resources hub: two Loop Grids inside the prototype's 2fr 1fr 1fr featured block. */
+.resources-featured > .w-loop-hub-main { grid-column: 1; }
+.resources-featured > .w-loop-hub-sm { grid-column: 2 / 4; }
+.e-loop-item > .e-con.resource-card-main, .e-loop-item > .e-con.resource-card-sm, .e-loop-item > .e-con.news-item { height: 100%; }
+.e-loop-item > .e-con.news-item { height: auto; }
+@media (max-width: 900px) {
+  .resources-featured > .w-loop-hub-main, .resources-featured > .w-loop-hub-sm { grid-column: auto; }
+}
 .w-text.article-intro > p, .w-text.guide-card-p > p, .w-text.news-entry-p > p { margin: 0; }
 
 /* 8. Elementor resets the prototype relied on the UA for. */

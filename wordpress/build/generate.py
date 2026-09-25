@@ -280,6 +280,12 @@ class Converter:
     # ── dispatcher ──
     def convert(self, node):
         tag = node.tag
+        if 'data-loop' in node.attrs:
+            # A block the prototype shows with sample cards is a Loop Grid over live resources in
+            # WordPress (the Resources hub's Stories / Guides / News). The prototype markup inside
+            # is design reference only.
+            import templates as resource_templates
+            return resource_templates.hub_loop(node.attrs['data-loop'], ' '.join(node.classes))
         if tag == 'img':
             return self.image(node)
         if tag in HEADINGS and self.inline_only(node):

@@ -164,3 +164,48 @@ add_shortcode( 'w270_archive_count', function ( $atts ) {
 	] ) ) : 0;
 	return '<div class="archive-count">' . (int) $n . ' ' . esc_html( $a['label'] ) . '</div>';
 } );
+
+// [w270_card_tag main=1 class=resource-card-main-tag] → "Featured guide · 2 min read" / "Checklist · 1 min"
+add_shortcode( 'w270_card_tag', function ( $atts ) {
+	$a    = shortcode_atts( [ 'main' => '', 'class' => 'resource-card-sm-tag', 'post' => 0 ], (array) $atts );
+	$id   = w270_sc_id( $a );
+	$mins = w270_read_time( $id );
+	$main = ! empty( $a['main'] );
+	$tag  = w270_type_label( $id, $main ) . ( $mins ? ( $main ? " · {$mins} min read" : " · {$mins} min" ) : '' );
+	return '<div class="' . esc_attr( $a['class'] ) . '">' . esc_html( $tag ) . '</div>';
+} );
+
+// [w270_date format="F Y" class=news-item-date]
+add_shortcode( 'w270_date', function ( $atts ) {
+	$a = shortcode_atts( [ 'format' => 'j F Y', 'class' => '', 'post' => 0 ], (array) $atts );
+	return '<div class="' . esc_attr( $a['class'] ) . '">' . esc_html( get_the_date( $a['format'], w270_sc_id( $a ) ) ) . '</div>';
+} );
+
+// [w270_terms taxonomy=news_category class=news-item-tag] → the first term's name
+add_shortcode( 'w270_terms', function ( $atts ) {
+	$a     = shortcode_atts( [ 'taxonomy' => 'news_category', 'class' => '', 'post' => 0 ], (array) $atts );
+	$names = wp_get_object_terms( w270_sc_id( $a ), $a['taxonomy'], [ 'fields' => 'names' ] );
+	if ( is_wp_error( $names ) || ! $names ) { return ''; }
+	return '<div class="' . esc_attr( $a['class'] ) . '">' . esc_html( $names[0] ) . '</div>';
+} );
+
+/**
+ * Loop Grid queries the Query ID control names (Elementor Pro: elementor/query/{id}).
+ * The Resources hub shows the featured guide, then the next two guides/checklists/explainers.
+ */
+$w270_library_terms = [ 'guides', 'checklists', 'explainers' ];
+add_action( 'elementor/query/w270_hub_featured', function ( $query ) use ( $w270_library_terms ) {
+	$query->set( 'post_type', 'resource' );
+	$query->set( 'tax_query', [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => $w270_library_terms ] ] );
+	$query->set( 'meta_query', [ [ 'key' => 'featured', 'value' => '1' ] ] );
+	$query->set( 'orderby', [ 'menu_order' => 'ASC', 'date' => 'DESC' ] );
+	$query->set( 'posts_per_page', 1 );
+} );
+add_action( 'elementor/query/w270_hub_guides', function ( $query ) use ( $w270_library_terms ) {
+	$query->set( 'post_type', 'resource' );
+	$query->set( 'tax_query', [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => $w270_library_terms ] ] );
+	$query->set( 'meta_query', [ 'relation' => 'OR', [ 'key' => 'featured', 'compare' => 'NOT EXISTS' ], [ 'key' => 'featured', 'value' => '1', 'compare' => '!=' ] ] );
+	$query->set( 'orderby', [ 'menu_order' => 'ASC', 'date' => 'DESC' ] );
+	$query->set( 'posts_per_page', 2 );
+} );
+
