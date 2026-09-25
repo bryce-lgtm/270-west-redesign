@@ -97,7 +97,7 @@ body:not(.elementor-editor-active) :where(.w-html > .elementor-shortcode) { disp
 .site-header .elementor-nav-menu--main .sub-menu li + li { margin-top: 2px; }
 .site-header .elementor-nav-menu--main .sub-menu a.elementor-item {
   display: block; padding: 10px 12px; color: rgba(255,255,255,0.88); text-decoration: none;
-  font-family: var(--font-sans); font-size: 12.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.09em; line-height: 1.2;
+  font-family: var(--font-sans); font-size: 12.5px !important; font-weight: 500; text-transform: uppercase; letter-spacing: 0.09em; line-height: 1.2; /* !important: Pro's layered rule is important too */
 }
 .site-header .elementor-nav-menu--main .sub-menu a.elementor-item:hover { background: rgba(160,181,193,0.14); color: #fff; }
 .site-header .elementor-nav-menu--main li.nav-cta > a.elementor-item {
