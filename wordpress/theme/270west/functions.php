@@ -9,6 +9,7 @@ define( 'W270_ASSETS', get_stylesheet_directory_uri() . '/assets' );
 
 require_once get_stylesheet_directory() . '/inc/class-w270-nav-walker.php';
 require_once get_stylesheet_directory() . '/inc/resources.php';
+require_once get_stylesheet_directory() . '/inc/shortcodes.php';
 
 // Hello's reset/theme CSS would fight the prototype stylesheet; the prototype assumes UA defaults.
 add_filter( 'hello_elementor_enqueue_style', '__return_false' );

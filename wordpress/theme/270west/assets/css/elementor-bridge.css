@@ -133,6 +133,24 @@ body:not(.elementor-editor-active) :where(.w-image, .w-html, .w-list) { display:
 .site-footer .w-nav a.elementor-item { display: inline; padding: 0; color: inherit; text-decoration: none; font-size: 13px; line-height: 1.6; }
 .site-footer .w-nav a.elementor-item:hover { color: #fff; }
 
+/* 7c. Resource templates in Elementor Pro (loop items, singles, archive pages). The generated
+   structure carries the prototype's classes; this maps Pro's Loop Grid and Taxonomy Filter
+   markup onto the prototype's archive rules. */
+.e-loop-item { display: block; }
+.e-loop-item > .e-con.guide-card, .e-loop-item > .e-con.story-card, .e-loop-item > .e-con.news-entry { height: 100%; }
+.archive-toolbar .e-filter { display: flex; flex-wrap: wrap; gap: 8px; }
+.archive-toolbar .e-filter-item[data-filter="__all"] { order: -1; }
+.archive-toolbar .e-filter-item {
+  font: inherit; font-size: 15px; font-weight: 500; padding: 8px 16px; cursor: pointer;
+  background: transparent; border: 1px solid var(--rule-strong); color: var(--muted); border-radius: 100px;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.archive-toolbar .e-filter-item:hover { border-color: var(--ink); color: var(--ink); }
+.archive-toolbar .e-filter-item[aria-pressed="true"], .archive-toolbar .e-filter-item.e-active { background: var(--ink); border-color: var(--ink); color: #fff; }
+.archive-toolbar .e-filter-item:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.archive-news .e-loop-item + .e-loop-item .news-entry { padding-top: 0; }
+.w-text.article-intro > p, .w-text.guide-card-p > p, .w-text.news-entry-p > p { margin: 0; }
+
 /* 8. Elementor resets the prototype relied on the UA for. */
 :where(.elementor a) { text-decoration: revert; }
 :where(.elementor img) { height: revert; border-radius: revert; }

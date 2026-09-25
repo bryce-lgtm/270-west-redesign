@@ -435,6 +435,8 @@ def main(argv):
         print(f"tpl-{t['type']:24s} {sum(1 for _ in _walk(t['elements'])):4d} elements")
     for w in warnings:
         print('   ', w)
+    import templates as resource_templates
+    print('resource templates:', ', '.join(resource_templates.build(OUT)))
     with open(GENERATED_CSS, 'w', encoding='utf-8') as f:
         f.write(STYLES.css())
     print(f'generated.css: {len(STYLES.rules)} rules')

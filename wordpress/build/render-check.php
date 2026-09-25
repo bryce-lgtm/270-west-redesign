@@ -98,8 +98,10 @@ try {
 	foreach ( [ 'resources/guides' => 13, 'resources/stories' => 2, 'resources/news' => 5 ] as $path => $min ) {
 		$page = get_page_by_path( $path, OBJECT, 'page' );
 		if ( ! $page ) { throw new RuntimeException( "no page at /{$path}/" ); }
-		if ( 'template-resource-archive.php' !== get_post_meta( $page->ID, '_wp_page_template', true ) ) {
-			throw new RuntimeException( "/{$path}/ is not using the archive template" );
+		$is_php  = 'template-resource-archive.php' === get_post_meta( $page->ID, '_wp_page_template', true );
+		$is_loop = str_contains( (string) get_post_meta( $page->ID, '_elementor_data', true ), '"loop-grid"' );
+		if ( ! $is_php && ! $is_loop ) {
+			throw new RuntimeException( "/{$path}/ is neither on the archive template nor an Elementor Loop Grid page" );
 		}
 		$types = array_filter( (array) get_post_meta( $page->ID, 'archive_types', true ) );
 		if ( ! $types ) { throw new RuntimeException( "/{$path}/ lists no sub-types" ); }
@@ -130,7 +132,10 @@ if ( class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) {
 			if ( ! in_array( 'include/general', $conditions, true ) ) { throw new RuntimeException( "{$location} template lacks include/general" ); }
 			if ( ! $manager->get_location_templates( $location ) ) { throw new RuntimeException( "nothing resolves for location {$location}" ); }
 		}
-		echo "OK   theme builder: header and footer templates resolve\n";
+		foreach ( [ 'w270-single-library', 'w270-single-story', 'w270-single-news', 'w270-card-guide', 'w270-card-story', 'w270-card-news' ] as $slug ) {
+			if ( ! get_posts( [ 'post_type' => 'elementor_library', 'name' => $slug, 'numberposts' => 1 ] ) ) { throw new RuntimeException( "no template {$slug}" ); }
+		}
+		echo "OK   theme builder: header, footer, resource singles and cards present\n";
 	} catch ( Throwable $e ) {
 		$fail = true;
 		printf( "FAIL theme builder: %s\n", $e->getMessage() );

@@ -1,5 +1,7 @@
 # Elementor Pro templates: header, footer, resources — plan
 
+**Status:** implemented and verified on SiteGround 2026-09-25 (both phases). Templates: `w270-header`, `w270-footer`, `w270-card-{guide,story,news}` (loop items), `w270-single-{library,story,news}`; the three archive pages carry a Taxonomy Filter + Loop Grid. `single-resource.php` hands over to the `single` location and stays as the no-Pro fallback.
+
 **Goal:** the site chrome and the resource templates become Elementor Pro Theme Builder templates the client can edit in wp-admin, without losing the prototype's design.
 
 **Constraints that shape the design**
