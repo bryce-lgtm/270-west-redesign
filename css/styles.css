@@ -1083,7 +1083,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 /* Dropdown, reversed onto the dark bar */
 .nav-dropdown-menu { background: var(--ink); border: 1px solid rgba(160,181,193,0.28); }
 .site-header nav .nav-dropdown-menu a {
-  color: rgba(255,255,255,0.88); text-transform: none; letter-spacing: normal; font-size: 14px;
+  color: rgba(255,255,255,0.88); text-transform: uppercase; letter-spacing: 0.09em; font-size: 12.5px; font-weight: 500;
 }
 .site-header nav .nav-dropdown-menu a:hover { background: rgba(160,181,193,0.14); color: #fff; }
 
