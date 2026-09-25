@@ -89,17 +89,18 @@ body:not(.elementor-editor-active) :where(.w-html > .elementor-shortcode) { disp
 .site-header .elementor-nav-menu--main .elementor-nav-menu > li > a.elementor-item:hover::after,
 .site-header .elementor-nav-menu--main .elementor-nav-menu > li > a.elementor-item.elementor-item-active::after { transform: scaleX(1); }
 .site-header .elementor-nav-menu--main .sub-arrow { display: inline-flex; font-size: 9px; line-height: 1; }
-/* Visibility and position of the sub-menu are Pro's (SmartMenus toggles them inline); only the look is ours. */
+/* Visibility and position of the sub-menu are Pro's (SmartMenus toggles them inline); only the look is ours.
+   Sub-menu links carry elementor-sub-item, not elementor-item, so the rules match any link in the list. */
 .site-header .elementor-nav-menu--main .sub-menu {
   min-width: 210px; margin: 0; padding: 8px; list-style: none;
   background: var(--ink); border: 1px solid rgba(160,181,193,0.24); box-shadow: var(--shadow-md); z-index: 120;
 }
 .site-header .elementor-nav-menu--main .sub-menu li + li { margin-top: 2px; }
-.site-header .elementor-nav-menu--main .sub-menu a.elementor-item {
+.site-header .elementor-nav-menu--main .sub-menu a {
   display: block; padding: 10px 12px; color: rgba(255,255,255,0.88); text-decoration: none;
-  font-family: var(--font-sans); font-size: 12.5px !important; font-weight: 500; text-transform: uppercase; letter-spacing: 0.09em; line-height: 1.2; /* !important: Pro's layered rule is important too */
+  font-family: var(--font-sans); font-size: 12.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.09em; line-height: 1.2;
 }
-.site-header .elementor-nav-menu--main .sub-menu a.elementor-item:hover { background: rgba(160,181,193,0.14); color: #fff; }
+.site-header .elementor-nav-menu--main .sub-menu a:hover { background: rgba(160,181,193,0.14); color: #fff; }
 .site-header .elementor-nav-menu--main li.nav-cta > a.elementor-item {
   background: var(--teal); color: #fff; padding: 11px 18px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em;
   transition: background var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
@@ -122,12 +123,12 @@ body:not(.elementor-editor-active) :where(.w-html > .elementor-shortcode) { disp
 }
 .site-header nav.elementor-nav-menu--dropdown { background: var(--ink); border-top: 1px solid rgba(160,181,193,0.24); gap: 0; }
 .site-header nav.elementor-nav-menu--dropdown .elementor-nav-menu, .site-header nav.elementor-nav-menu--dropdown .sub-menu { margin: 0; padding: 0; list-style: none; }
-.site-header nav.elementor-nav-menu--dropdown a.elementor-item {
+.site-header nav.elementor-nav-menu--dropdown a {
   display: flex; justify-content: space-between; align-items: center; padding: 14px 20px;
   color: rgba(255,255,255,0.9); text-decoration: none; text-transform: uppercase; letter-spacing: 0.09em;
   font-family: var(--font-sans); font-size: 13px; font-weight: 500; border-bottom: 1px solid rgba(160,181,193,0.2);
 }
-.site-header nav.elementor-nav-menu--dropdown .sub-menu a.elementor-item { padding-left: 36px; color: var(--blue); }
+.site-header nav.elementor-nav-menu--dropdown .sub-menu a { padding-left: 36px; color: var(--blue); }
 .site-header nav.elementor-nav-menu--dropdown li.nav-cta > a.elementor-item { color: var(--blue); font-weight: 600; }
 /* Footer link columns as vertical menus. */
 .site-footer .w-nav .elementor-nav-menu { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
