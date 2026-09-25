@@ -202,10 +202,24 @@ add_action( 'elementor/query/w270_hub_featured', function ( $query ) use ( $w270
 	$query->set( 'posts_per_page', 1 );
 } );
 add_action( 'elementor/query/w270_hub_guides', function ( $query ) use ( $w270_library_terms ) {
+	// The next two by menu order, skipping only the guide that took the featured slot (more than
+	// one guide may be flagged featured; the others still belong here).
+	// Pro fires this action from inside pre_get_posts, so the lookup below would re-enter it
+	// without the guard and recurse until memory runs out.
+	static $running = false;
+	if ( $running ) { return; }
+	$running  = true;
+	$featured = get_posts( [
+		'post_type' => 'resource', 'post_status' => 'publish', 'numberposts' => 1, 'fields' => 'ids',
+		'tax_query' => [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => $w270_library_terms ] ],
+		'meta_query' => [ [ 'key' => 'featured', 'value' => '1' ] ],
+		'orderby' => [ 'menu_order' => 'ASC', 'date' => 'DESC' ],
+	] );
 	$query->set( 'post_type', 'resource' );
 	$query->set( 'tax_query', [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => $w270_library_terms ] ] );
-	$query->set( 'meta_query', [ 'relation' => 'OR', [ 'key' => 'featured', 'compare' => 'NOT EXISTS' ], [ 'key' => 'featured', 'value' => '1', 'compare' => '!=' ] ] );
+	if ( $featured ) { $query->set( 'post__not_in', $featured ); }
 	$query->set( 'orderby', [ 'menu_order' => 'ASC', 'date' => 'DESC' ] );
 	$query->set( 'posts_per_page', 2 );
+	$running = false;
 } );
 
