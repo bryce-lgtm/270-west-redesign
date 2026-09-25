@@ -495,8 +495,9 @@ details:not([open]) .faq-icon::after { content: '+'; }
 /* ── HOW IT WORKS INNER ── */
 .hiw-step-row { display: grid; grid-template-columns: 120px 1fr 320px; gap: 64px; padding: 56px 0; border-top: 1px solid var(--rule); }
 .hiw-step-row:last-of-type { border-bottom: 1px solid var(--rule); }
-/* Six-step process (Sept 2026 copy): no aside column, so the body takes the remaining width. */
-.hiw-step-row:not(:has(.hiw-step-aside)) { grid-template-columns: 120px 1fr; max-width: 980px; }
+/* Six-step process (Sept 2026 copy): no aside column. The row follows the page's label/content
+   split (1fr 2fr, 80px gap) so each step's text lines up under the section heading above it. */
+.hiw-step-row:not(:has(.hiw-step-aside)) { grid-template-columns: 1fr 2fr; gap: 80px; }
 .hiw-step-n { font-family: var(--font-serif); font-size: 96px; font-weight: 300; line-height: 0.9; color: var(--olive); letter-spacing: -0.04em; }
 .hiw-step-time { margin-top: 16px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .hiw-step-h { font-family: var(--font-display); font-size: 36px; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 20px; }

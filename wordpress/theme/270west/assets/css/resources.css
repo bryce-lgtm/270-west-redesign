@@ -16,3 +16,16 @@
 .res-library { background: var(--bg2); border-top: 1px solid var(--rule); }
 .res-library-head { display: grid; grid-template-columns: 1fr 2fr; gap: 64px; margin-bottom: 56px; }
 .res-library-h { font-family: var(--font-serif); font-size: 44px; font-weight: 500; line-height: 1.1; letter-spacing: -0.02em; margin: 0; max-width: 720px; }
+
+/* Story single: mirrors the prototype's story.html (16:9 video/poster band, then the copy). The
+   featured photos are portrait crops, so the band shows their top third, as the prototype poster did. */
+.story-single { padding: 56px 80px 100px; }
+.story-single-video, .story-single-photo { position: relative; aspect-ratio: 16 / 9; background: var(--ink); overflow: hidden; box-shadow: var(--shadow-ink); margin: 0 0 40px; }
+.story-single-video iframe, .story-single-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; border: 0; }
+.story-single-quote { font-family: var(--font-serif); font-size: 30px; font-weight: 400; line-height: 1.35; letter-spacing: -0.01em; color: var(--ink); margin: 0 0 20px; max-width: 760px; }
+.story-single-cite { display: flex; flex-direction: column; gap: 4px; margin: 0 0 48px; }
+.story-single .article-body { max-width: 720px; }
+@media (max-width: 900px) {
+  .story-single { padding: 32px 20px 56px; }
+  .story-single-quote { font-size: 22px; }
+}
