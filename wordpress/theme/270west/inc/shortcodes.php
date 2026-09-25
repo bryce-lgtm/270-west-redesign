@@ -84,9 +84,13 @@ add_shortcode( 'w270_hero_meta', function ( $atts ) {
 
 // The guide-layout parts, each rendering only where the PHP single would.
 add_shortcode( 'w270_toc', function () {
+	// Every resource type gets a table of contents when the body has two or more headings; a
+	// guide can switch it off with its Show TOC field. With nothing to list, nothing renders and
+	// .article-layout drops the column (see styles.css) rather than leaving it blank.
 	$show = w270_field( 'show_toc' );
-	$show = null === $show ? true : (bool) $show;
-	$toc  = ( 'guides' === w270_subtype_slug() && $show ) ? w270_toc( apply_filters( 'the_content', get_the_content() ) ) : [];
+	$show = null === $show || '' === $show ? true : (bool) $show;
+	$toc  = $show ? w270_toc( apply_filters( 'the_content', get_the_content() ) ) : [];
+	if ( ! $toc ) { return ''; }
 	ob_start();
 	get_template_part( 'template-parts/resource/toc', null, [ 'toc' => $toc ] );
 	return ob_get_clean();

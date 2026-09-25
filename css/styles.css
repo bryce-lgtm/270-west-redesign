@@ -412,6 +412,10 @@ details:not([open]) .faq-icon::after { content: '+'; }
 
 /* ── ARTICLE ── */
 .article-layout { padding: 80px; display: grid; grid-template-columns: 240px 1fr 240px; gap: 64px; align-items: start; }
+/* No table of contents (fewer than two headings): the body takes the first column instead of leaving it blank. */
+.article-layout:not(:has(.article-toc)) { grid-template-columns: 1fr 240px; }
+/* News singles: body only, at reading width. */
+.article-layout.article-layout-narrow { grid-template-columns: minmax(0, 760px); }
 .article-toc { position: sticky; top: 100px; }
 .article-toc-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
 .article-toc-links { display: grid; gap: 10px; font-size: 14px; line-height: 1.4; }
