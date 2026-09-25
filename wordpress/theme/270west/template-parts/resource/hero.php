@@ -12,7 +12,7 @@ $minutes = w270_read_time( get_the_ID() );
 			<span class="res-crumb-current"><a href="<?php echo esc_url( home_url( '/resources/#topic-' . $topic->slug ) ); ?>"><?php echo esc_html( $topic->name ); ?></a></span>
 		<?php endif; ?>
 	</div>
-	<?php if ( $seo_h1 ) : ?>
+	<?php if ( $seo_h1 && 0 !== strcasecmp( trim( $seo_h1 ), get_the_title() ) ) : ?>
 		<h1 class="res-title"><?php echo esc_html( $seo_h1 ); ?></h1>
 		<h2 class="page-hero-lead"><?php the_title(); ?></h2>
 	<?php else : ?>

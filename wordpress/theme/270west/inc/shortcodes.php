@@ -63,8 +63,10 @@ add_shortcode( 'w270_seo_h1', function ( $atts ) {
 	return esc_html( w270_field( 'seo_h1', $id ) ?: get_the_title( $id ) );
 } );
 add_shortcode( 'w270_marketing_h2', function ( $atts ) {
-	$id = w270_sc_id( $atts );
-	return w270_field( 'seo_h1', $id ) ? esc_html( get_the_title( $id ) ) : '';
+	$id  = w270_sc_id( $atts );
+	$seo = trim( (string) w270_field( 'seo_h1', $id ) );
+	// Only when the SEO H1 differs from the title; otherwise the H2 would repeat the H1.
+	return ( $seo && 0 !== strcasecmp( $seo, get_the_title( $id ) ) ) ? esc_html( get_the_title( $id ) ) : '';
 } );
 
 // [w270_topic_crumb] → the "/ Topic" tail of the breadcrumb
