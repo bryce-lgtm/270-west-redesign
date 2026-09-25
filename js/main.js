@@ -405,11 +405,14 @@ function initVideoLightbox() {
     dialog.addEventListener('close', () => { frame.innerHTML = ''; if (opener) opener.focus(); });
     document.body.appendChild(dialog);
   }
-  cards.forEach(card => card.addEventListener('click', () => {
+  cards.forEach(card => card.addEventListener('click', e => {
+    e.preventDefault(); // in WordPress the card is an <a href="#"> container
     if (!dialog) build();
     opener = card;
-    const src = card.dataset.videoSrc;
-    const title = card.dataset.videoTitle || 'Video';
+    // The prototype keeps data-video-* on the card; the WordPress build keeps them on the play icon.
+    const data = Object.assign({}, card.querySelector('.video-card-play')?.dataset, card.dataset);
+    const src = data.videoSrc;
+    const title = data.videoTitle || 'Video';
     dialog.setAttribute('aria-label', title);
     if (src) {
       frame.innerHTML = /\.(mp4|webm)$/i.test(src)
@@ -626,6 +629,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const w270Lead = initLeadTracking();
   initScheduler(w270Lead);
   initVideoLightbox();
+  // WordPress builds the FAQ as an Elementor accordion; on a page whose items all start open
+  // (the FAQ page itself) the widget can only open the first, so open the rest here.
+  document.querySelectorAll('.w-faq-open details:not([open])').forEach(d => {
+    d.open = true;
+    const summary = d.querySelector('summary');
+    if (summary) summary.setAttribute('aria-expanded', 'true');
+  });
   initStoryGrid();
   initQuiz();
   if (document.getElementById('consult-widget')) initConsultWidget('consult-widget');

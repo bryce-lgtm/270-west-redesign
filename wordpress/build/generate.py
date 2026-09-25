@@ -192,18 +192,19 @@ class Converter:
 
     def image(self, node):
         src = node.attrs.get('src', '')
-        # SVGs (the brand marks) ship with the theme: WordPress blocks SVG uploads by
-        # default, and there's no reason to put logo files in the media library.
+        alt = node.attrs.get('alt', '')
+        # SVGs (the brand marks) ship with the theme: WordPress blocks SVG uploads by default, and
+        # there's no reason to put logo files in the media library. They are still Image widgets,
+        # just pointed at the theme asset by URL, so the editor shows a picture rather than markup.
+        # Their width/height attributes are dropped; the stylesheet sizes every brand image.
         if src.lower().endswith('.svg'):
-            attrs = ' '.join(f'{k}="{v}"' for k, v in node.attrs.items() if k not in ('src', 'class'))
-            return self.widget('html', {
-                'html': f'<img src="{ASSETS}/{src}" {attrs}/>',
-                '_css_classes': self.classes(node, 'w-image'),
-            })
-        name = os.path.basename(src)
-        self.media.append(name)
+            image = {'url': f'{ASSETS}/{src}', 'id': '', 'alt': alt}
+        else:
+            name = os.path.basename(src)
+            self.media.append(name)
+            image = {'__media__': name, 'alt': alt}
         return self.widget('image', {
-            'image': {'__media__': name, 'alt': node.attrs.get('alt', '')},
+            'image': image,
             'image_size': 'full',
             '_css_classes': self.classes(node, 'w-image'),
         })
@@ -240,8 +241,9 @@ class Converter:
                 after.append(n.text)
         return html.unescape(' '.join(' '.join(after).split()))
 
-    def html(self, node):
+    def html(self, node, extra=None):
         attrs = dict(node.attrs)
+        attrs.update(extra or {})
         el_id = attrs.get('id')
         if el_id in self.decor:
             fn, args = self.decor[el_id]
@@ -252,6 +254,69 @@ class Converter:
         else:
             markup = f'<{node.tag}{_attr_str(attrs)}>{self.doc.inner_html(node)}</{node.tag}>'
         return self.widget('html', {'html': rewrite_links(markup), '_css_classes': 'w-html'})
+
+    def accordion(self, items):
+        """A run of <details class="faq-item"> siblings becomes one native Accordion widget: each
+        question is a repeater item the editor can retitle, each answer a child container of
+        ordinary text widgets. The prototype's +/- marker is drawn by the bridge, so the widget's
+        own icon is switched off. On a page whose items are all open (the FAQ page) the widget
+        carries .w-faq-open and main.js opens every item, because the widget itself can only
+        open the first."""
+        repeater, panels = [], []
+        for d in items:
+            summary = next((k for k in d.elements() if k.tag == 'summary'), None)
+            title = ' '.join(self.doc.text(summary).split()) if summary is not None else ''
+            repeater.append({'_id': new_id(), 'item_title': html.unescape(title), 'element_css_id': ''})
+            body = []
+            for c in d.children:
+                if c is summary or c.tag in ('script', 'style'):
+                    continue
+                if c.is_text:
+                    if c.text.strip():
+                        body.append(self.loose_text(c.text))
+                else:
+                    body.append(self.convert(c))
+            panels.append({'id': new_id(), 'elType': 'container', 'isInner': True,
+                           'settings': {'content_width': 'full', 'css_classes': 'w-con faq-answer'},
+                           'elements': body})
+        all_open = all('open' in d.attrs for d in items)
+        classes = 'w-faq' + (' w-faq-open' if all_open else '')
+        widget = self.widget('nested-accordion', {
+            'items': repeater,
+            'default_state': 'expanded' if all_open else 'all_collapsed',
+            'max_items_expended': 'multiple',
+            'title_tag': 'div',
+            'accordion_item_title_icon': {'value': '', 'library': ''},
+            'accordion_item_title_icon_active': {'value': '', 'library': ''},
+            '_css_classes': classes,
+        })
+        widget['elements'] = panels
+        return widget
+
+    def video_card(self, node):
+        """The prototype's poster <button class="video-card" data-video-*> becomes a linked
+        container (an <a>, so it stays focusable and keyboard-activated) holding the poster as an
+        Image widget and the label as text. Elementor Pro's custom-attribute control is licence
+        gated, so the data-video-* attributes ride on the play icon (the one HTML widget left in
+        the card); main.js reads them from either place."""
+        data = {k: (f'{ASSETS}/{v}' if v.startswith('img/') else v)
+                for k, v in node.attrs.items() if k.startswith('data-video-')}
+        settings = {
+            'content_width': 'full',
+            'html_tag': 'a',
+            'link': {'url': '#', 'is_external': '', 'nofollow': ''},
+            'css_classes': self.classes(node, 'w-con'),
+        }
+        children = []
+        for c in node.children:
+            if c.is_text:
+                if c.text.strip():
+                    children.append(self.loose_text(c.text))
+            elif 'video-card-play' in c.classes:
+                children.append(self.html(c, extra=data))
+            else:
+                children.append(self.convert(c))
+        return {'id': new_id(), 'elType': 'container', 'isInner': True, 'settings': settings, 'elements': children}
 
     def container(self, node):
         settings = {
@@ -266,15 +331,25 @@ class Converter:
         dropped = [k for k in node.attrs if k not in ('class', 'id', 'style', 'href')]
         if dropped:
             self.warnings.append(f'container <{node.tag} class="{node.attrs.get("class", "")}"> dropped attrs {dropped}')
-        children = []
+        children, run = [], []
+
+        def flush():
+            if run:
+                children.append(self.accordion(list(run)))
+                run.clear()
         for c in node.children:
             if c.is_text:
                 if c.text.strip():
+                    flush()
                     children.append(self.loose_text(c.text))
             elif c.tag in ('script', 'style'):
                 continue
+            elif c.tag == 'details':
+                run.append(c)
             else:
+                flush()
                 children.append(self.convert(c))
+        flush()
         return {'id': new_id(), 'elType': 'container', 'isInner': True, 'settings': settings, 'elements': children}
 
     # ── dispatcher ──
@@ -294,13 +369,24 @@ class Converter:
             return self.button(node)
         if tag == 'form':
             return self.form(node)
+        if tag == 'button' and 'video-card' in node.classes:
+            return self.video_card(node)
+        if tag == 'details':
+            return self.accordion([node])
         if tag in HTML_TAGS or 'data-photo' in node.attrs or node.attrs.get('id') in JS_WIDGET_IDS:
             return self.html(node)
         if set(node.classes) & RAW_HTML_CLASSES:
             return self.html(node)
-        if tag in LIST_TAGS:
-            return self.text(node)
         kids = node.elements()
+        if tag in LIST_TAGS:
+            # A plain list is rich text the editor handles natively. A list whose items are cards
+            # (headings, paragraphs, images) becomes a container of containers instead, so each
+            # card is editable; the list tags become <div>s, which the stylesheet does not rely on.
+            if all(k.tag == 'li' and self.inline_only(k) for k in kids):
+                return self.text(node)
+            return self.container(node)
+        if kids and not self.has_text(node) and all(k.tag == 'svg' for k in kids):
+            return self.html(node)  # an icon holder: only the drawing inside, nothing to edit
         if not kids:
             return self.text(node) if self.has_text(node) else self.html(node)
         if self.inline_only(node):

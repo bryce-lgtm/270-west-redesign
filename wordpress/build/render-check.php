@@ -19,6 +19,12 @@ foreach ( $pages as $p ) {
 		$html = \Elementor\Plugin::$instance->frontend->get_builder_content_for_display( $p->ID );
 		if ( strlen( $html ) < 500 ) { throw new RuntimeException( 'rendered only ' . strlen( $html ) . ' bytes' ); }
 		if ( str_contains( $html, '__W270_ASSETS__' ) || str_contains( $html, '__media__' ) || str_contains( $html, '__W270_FORM__' ) ) { throw new RuntimeException( 'unresolved placeholder in output' ); }
+		// The FAQ is a native Accordion widget (one item per question), not a raw <details> block.
+		if ( 'faq' === $p->post_name ) {
+			$n = substr_count( $html, 'class="e-n-accordion-item-title"' );
+			if ( $n < 11 ) { throw new RuntimeException( "expected 11+ accordion items, found $n" ); }
+			if ( str_contains( $html, 'class="faq-item"' ) ) { throw new RuntimeException( 'raw <details class="faq-item"> still rendered' ); }
+		}
 		printf( "OK   %-30s %2d sections %7d bytes\n", $p->post_name, count( $data ), strlen( $html ) );
 	} catch ( Throwable $e ) {
 		$fail = true;

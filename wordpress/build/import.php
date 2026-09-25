@@ -159,8 +159,10 @@ function w270_resolve( array $elements, string $assets ) {
 					update_post_meta( $id, '_wp_attachment_image_alt', $v['alt'] );
 				}
 				$v = [ 'id' => $id, 'url' => wp_get_attachment_url( $id ) ];
-			} elseif ( is_array( $v ) && isset( $v['url'] ) && is_string( $v['url'] ) && str_starts_with( $v['url'], '/' ) ) {
-				$v['url'] = home_url( $v['url'] );
+			} elseif ( is_array( $v ) && isset( $v['url'] ) && is_string( $v['url'] ) ) {
+				// Image widgets pointed at a theme asset (the SVG brand marks) and site-relative links.
+				$v['url'] = str_replace( '__W270_ASSETS__', $assets, $v['url'] );
+				if ( str_starts_with( $v['url'], '/' ) ) { $v['url'] = home_url( $v['url'] ); }
 			}
 		}
 		unset( $v );
