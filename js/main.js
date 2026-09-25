@@ -570,7 +570,33 @@ function initArchives() {
 }
 
 // ── Init all ──
+// ── Resource table of contents: the link for the section in view is .active ──
+function initToc() {
+  const links = [...document.querySelectorAll('.article-toc-links a[href^="#"]')];
+  if (!links.length) return;
+  const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+  const headings = [...byId.keys()].map(id => document.getElementById(id)).filter(Boolean);
+  if (!headings.length) return;
+  let lock = 0;
+  const setActive = (id) => links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+  // Clicking a link marks it at once; the observer takes over again once the jump has settled.
+  links.forEach(a => a.addEventListener('click', () => { setActive(a.getAttribute('href').slice(1)); lock = Date.now() + 800; }));
+  // The section whose heading was last scrolled past the header line is the current one.
+  const headerH = () => (document.querySelector('.site-header') || { offsetHeight: 90 }).offsetHeight;
+  const update = () => {
+    if (Date.now() < lock) return;
+    const line = headerH() + 24;
+    let current = headings[0];
+    for (const h of headings) { if (h.getBoundingClientRect().top <= line) current = h; else break; }
+    setActive(current.id);
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+  initToc();
   initMobileMenu();
   initHeaderScroll();
 

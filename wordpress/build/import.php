@@ -56,7 +56,7 @@ function w270_page_by_slug( $slug ) {
 /** Menu definition items: [title, slug, classes, children]. */
 function w270_menu_defs() {
 	$services_children = [ [ 'Claims', 'claims' ], [ 'Appeals', 'appeals' ], [ 'Reassessment', 'reassessment' ], [ 'Support', 'support' ] ];
-	$resources_children = [ [ 'Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ] ];
+	$resources_children = [ [ 'Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ], [ 'FAQ', 'faq' ] ];
 	$main = [
 		[ 'Services', 'services', '', $services_children ],
 		[ 'How It Works', 'how-it-works' ], [ 'About', 'about' ],

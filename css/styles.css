@@ -424,6 +424,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .article-body { max-width: 720px; }
 .article-intro { font-family: var(--font-serif); font-size: 24px; font-weight: 400; line-height: 1.4; color: var(--ink); margin: 0 0 32px; font-style: italic; letter-spacing: -0.01em; }
 .article-h2 { font-family: var(--font-display); font-size: 36px; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin: 56px 0 16px; }
+.article-body h2[id] { scroll-margin-top: 120px; } /* anchored headings clear the sticky header */
 .article-h3 { font-family: var(--font-display); font-size: 24px; font-weight: 600; line-height: 1.25; margin: 32px 0 12px; }
 .article-p { font-size: 18px; line-height: 1.65; color: var(--ink); margin: 0 0 16px; }
 .article-blockquote { border-left: 3px solid var(--accent); padding: 8px 0 8px 24px; margin: 32px 0; font-family: var(--font-serif); font-size: 22px; font-style: italic; line-height: 1.4; }
