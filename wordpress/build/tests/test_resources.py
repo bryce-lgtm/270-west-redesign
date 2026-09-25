@@ -24,7 +24,7 @@ class SeedResourcesTests(unittest.TestCase):
         self.assertEqual(len(articles), 15)
         for r in articles:
             self.assertIn(r['topic'], self.seed['topics'], r['slug'])
-            self.assertGreater(r['read_time'], 0)
+            self.assertNotIn('read_time', r)  # reading time is computed by the theme now
 
     def test_stories_and_news_carry_their_own_fields(self):
         by_type = {}

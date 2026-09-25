@@ -15,7 +15,6 @@
       "type": "guides",
       "title": "A plain-language guide to VAC's main benefits programs",
       "topic": "VAC eligibility & programs",
-      "read_time": 18,
       "featured": true,
       "image": "mountain-valley.jpg",
       "order": 0,
@@ -31,7 +30,6 @@
       "type": "checklists",
       "title": "VAC application checklist: documents to gather",
       "topic": "Filing your first VAC claim",
-      "read_time": 5,
       "featured": true,
       "image": "forest-fog.jpg",
       "order": 1,
@@ -49,7 +47,6 @@
       "type": "explainers",
       "title": "How VAC disability ratings work",
       "topic": "After a VAC decision",
-      "read_time": 7,
       "featured": true,
       "image": "hills-road.jpg",
       "order": 2,
@@ -62,7 +59,6 @@
       "type": "explainers",
       "title": "Disability Benefits — what they cover",
       "topic": "VAC eligibility & programs",
-      "read_time": 6,
       "order": 10,
       "summary": "Coming soon: a plain-language explainer from 270 West."
     },
@@ -71,7 +67,6 @@
       "type": "explainers",
       "title": "Income Replacement Benefit explained",
       "topic": "VAC eligibility & programs",
-      "read_time": 6,
       "order": 11,
       "summary": "Coming soon: a plain-language explainer from 270 West."
     },
@@ -80,7 +75,6 @@
       "type": "explainers",
       "title": "Career Transition Services",
       "topic": "VAC eligibility & programs",
-      "read_time": 5,
       "order": 12,
       "summary": "Coming soon: a plain-language explainer from 270 West."
     },
@@ -89,7 +83,6 @@
       "type": "explainers",
       "title": "Family caregiver support",
       "topic": "VAC eligibility & programs",
-      "read_time": 5,
       "order": 13,
       "summary": "Coming soon: a plain-language explainer from 270 West."
     },
@@ -98,7 +91,6 @@
       "type": "guides",
       "title": "What to expect when you apply",
       "topic": "Filing your first VAC claim",
-      "read_time": 8,
       "order": 20,
       "summary": "Coming soon: a plain-language guide from 270 West."
     },
@@ -107,7 +99,6 @@
       "type": "checklists",
       "title": "Building your service-related health record",
       "topic": "Filing your first VAC claim",
-      "read_time": 6,
       "order": 21,
       "summary": "Coming soon: a checklist from 270 West."
     },
@@ -116,7 +107,6 @@
       "type": "guides",
       "title": "Getting medical documentation right",
       "topic": "Filing your first VAC claim",
-      "read_time": 7,
       "order": 22,
       "summary": "Coming soon: a plain-language guide from 270 West."
     },
@@ -125,7 +115,6 @@
       "type": "explainers",
       "title": "Common reasons applications come back",
       "topic": "Filing your first VAC claim",
-      "read_time": 5,
       "order": 23,
       "summary": "Coming soon: a plain-language explainer from 270 West."
     },
@@ -134,7 +123,6 @@
       "type": "explainers",
       "title": "Understanding your decision letter",
       "topic": "After a VAC decision",
-      "read_time": 6,
       "order": 30,
       "summary": "Coming soon: a plain-language explainer from 270 West."
     },
@@ -143,7 +131,6 @@
       "type": "guides",
       "title": "When to consider a re-assessment",
       "topic": "After a VAC decision",
-      "read_time": 7,
       "order": 31,
       "summary": "Coming soon: a plain-language guide from 270 West."
     },
@@ -152,7 +139,6 @@
       "type": "guides",
       "title": "How VAC appeals work",
       "topic": "After a VAC decision",
-      "read_time": 9,
       "order": 32,
       "summary": "Coming soon: a plain-language guide from 270 West."
     },
@@ -161,7 +147,6 @@
       "type": "guides",
       "title": "Mental health & wellness resources",
       "topic": "After a VAC decision",
-      "read_time": 6,
       "order": 33,
       "summary": "Coming soon: a plain-language guide from 270 West."
     },

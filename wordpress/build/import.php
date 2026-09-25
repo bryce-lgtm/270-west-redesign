@@ -399,11 +399,9 @@ function w270_import_resources( array $refresh = [] ) {
 				if ( is_wp_error( $u ) ) { throw new RuntimeException( $u->get_error_message() ); }
 				update_post_meta( $existing->ID, 'summary', $summary );
 				update_post_meta( $existing->ID, 'seo_h1', $r['seo_h1'] ?? '' );
-				if ( isset( $r['read_time'] ) ) { update_post_meta( $existing->ID, 'read_time', (int) $r['read_time'] ); }
 				if ( $acf ) {
 					update_field( 'field_270w_summary', $summary, $existing->ID );
 					update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $existing->ID );
-					if ( isset( $r['read_time'] ) ) { update_field( 'field_270w_read_time', (int) $r['read_time'], $existing->ID ); }
 				}
 				echo "resource {$r['slug']}: #{$existing->ID} refreshed from the seed\n";
 				continue;
@@ -434,7 +432,6 @@ function w270_import_resources( array $refresh = [] ) {
 			// Plain post meta first so the theme renders without ACF; update_field() below
 			// overwrites these with ACF's own values (same meta keys) when the plugin is present.
 			update_post_meta( $pid, 'summary', $summary );
-			if ( isset( $r['read_time'] ) ) { update_post_meta( $pid, 'read_time', (int) $r['read_time'] ); }
 			update_post_meta( $pid, 'featured', empty( $r['featured'] ) ? 0 : 1 );
 			update_post_meta( $pid, 'seo_h1', $r['seo_h1'] ?? '' );
 			if ( 'guides' === $subtype ) {
@@ -448,7 +445,6 @@ function w270_import_resources( array $refresh = [] ) {
 			}
 			if ( $acf ) {
 				update_field( 'field_270w_summary', $summary, $pid );
-				if ( isset( $r['read_time'] ) ) { update_field( 'field_270w_read_time', (int) $r['read_time'], $pid ); }
 				update_field( 'field_270w_featured', empty( $r['featured'] ) ? 0 : 1, $pid );
 				update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $pid );
 				if ( 'guides' === $subtype ) {
@@ -545,10 +541,16 @@ function w270_import_resources( array $refresh = [] ) {
 	if ( function_exists( 'acf_get_local_json_files' ) && function_exists( 'acf_import_field_group' ) ) {
 		$synced = 0;
 		foreach ( acf_get_local_json_files() as $key => $file ) {
-			$in_db = get_posts( [ 'post_type' => 'acf-field-group', 'name' => $key, 'post_status' => 'any', 'numberposts' => 1, 'fields' => 'ids' ] );
-			if ( $in_db ) { continue; }
 			$group = json_decode( file_get_contents( $file ), true );
 			if ( ! $group ) { continue; }
+			$in_db = get_posts( [ 'post_type' => 'acf-field-group', 'name' => $key, 'post_status' => 'any', 'numberposts' => 1, 'fields' => 'ids' ] );
+			if ( $in_db ) {
+				// Present already: re-import only when the JSON is newer than the stored copy (the
+				// same test ACF's own "Sync available" uses), so field-group edits ship with a deploy.
+				$stored = (int) get_post_meta( $in_db[0], '_acf_modified', true ) ?: (int) strtotime( get_post_field( 'post_modified_gmt', $in_db[0] ) );
+				if ( (int) ( $group['modified'] ?? 0 ) <= $stored ) { continue; }
+				$group['ID'] = $in_db[0];
+			}
 			acf_import_field_group( $group );
 			$synced++;
 		}

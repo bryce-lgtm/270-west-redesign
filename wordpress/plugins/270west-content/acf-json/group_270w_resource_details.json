@@ -13,15 +13,6 @@
             "instructions": "One or two sentences. Shown on cards and as the intro paragraph of the article."
         },
         {
-            "key": "field_270w_read_time",
-            "label": "Read time (minutes)",
-            "name": "read_time",
-            "type": "number",
-            "min": 1,
-            "step": 1,
-            "default_value": 5
-        },
-        {
             "key": "field_270w_featured",
             "label": "Featured",
             "name": "featured",
@@ -69,5 +60,6 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "active": true,
-    "show_in_rest": 0
+    "show_in_rest": 0,
+    "modified": 1790336797
 }
