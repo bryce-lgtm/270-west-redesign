@@ -58,9 +58,10 @@ body:not(.elementor-editor-active) :where(.w-bare) { display: contents; }
 :where(.w-btn .elementor-button-content-wrapper, .w-btn .elementor-button-text) { display: inline; }
 .w-btn:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-/* 7. Images and HTML widgets: wrappers disappear on the frontend so the inner element is a
-   direct child of the prototype container (needed for absolute/overlay/grid children). */
-body:not(.elementor-editor-active) :where(.w-image, .w-html) { display: contents; }
+/* 7. Images, HTML widgets and whole lists: wrappers disappear on the frontend so the inner element
+   is a direct child of the prototype container (needed for absolute/overlay/grid children, and so a
+   <ul>/<ol> that is itself a grid is not boxed inside a wrapper). */
+body:not(.elementor-editor-active) :where(.w-image, .w-html, .w-list) { display: contents; }
 .elementor-editor-active .w-image { text-align: inherit; }
 
 /* 8. Elementor resets the prototype relied on the UA for. */

@@ -495,6 +495,8 @@ details:not([open]) .faq-icon::after { content: '+'; }
 /* ── HOW IT WORKS INNER ── */
 .hiw-step-row { display: grid; grid-template-columns: 120px 1fr 320px; gap: 64px; padding: 56px 0; border-top: 1px solid var(--rule); }
 .hiw-step-row:last-of-type { border-bottom: 1px solid var(--rule); }
+/* Six-step process (Sept 2026 copy): no aside column, so the body takes the remaining width. */
+.hiw-step-row:not(:has(.hiw-step-aside)) { grid-template-columns: 120px 1fr; max-width: 980px; }
 .hiw-step-n { font-family: var(--font-serif); font-size: 96px; font-weight: 300; line-height: 0.9; color: var(--olive); letter-spacing: -0.04em; }
 .hiw-step-time { margin-top: 16px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .hiw-step-h { font-family: var(--font-display); font-size: 36px; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 20px; }
@@ -1648,6 +1650,7 @@ strong, b { font-weight: 500; }
 @media (max-width: 1100px) { .commitments-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 700px) { .commitments-grid { grid-template-columns: 1fr; } }
 .about-founder-h { font-family: var(--font-serif); font-size: clamp(30px, 3.4vw, 44px); font-weight: 400; line-height: 1.2; margin: 0 0 8px; }
+.about-founder-sub { font-family: var(--font-serif); font-size: 26px; font-weight: 400; line-height: 1.25; letter-spacing: -0.01em; margin: 40px 0 16px; }
 .commitments-grid::after { content: ""; background: var(--bg); }
 
 /* ── CONSULT PAGE: two options, side by side ── */
