@@ -24,7 +24,7 @@ class SeedResourcesTests(unittest.TestCase):
         self.assertEqual(len(articles), 15)
         for r in articles:
             self.assertIn(r['topic'], self.seed['topics'], r['slug'])
-            self.assertGreater(r['read_time'], 0)
+            self.assertNotIn('read_time', r)  # reading time is computed by the theme now
 
     def test_stories_and_news_carry_their_own_fields(self):
         by_type = {}
@@ -73,3 +73,16 @@ class SeedArticleTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class SeedContentFiles(unittest.TestCase):
+    def test_every_content_file_exists(self):
+        with open(os.path.join(BUILD, 'seed-resources.json'), encoding='utf-8') as f:
+            seed = json.load(f)
+        for r in seed['resources']:
+            if r.get('content'):
+                path = os.path.join(BUILD, 'content', r['content'])
+                self.assertTrue(os.path.isfile(path), f"{r['slug']}: missing {path}")
+                with open(path, encoding='utf-8') as f:
+                    self.assertIn('<p>', f.read(), f"{r['slug']}: content file has no paragraphs")
+

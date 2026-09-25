@@ -9,6 +9,7 @@ define( 'W270_ASSETS', get_stylesheet_directory_uri() . '/assets' );
 
 require_once get_stylesheet_directory() . '/inc/class-w270-nav-walker.php';
 require_once get_stylesheet_directory() . '/inc/resources.php';
+require_once get_stylesheet_directory() . '/inc/shortcodes.php';
 
 // Hello's reset/theme CSS would fight the prototype stylesheet; the prototype assumes UA defaults.
 add_filter( 'hello_elementor_enqueue_style', '__return_false' );
@@ -66,7 +67,7 @@ add_filter( 'style_loader_tag', function ( $tag, $handle, $href ) {
 	}
 	// Gravity Forms' orbital theme is layered for the same reason: the prototype form styling in
 	// elementor-bridge.css is unlayered, so it wins without a specificity war or !important.
-	foreach ( [ 'elementor' => '/^(elementor-frontend|elementor-icons|widget-|base-|e-|swiper)/', 'gforms' => '/^(gform_basic|gform_theme|gravity_forms_theme)/' ] as $layer => $re ) {
+	foreach ( [ 'elementor' => '/^(elementor-frontend|elementor-icons|elementor-pro|widget-|base-|e-|swiper|font-awesome)/', 'gforms' => '/^(gform_basic|gform_theme|gravity_forms_theme)/' ] as $layer => $re ) {
 		if ( preg_match( $re, $handle ) ) {
 			return '<style id="' . esc_attr( $handle ) . '-css">@import url("' . esc_url( $href ) . '") layer(' . $layer . ');</style>' . "\n";
 		}
@@ -78,6 +79,11 @@ add_filter( 'style_loader_tag', function ( $tag, $handle, $href ) {
 // company ("About 270 West Consulting — …") must not get the site name appended again.
 add_filter( 'document_title_separator', fn() => '—' );
 add_filter( 'document_title_parts', function ( $parts ) {
+	// The front page's <title> is its own page title, generated from the prototype's <title>
+	// (e.g. "VAC benefits consultants | 270 West Consulting"), not WordPress's "Site — Tagline".
+	if ( is_front_page() && ( $front = (int) get_option( 'page_on_front' ) ) && ( $t = get_the_title( $front ) ) ) {
+		return [ 'title' => $t ];
+	}
 	if ( is_singular() && ! empty( $parts['title'] ) && ! empty( $parts['site'] ) && false !== stripos( $parts['title'], $parts['site'] ) ) {
 		unset( $parts['site'] );
 	}

@@ -193,8 +193,8 @@ function initQuiz(containerId) {
     if (step === 0) {
       body = `
         <div class="quiz-step-label">Step 01 · Intake</div>
-        <div class="quiz-h3">See where you stand with&nbsp;VAC.</div>
-        <div class="quiz-lead">Five quick questions about your service and your history with VAC. About two minutes, confidential, no obligation. We'll come back with a clear next step.</div>
+        <div class="quiz-h3">Where are you in your VAC benefits process?</div>
+        <div class="quiz-lead">Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We'll get back to you with a clear next step.</div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <button class="quiz-start-btn" onclick="quizGo(1)">Start now →</button>
           <div class="quiz-badges"><span>● 2 MIN</span><span>● CONFIDENTIAL</span><span>● NO COST</span></div>
@@ -405,11 +405,14 @@ function initVideoLightbox() {
     dialog.addEventListener('close', () => { frame.innerHTML = ''; if (opener) opener.focus(); });
     document.body.appendChild(dialog);
   }
-  cards.forEach(card => card.addEventListener('click', () => {
+  cards.forEach(card => card.addEventListener('click', e => {
+    e.preventDefault(); // in WordPress the card is an <a href="#"> container
     if (!dialog) build();
     opener = card;
-    const src = card.dataset.videoSrc;
-    const title = card.dataset.videoTitle || 'Video';
+    // The prototype keeps data-video-* on the card; the WordPress build keeps them on the play icon.
+    const data = Object.assign({}, card.querySelector('.video-card-play')?.dataset, card.dataset);
+    const src = data.videoSrc;
+    const title = data.videoTitle || 'Video';
     dialog.setAttribute('aria-label', title);
     if (src) {
       frame.innerHTML = /\.(mp4|webm)$/i.test(src)
@@ -570,7 +573,33 @@ function initArchives() {
 }
 
 // ── Init all ──
+// ── Resource table of contents: the link for the section in view is .active ──
+function initToc() {
+  const links = [...document.querySelectorAll('.article-toc-links a[href^="#"]')];
+  if (!links.length) return;
+  const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+  const headings = [...byId.keys()].map(id => document.getElementById(id)).filter(Boolean);
+  if (!headings.length) return;
+  let lock = 0;
+  const setActive = (id) => links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+  // Clicking a link marks it at once; the observer takes over again once the jump has settled.
+  links.forEach(a => a.addEventListener('click', () => { setActive(a.getAttribute('href').slice(1)); lock = Date.now() + 800; }));
+  // The section whose heading was last scrolled past the header line is the current one.
+  const headerH = () => (document.querySelector('.site-header') || { offsetHeight: 90 }).offsetHeight;
+  const update = () => {
+    if (Date.now() < lock) return;
+    const line = headerH() + 24;
+    let current = headings[0];
+    for (const h of headings) { if (h.getBoundingClientRect().top <= line) current = h; else break; }
+    setActive(current.id);
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+  initToc();
   initMobileMenu();
   initHeaderScroll();
 
@@ -600,6 +629,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const w270Lead = initLeadTracking();
   initScheduler(w270Lead);
   initVideoLightbox();
+  // WordPress builds the FAQ as an Elementor accordion; on a page whose items all start open
+  // (the FAQ page itself) the widget can only open the first, so open the rest here.
+  document.querySelectorAll('.w-faq-open details:not([open])').forEach(d => {
+    d.open = true;
+    const summary = d.querySelector('summary');
+    if (summary) summary.setAttribute('aria-expanded', 'true');
+  });
   initStoryGrid();
   initQuiz();
   if (document.getElementById('consult-widget')) initConsultWidget('consult-widget');

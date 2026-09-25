@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>VAC Status Checker | 270 West Consulting</title>
-<meta name="description" content="A five-question VAC status check for Canadian veterans: tell us about your service and your history with Veterans Affairs Canada, and we will come back with a clear next step."/>
+<title>Canadian Veterans Benefits Support | 270 West Consulting</title>
+<meta name="description" content="Answer five short questions about your service and VAC experience. A 270 West benefits navigator will follow up about support for claims, appeals or reassessments."/>
 <link rel="icon" href="img/brand/favicon.svg" type="image/svg+xml"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -19,8 +19,8 @@
     <div class="nav-dropdown">
       <a href="services.html" class="nav-dropdown-parent" aria-haspopup="true">Services <svg class="nav-dropdown-chevron" viewBox="0 0 10 6" width="9" height="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></a>
       <div class="nav-dropdown-menu">
-        <a href="service-claims.html">Claims</a>
-        <a href="service-appeals.html">Appeals</a>
+        <a href="service-claims.html">VAC claims</a>
+        <a href="service-appeals.html">VAC appeals</a>
         <a href="service-reassessment.html">Reassessment</a>
         <a href="service-support.html">Support</a>
       </div>
@@ -33,6 +33,7 @@
         <a href="stories.html">Stories</a>
         <a href="guides.html">Guides</a>
         <a href="news.html">News</a>
+        <a href="faq.html">FAQ</a>
       </div>
     </div>
     <a href="contact.html">Contact</a>
@@ -52,15 +53,19 @@
   <a href="stories.html" class="mobile-subnav">Stories</a>
   <a href="guides.html" class="mobile-subnav">Guides</a>
   <a href="news.html" class="mobile-subnav">News</a>
+  <a href="faq.html" class="mobile-subnav">FAQ</a>
   <a href="contact.html">Contact</a>
   <a href="consult.html" class="mobile-nav-cta">Book a Consult →</a>
 </nav>
 
 <!-- PAGE HERO -->
 <section class="page-hero">
-  <h1 class="page-hero-h1">VAC status check for Canadian veterans</h1>
-  <p class="page-hero-lead">Five questions. About two minutes.</p>
-  <p class="page-hero-sub">Tell us about your service and where you are with VAC. We'll review your answers and come back with a clear next step. This isn't a VAC decision or an eligibility determination.</p>
+  <h1 class="page-hero-h1">See which Canadian Veterans Benefits program may apply to you</h1>
+  <p class="page-hero-lead">Are you considering a first claim, looking again at a decision or dealing with a condition that has changed?</p>
+  <p class="page-hero-sub">Answer five questions about your service and experience to help us understand your situation.</p>
+    <div class="page-hero-ctas">
+      <a href="#quiz-widget" class="btn-accent">Find the support that fits your situation →</a>
+    </div>
 </section>
 
 <!-- ELIGIBILITY LAYOUT -->
@@ -68,16 +73,17 @@
   <!-- Left: context -->
   <div class="status-page-sticky">
     <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px">What happens next</div>
-    <h2 style="font-size:36px;font-weight:400;line-height:1.1;letter-spacing:-0.02em;margin:0 0 20px">Honest answers, not sales pitches.</h2>
-    <p style="font-size:16px;line-height:1.6;color:var(--muted);margin:0 0 32px">After you complete the check, a 270 West advisor will review your answers and reach out within one business day to talk through where you stand and what we can help with, at no cost.</p>
+    <h2 style="font-size:36px;font-weight:400;line-height:1.1;letter-spacing:-0.02em;margin:0 0 20px">A benefits navigator will review your answers.</h2>
+    <p style="font-size:16px;line-height:1.6;color:var(--muted);margin:0 0 32px">After you complete the check, one of our benefits navigators will contact you within one business day. They’ll talk through your situation, explain how we may be able to help and answer your questions.</p>
+    <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px">Privacy and choice</div>
     <div style="display:grid;gap:16px">
       <div style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:var(--bg2);border:1px solid var(--rule)">
         <div style="color:var(--accent);margin-top:2px;flex-shrink:0">
           <svg viewBox="0 0 32 32" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="16" r="12"/><path d="M10 16 L14 20 L22 12"/></svg>
         </div>
         <div>
-          <div style="font-size:14px;font-weight:600;margin-bottom:4px">Fully confidential</div>
-          <div style="font-size:13px;color:var(--muted);line-height:1.5">We never share your information.</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:4px">Your information</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.5">We use your answers to respond to your request. Read our <a href="privacy.html" style="color:var(--accent)">Privacy Policy</a> for details on how we handle your personal information.</div>
         </div>
       </div>
       <div style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:var(--bg2);border:1px solid var(--rule)">
@@ -86,7 +92,7 @@
         </div>
         <div>
           <div style="font-size:14px;font-weight:600;margin-bottom:4px">No obligation</div>
-          <div style="font-size:13px;color:var(--muted);line-height:1.5">See what applies, then decide what to do next.</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.5">The check and follow-up conversation are free. After speaking with us, you decide whether you want to move forward.</div>
         </div>
       </div>
       <div style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:var(--bg2);border:1px solid var(--rule)">
@@ -95,17 +101,45 @@
         </div>
         <div>
           <div style="font-size:14px;font-weight:600;margin-bottom:4px">Independent of VAC</div>
-          <div style="font-size:13px;color:var(--muted);line-height:1.5">We're independent, not part of Veterans Affairs Canada.</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.5">270 West is independent of Veterans Affairs Canada. This check does not access your VAC file or make an eligibility decision.</div>
         </div>
       </div>
     </div>
     <div style="margin-top:32px;padding:20px 24px;background:var(--bg2);border-left:2px solid var(--olive)">
-      <div style="font-size:13px;color:var(--muted);line-height:1.55;font-style:italic">Prefer to talk it through? <a href="consult.html" style="color:var(--accent)">Book a free consult →</a></div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.55;font-style:italic">Prefer to talk it through? <a href="consult.html" style="color:var(--accent)">Book a free 30-minute call →</a></div>
     </div>
   </div>
   <!-- Right: quiz widget -->
   <div>
     <div id="quiz-widget"></div>
+  </div>
+</section>
+
+<!-- FAQ: from the Sept 2026 copy deck. -->
+<section class="section-pad" style="background:var(--bg2)">
+  <div style="display:grid;grid-template-columns:1fr 2fr;gap:64px">
+    <div>
+      <div class="mono-label">Common questions</div>
+      <h2 style="font-family:var(--font-serif);font-size:44px;font-weight:400;line-height:1.2;letter-spacing:-0.02em;margin:0">Frequently asked questions</h2>
+    </div>
+    <div style="border-top:1px solid var(--rule)">
+      <details class="faq-item">
+        <summary>Who qualifies for veterans benefits in Canada?<span class="faq-icon"></span></summary>
+        <p>The requirements depend on the benefit. For VAC disability benefits, factors include your service, a diagnosed condition and its connection to your service. Other benefits have their own requirements. Speak with us to learn more about disability benefit criteria.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Am I eligible for veterans benefits?<span class="faq-icon"></span></summary>
+        <p>This check cannot determine your eligibility. A benefits navigator can review what you share, discuss services that may be relevant to your situation and help you understand possible next steps.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I use the check if I’ve already received a VAC decision?<span class="faq-icon"></span></summary>
+        <p>Yes. You can use it if you want to discuss a decision, are considering an appeal or have a condition that has changed since your assessment.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Will this show the status of a claim I’ve submitted to VAC?<span class="faq-icon"></span></summary>
+        <p>No. The check does not connect to My VAC Account or retrieve updates on an application. It helps us understand where you are in the process so we can have a useful follow-up conversation.</p>
+      </details>
+    </div>
   </div>
 </section>
 
@@ -115,7 +149,7 @@
   <div class="footer-grid-5">
     <div>
       <div class="footer-lockup"><img src="img/brand/270west-horizontal-light.svg" alt="270 West Consulting" width="186" height="50"/></div>
-      <div style="line-height:1.6">Helping Canadian veterans secure the benefits they’ve earned.<br>Made in Canada · BBB Accredited</div>
+      <div style="line-height:1.6">Helping Canadian veterans access the benefits they’ve earned.<br>Made in Canada · BBB Accredited</div>
     </div>
     <div>
       <div class="footer-col-label">Explore</div>
@@ -130,9 +164,9 @@
     <div>
       <div class="footer-col-label">Services</div>
       <div class="footer-col-items">
-        <a href="service-appeals.html">Appeals</a>
-        <a href="service-claims.html">Claims</a>
-        <a href="service-reassessment.html">Reassessments</a>
+        <a href="service-appeals.html">VAC appeals</a>
+        <a href="service-claims.html">VAC claims</a>
+        <a href="service-reassessment.html">VAC reassessments</a>
         <a href="service-support.html">Support</a>
       </div>
     </div>

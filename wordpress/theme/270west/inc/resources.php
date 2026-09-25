@@ -50,8 +50,15 @@ function w270_type_label( int $post_id, bool $featured = false ) {
 	return function_exists( 'w270c_type_label' ) ? w270c_type_label( $post_id, $featured ) : 'Resource';
 }
 
+/**
+ * Reading time in minutes, computed from the body at 200 words a minute (never below 1).
+ * Nothing to set in wp-admin: it follows the copy as it is edited.
+ */
 function w270_read_time( $post_id ) {
-	return max( 0, (int) w270_field( 'read_time', $post_id ) );
+	$post = get_post( $post_id );
+	if ( ! $post ) { return 0; }
+	$words = str_word_count( wp_strip_all_tags( strip_shortcodes( $post->post_content ) ) );
+	return max( 1, (int) ceil( $words / 200 ) );
 }
 
 function w270_topic( $post_id ) {
@@ -71,7 +78,9 @@ function w270_related( $post_id ) {
 
 /** Adds the prototype's article classes and h-N ids to resource content (runs after wpautop). */
 function w270_article_classes( $content ) {
-	if ( ! is_singular( w270_resource_types() ) || ! in_the_loop() ) { return $content; }
+	// The queried resource's own body, whether rendered by the PHP loop or by an Elementor Pro
+	// single template (which runs outside the loop, so in_the_loop() would be false there).
+	if ( ! is_singular( w270_resource_types() ) || get_the_ID() !== get_queried_object_id() ) { return $content; }
 	$i = 0;
 	$content = preg_replace_callback( '/<h2\b([^>]*)>/i', function ( $m ) use ( &$i ) {
 		$attrs = $m[1];

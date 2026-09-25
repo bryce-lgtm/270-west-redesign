@@ -3,6 +3,8 @@
  * 270 West importer. Usage:
  *   "$PHP" -c "$INI" wordpress/build/import.php --all
  *   "$PHP" -c "$INI" wordpress/build/import.php --pages --only=home
+ *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-resources=slug-a,slug-b   # re-seed named resources
+ *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-templates               # re-seed the Pro header/footer
  */
 if ( PHP_SAPI !== 'cli' ) { http_response_code( 403 ); exit; } // never runnable over HTTP
 $site = getenv( 'W270_SITE' ) ?: '/Users/Bryce/Local Sites/270-west/app/public';
@@ -54,7 +56,7 @@ function w270_page_by_slug( $slug ) {
 /** Menu definition items: [title, slug, classes, children]. */
 function w270_menu_defs() {
 	$services_children = [ [ 'Claims', 'claims' ], [ 'Appeals', 'appeals' ], [ 'Reassessment', 'reassessment' ], [ 'Support', 'support' ] ];
-	$resources_children = [ [ 'Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ] ];
+	$resources_children = [ [ 'Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ], [ 'FAQ', 'faq' ] ];
 	$main = [
 		[ 'Services', 'services', '', $services_children ],
 		[ 'How It Works', 'how-it-works' ], [ 'About', 'about' ],
@@ -68,7 +70,7 @@ function w270_menu_defs() {
 			[ 'Services', 'services' ], [ 'How It Works', 'how-it-works' ], [ 'About', 'about' ], [ 'Resources', 'resources' ], [ 'Contact', 'contact' ],
 		] ],
 		'Footer Services' => [ 'location' => 'footer-services', 'items' => [
-			[ 'Appeals', 'appeals' ], [ 'Claims', 'claims' ], [ 'Reassessments', 'reassessment' ], [ 'Support', 'support' ],
+			[ 'VAC appeals', 'appeals' ], [ 'VAC claims', 'claims' ], [ 'VAC reassessments', 'reassessment' ], [ 'Support', 'support' ],
 		] ],
 	];
 }
@@ -157,8 +159,10 @@ function w270_resolve( array $elements, string $assets ) {
 					update_post_meta( $id, '_wp_attachment_image_alt', $v['alt'] );
 				}
 				$v = [ 'id' => $id, 'url' => wp_get_attachment_url( $id ) ];
-			} elseif ( is_array( $v ) && isset( $v['url'] ) && is_string( $v['url'] ) && str_starts_with( $v['url'], '/' ) ) {
-				$v['url'] = home_url( $v['url'] );
+			} elseif ( is_array( $v ) && isset( $v['url'] ) && is_string( $v['url'] ) ) {
+				// Image widgets pointed at a theme asset (the SVG brand marks) and site-relative links.
+				$v['url'] = str_replace( '__W270_ASSETS__', $assets, $v['url'] );
+				if ( str_starts_with( $v['url'], '/' ) ) { $v['url'] = home_url( $v['url'] ); }
 			}
 		}
 		unset( $v );
@@ -190,6 +194,7 @@ function w270_import_pages( $only = null ) {
 			$pid = $existing ? wp_update_post( $post + [ 'ID' => $existing->ID ], true ) : wp_insert_post( $post, true );
 			if ( is_wp_error( $pid ) ) { throw new RuntimeException( $pid->get_error_message() ); }
 			$elements = w270_resolve( $def['elements'], $assets );
+			if ( function_exists( 'w270_resolve_placeholders' ) ) { $elements = w270_resolve_placeholders( $elements ); }
 			update_post_meta( $pid, '_elementor_edit_mode', 'builder' );
 			update_post_meta( $pid, '_elementor_template_type', 'wp-page' );
 			update_post_meta( $pid, '_elementor_version', ELEMENTOR_VERSION );
@@ -334,7 +339,7 @@ function w270_form_shortcodes( $html ) {
 	}, $html );
 }
 
-function w270_import_resources() {
+function w270_import_resources( array $refresh = [] ) {
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	$plugin = '270west-content/270west-content.php';
 	if ( ! is_plugin_active( $plugin ) ) {
@@ -381,6 +386,30 @@ function w270_import_resources() {
 				'order'       => 'ASC',
 			] );
 			$existing   = $found ? $found[0] : null;
+			// Body copy: the prototype article for the one seeded from it, a file under build/content/
+			// when the seed names one, otherwise a placeholder the editor replaces in wp-admin.
+			if ( $is_article ) {
+				$content = w270_media_urls( $article['content'] );
+			} elseif ( ! empty( $r['content'] ) ) {
+				$content = w270_media_urls( file_get_contents( __DIR__ . '/content/' . $r['content'] ) );
+			} else {
+				$content = '<p>Content coming soon.</p>';
+			}
+			if ( $existing && in_array( $r['slug'], $refresh, true ) ) {
+				// --refresh-resources=<slug>: an explicit request to re-seed copy from the repo.
+				// Only what the seed defines is rewritten; taxonomy, image and other fields stay.
+				$ids[ $r['slug'] ] = $existing->ID;
+				$u = wp_update_post( [ 'ID' => $existing->ID, 'post_title' => $r['title'], 'post_excerpt' => $summary, 'post_content' => $content ], true );
+				if ( is_wp_error( $u ) ) { throw new RuntimeException( $u->get_error_message() ); }
+				update_post_meta( $existing->ID, 'summary', $summary );
+				update_post_meta( $existing->ID, 'seo_h1', $r['seo_h1'] ?? '' );
+				if ( $acf ) {
+					update_field( 'field_270w_summary', $summary, $existing->ID );
+					update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $existing->ID );
+				}
+				echo "resource {$r['slug']}: #{$existing->ID} refreshed from the seed\n";
+				continue;
+			}
 			if ( $existing ) {
 				// Seed-once: resource content belongs to wp-admin from here on, so a re-run
 				// must not overwrite an edit or resurrect a field value someone cleared.
@@ -391,7 +420,7 @@ function w270_import_resources() {
 			$post = [
 				'post_type' => 'resource', 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
 				'post_excerpt' => $summary, 'menu_order' => (int) $r['order'],
-				'post_content' => $is_article ? w270_media_urls( $article['content'] ) : '<p>Content coming soon.</p>',
+				'post_content' => $content,
 			];
 			// News entries carry their own publication date; everything else uses "now".
 			if ( ! empty( $r['date'] ) ) { $post['post_date'] = $r['date'] . ' 09:00:00'; }
@@ -407,7 +436,6 @@ function w270_import_resources() {
 			// Plain post meta first so the theme renders without ACF; update_field() below
 			// overwrites these with ACF's own values (same meta keys) when the plugin is present.
 			update_post_meta( $pid, 'summary', $summary );
-			if ( isset( $r['read_time'] ) ) { update_post_meta( $pid, 'read_time', (int) $r['read_time'] ); }
 			update_post_meta( $pid, 'featured', empty( $r['featured'] ) ? 0 : 1 );
 			update_post_meta( $pid, 'seo_h1', $r['seo_h1'] ?? '' );
 			if ( 'guides' === $subtype ) {
@@ -421,7 +449,6 @@ function w270_import_resources() {
 			}
 			if ( $acf ) {
 				update_field( 'field_270w_summary', $summary, $pid );
-				if ( isset( $r['read_time'] ) ) { update_field( 'field_270w_read_time', (int) $r['read_time'], $pid ); }
 				update_field( 'field_270w_featured', empty( $r['featured'] ) ? 0 : 1, $pid );
 				update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $pid );
 				if ( 'guides' === $subtype ) {
@@ -502,13 +529,34 @@ function w270_import_resources() {
 		foreach ( $hero as $key => $value ) {
 			if ( '' === (string) get_post_meta( $pid, $key, true ) ) { update_post_meta( $pid, $key, $value ); }
 		}
-		// The template and its wiring are structure, not content, so they are always re-applied.
-		update_post_meta( $pid, '_wp_page_template', 'template-resource-archive.php' );
 		update_post_meta( $pid, 'archive_types', $types );
 		update_post_meta( $pid, 'archive_layout', $layout );
 		update_post_meta( $pid, 'archive_filter', $filter );
-		delete_post_meta( $pid, '_elementor_data' );
-		delete_post_meta( $pid, '_elementor_edit_mode' );
+		$page_file = W270_OUT . "/archive-{$slug}.json";
+		if ( class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) && file_exists( $page_file ) ) {
+			// With Pro the archive is an Elementor page: hero text, Taxonomy Filter and a Loop Grid
+			// over the sub-types, editable in wp-admin. Seeded once (or with --refresh-templates).
+			$already = get_post_meta( $pid, '_elementor_data', true );
+			if ( $already && empty( $GLOBALS['w270_refresh_templates'] ) ) {
+				echo "archive {$slug}: Elementor content left as-is\n";
+			} else {
+				$def = json_decode( file_get_contents( $page_file ), true, 512, JSON_THROW_ON_ERROR );
+				$elements = w270_resolve_placeholders( w270_resolve( $def['elements'], get_stylesheet_directory_uri() . '/assets' ) );
+				update_post_meta( $pid, '_elementor_edit_mode', 'builder' );
+				update_post_meta( $pid, '_elementor_template_type', 'wp-page' );
+				update_post_meta( $pid, '_elementor_version', ELEMENTOR_VERSION );
+				update_post_meta( $pid, '_elementor_data', wp_slash( wp_json_encode( $elements, JSON_UNESCAPED_UNICODE ) ) );
+				update_post_meta( $pid, '_elementor_page_settings', [ 'hide_title' => 'yes' ] );
+				delete_post_meta( $pid, '_elementor_css' );
+				delete_post_meta( $pid, '_wp_page_template' );
+				echo "archive {$slug}: Elementor content seeded (Loop Grid)\n";
+			}
+		} else {
+			// Without Pro the PHP template lists the sub-types.
+			update_post_meta( $pid, '_wp_page_template', 'template-resource-archive.php' );
+			delete_post_meta( $pid, '_elementor_data' );
+			delete_post_meta( $pid, '_elementor_edit_mode' );
+		}
 	}
 
 	// ACF Local JSON groups are invisible in the Field Groups list until they exist in the
@@ -518,10 +566,16 @@ function w270_import_resources() {
 	if ( function_exists( 'acf_get_local_json_files' ) && function_exists( 'acf_import_field_group' ) ) {
 		$synced = 0;
 		foreach ( acf_get_local_json_files() as $key => $file ) {
-			$in_db = get_posts( [ 'post_type' => 'acf-field-group', 'name' => $key, 'post_status' => 'any', 'numberposts' => 1, 'fields' => 'ids' ] );
-			if ( $in_db ) { continue; }
 			$group = json_decode( file_get_contents( $file ), true );
 			if ( ! $group ) { continue; }
+			$in_db = get_posts( [ 'post_type' => 'acf-field-group', 'name' => $key, 'post_status' => 'any', 'numberposts' => 1, 'fields' => 'ids' ] );
+			if ( $in_db ) {
+				// Present already: re-import only when the JSON is newer than the stored copy (the
+				// same test ACF's own "Sync available" uses), so field-group edits ship with a deploy.
+				$stored = (int) get_post_meta( $in_db[0], '_acf_modified', true ) ?: (int) strtotime( get_post_field( 'post_modified_gmt', $in_db[0] ) );
+				if ( (int) ( $group['modified'] ?? 0 ) <= $stored ) { continue; }
+				$group['ID'] = $in_db[0];
+			}
 			acf_import_field_group( $group );
 			$synced++;
 		}
@@ -531,16 +585,125 @@ function w270_import_resources() {
 	flush_rewrite_rules();
 }
 
+/**
+ * Elementor Pro Theme Builder templates (header, footer), generated from the prototype's chrome.
+ * Seed-once like resources: created if absent, then owned by wp-admin. --refresh-templates
+ * (deploy: W270_SG_REFRESH_TEMPLATES=1) re-seeds them from the repo.
+ */
+/** Template post ID by slug, for __W270_TPL__ placeholders (loop grids name their loop item). */
+function w270_template_id( $slug ) {
+	$found = get_posts( [ 'post_type' => 'elementor_library', 'name' => $slug, 'post_status' => 'any', 'numberposts' => 1, 'fields' => 'ids' ] );
+	return $found ? (int) $found[0] : 0;
+}
+
+/** Resolves __W270_TPL__:<slug> and __W270_TERM__:<taxonomy>:<slug> placeholders anywhere in element settings. */
+function w270_resolve_placeholders( $value ) {
+	if ( is_array( $value ) ) { return array_map( 'w270_resolve_placeholders', $value ); }
+	if ( is_string( $value ) && str_starts_with( $value, '__W270_TPL__:' ) ) {
+		$id = w270_template_id( substr( $value, 13 ) );
+		if ( ! $id ) { throw new RuntimeException( "template placeholder {$value} did not resolve" ); }
+		return (string) $id;
+	}
+	if ( is_string( $value ) && str_starts_with( $value, '__W270_TERM__:' ) ) {
+		[ $tax, $slug ] = explode( ':', substr( $value, 14 ), 2 );
+		$term = get_term_by( 'slug', $slug, $tax );
+		if ( ! $term ) { throw new RuntimeException( "term placeholder {$value} did not resolve" ); }
+		return (string) $term->term_id;
+	}
+	return $value;
+}
+
+function w270_import_templates( $refresh = false ) {
+	if ( ! class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) { echo "templates: Elementor Pro not active, skipped\n"; return; }
+	$source  = \Elementor\Plugin::$instance->templates_manager->get_source( 'local' );
+	$manager = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager();
+	$assets  = get_stylesheet_directory_uri() . '/assets';
+	// Loop items first: singles and archives refer to them by slug.
+	$files = glob( W270_OUT . '/tpl-*.json' );
+	usort( $files, fn( $a, $b ) => strcmp( ( str_contains( $a, 'tpl-w270-card' ) ? '0' : '1' ) . $a, ( str_contains( $b, 'tpl-w270-card' ) ? '0' : '1' ) . $b ) );
+	foreach ( $files as $file ) {
+		try {
+			$def      = json_decode( file_get_contents( $file ), true, 512, JSON_THROW_ON_ERROR );
+			$found    = get_posts( [ 'post_type' => 'elementor_library', 'name' => $def['slug'], 'post_status' => 'any', 'numberposts' => 1 ] );
+			$existing = $found ? $found[0] : null;
+			if ( $existing && ! $refresh ) { echo "template {$def['slug']}: #{$existing->ID} already present, left as-is\n"; continue; }
+			$elements = w270_resolve_placeholders( w270_resolve( $def['elements'], $assets ) );
+			if ( $existing ) {
+				$id = $existing->ID;
+				$r  = $source->update_item( [ 'id' => $id, 'title' => $def['title'], 'content' => $elements ] );
+			} else {
+				$r  = $source->save_item( [ 'title' => $def['title'], 'type' => $def['type'], 'content' => $elements, 'page_settings' => [] ] );
+				$id = $r;
+			}
+			if ( is_wp_error( $r ) ) { throw new RuntimeException( $r->get_error_message() ); }
+			if ( ! $existing ) { wp_update_post( [ 'ID' => $id, 'post_name' => $def['slug'] ] ); }
+			// Display conditions: everywhere, except the advertising landing pages, which carry
+			// their own header and footer inside the page.
+			$conditions = [];
+			foreach ( $def['conditions'] as $c ) {
+				// 'in_resource_type:stories' → the term ID Pro's In-Taxonomy condition wants.
+				$parts = array_pad( explode( '/', $c ), 4, '' );
+				if ( str_contains( $parts[2], ':' ) ) {
+					[ $sub, $slug ] = explode( ':', $parts[2], 2 );
+					$term = get_term_by( 'slug', $slug, substr( $sub, 3 ) );
+					if ( ! $term ) { throw new RuntimeException( "condition {$c}: no term {$slug}" ); }
+					$parts[2] = $sub;
+					$parts[3] = (string) $term->term_id;
+				}
+				$conditions[] = $parts;
+			}
+			if ( ! empty( $def['exclude_landing'] ) ) {
+				foreach ( w270_landing_slugs() as $slug ) {
+					$p = w270_page_by_slug( $slug );
+					if ( $p ) { $conditions[] = [ 'exclude', 'singular', 'page', (string) $p->ID ]; }
+				}
+			}
+			if ( 'loop-item' !== $def['type'] ) { $manager->save_conditions( $id, $conditions ); }
+			delete_post_meta( $id, '_elementor_css' );
+			echo "template {$def['slug']}: #{$id} " . ( $existing ? 'refreshed' : 'created' ) . ' (' . count( $conditions ) . " conditions)\n";
+		} catch ( Throwable $e ) {
+			echo 'template ' . basename( $file ) . ': ERROR ' . $e->getMessage() . "\n";
+			$GLOBALS['w270_failed'] = true;
+		}
+	}
+}
+
+/** Re-saves the header/footer display conditions (structure, not content): landing-page exclusions need page IDs. */
+function w270_refresh_chrome_conditions() {
+	if ( ! class_exists( '\\ElementorPro\\Modules\\ThemeBuilder\\Module' ) ) { return; }
+	$manager = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager();
+	foreach ( [ 'w270-header', 'w270-footer' ] as $slug ) {
+		$id = w270_template_id( $slug );
+		if ( ! $id ) { continue; }
+		$conditions = [ [ 'include', 'general', '', '' ] ];
+		foreach ( w270_landing_slugs() as $lp ) {
+			$p = w270_page_by_slug( $lp );
+			if ( $p ) { $conditions[] = [ 'exclude', 'singular', 'page', (string) $p->ID ]; }
+		}
+		$manager->save_conditions( $id, $conditions );
+	}
+	echo "templates: header/footer conditions refreshed\n";
+}
+
 function w270_main( $argv ) {
 	$flags = array_fill_keys( array_map( fn( $a ) => explode( '=', ltrim( $a, '-' ) )[0], array_slice( $argv, 1 ) ), true );
 	$only  = null;
-	foreach ( $argv as $a ) { if ( str_starts_with( $a, '--only=' ) ) { $only = substr( $a, 7 ); } }
+	$refresh = [];
+	foreach ( $argv as $a ) {
+		if ( str_starts_with( $a, '--only=' ) ) { $only = substr( $a, 7 ); }
+		if ( str_starts_with( $a, '--refresh-resources=' ) ) { $refresh = array_filter( explode( ',', substr( $a, 20 ) ) ); }
+	}
 	$all = isset( $flags['all'] );
 	if ( $all || isset( $flags['media'] ) ) { function_exists( 'w270_import_media' ) && w270_import_media(); }
 	if ( $all || isset( $flags['forms'] ) ) { w270_import_forms(); }
+	// Templates before pages: the Resources hub's Loop Grids name their loop-item templates.
+	$GLOBALS['w270_refresh_templates'] = isset( $flags['refresh-templates'] );
+	if ( $all || isset( $flags['templates'] ) || isset( $flags['refresh-templates'] ) ) { w270_import_templates( isset( $flags['refresh-templates'] ) ); }
 	if ( $all || isset( $flags['pages'] ) ) { function_exists( 'w270_import_pages' ) && w270_import_pages( $only ); }
 	if ( $all || isset( $flags['menus'] ) ) { w270_import_menus(); }
-	if ( $all || isset( $flags['resources'] ) ) { w270_import_resources(); }
+	if ( $all || isset( $flags['resources'] ) || $refresh || isset( $flags['refresh-templates'] ) ) { w270_import_resources( $refresh ); }
+	// The header/footer exclude the landing pages by ID, which only exist once pages are imported.
+	if ( $all || isset( $flags['templates'] ) || isset( $flags['refresh-templates'] ) ) { w270_refresh_chrome_conditions(); }
 	if ( $all || isset( $flags['kit'] ) ) { function_exists( 'w270_import_kit' ) && w270_import_kit(); }
 	if ( $all || isset( $flags['settings'] ) ) { w270_import_settings(); }
 	if ( class_exists( '\Elementor\Plugin' ) ) { \Elementor\Plugin::$instance->files_manager->clear_cache(); }

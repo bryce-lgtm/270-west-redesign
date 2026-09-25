@@ -19,6 +19,12 @@ foreach ( $pages as $p ) {
 		$html = \Elementor\Plugin::$instance->frontend->get_builder_content_for_display( $p->ID );
 		if ( strlen( $html ) < 500 ) { throw new RuntimeException( 'rendered only ' . strlen( $html ) . ' bytes' ); }
 		if ( str_contains( $html, '__W270_ASSETS__' ) || str_contains( $html, '__media__' ) || str_contains( $html, '__W270_FORM__' ) ) { throw new RuntimeException( 'unresolved placeholder in output' ); }
+		// The FAQ is a native Accordion widget (one item per question), not a raw <details> block.
+		if ( 'faq' === $p->post_name ) {
+			$n = substr_count( $html, 'class="e-n-accordion-item-title"' );
+			if ( $n < 11 ) { throw new RuntimeException( "expected 11+ accordion items, found $n" ); }
+			if ( str_contains( $html, 'class="faq-item"' ) ) { throw new RuntimeException( 'raw <details class="faq-item"> still rendered' ); }
+		}
 		printf( "OK   %-30s %2d sections %7d bytes\n", $p->post_name, count( $data ), strlen( $html ) );
 	} catch ( Throwable $e ) {
 		$fail = true;
@@ -98,8 +104,10 @@ try {
 	foreach ( [ 'resources/guides' => 13, 'resources/stories' => 2, 'resources/news' => 5 ] as $path => $min ) {
 		$page = get_page_by_path( $path, OBJECT, 'page' );
 		if ( ! $page ) { throw new RuntimeException( "no page at /{$path}/" ); }
-		if ( 'template-resource-archive.php' !== get_post_meta( $page->ID, '_wp_page_template', true ) ) {
-			throw new RuntimeException( "/{$path}/ is not using the archive template" );
+		$is_php  = 'template-resource-archive.php' === get_post_meta( $page->ID, '_wp_page_template', true );
+		$is_loop = str_contains( (string) get_post_meta( $page->ID, '_elementor_data', true ), '"loop-grid"' );
+		if ( ! $is_php && ! $is_loop ) {
+			throw new RuntimeException( "/{$path}/ is neither on the archive template nor an Elementor Loop Grid page" );
 		}
 		$types = array_filter( (array) get_post_meta( $page->ID, 'archive_types', true ) );
 		if ( ! $types ) { throw new RuntimeException( "/{$path}/ lists no sub-types" ); }
@@ -118,5 +126,27 @@ try {
 } catch ( Throwable $e ) {
 	$fail = true;
 	printf( "FAIL resource archives: %s\n", $e->getMessage() );
+}
+// Elementor Pro Theme Builder: the header and footer templates exist and resolve for their locations.
+if ( class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) {
+	try {
+		$manager = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager();
+		foreach ( [ 'header' => 'w270-header', 'footer' => 'w270-footer' ] as $location => $slug ) {
+			$t = get_posts( [ 'post_type' => 'elementor_library', 'name' => $slug, 'numberposts' => 1 ] );
+			if ( ! $t ) { throw new RuntimeException( "no {$location} template ({$slug})" ); }
+			$conditions = (array) get_post_meta( $t[0]->ID, '_elementor_conditions', true );
+			if ( ! in_array( 'include/general', $conditions, true ) ) { throw new RuntimeException( "{$location} template lacks include/general" ); }
+			if ( ! $manager->get_location_templates( $location ) ) { throw new RuntimeException( "nothing resolves for location {$location}" ); }
+		}
+		foreach ( [ 'w270-single-library', 'w270-single-story', 'w270-single-news', 'w270-card-guide', 'w270-card-story', 'w270-card-news' ] as $slug ) {
+			if ( ! get_posts( [ 'post_type' => 'elementor_library', 'name' => $slug, 'numberposts' => 1 ] ) ) { throw new RuntimeException( "no template {$slug}" ); }
+		}
+		echo "OK   theme builder: header, footer, resource singles and cards present\n";
+	} catch ( Throwable $e ) {
+		$fail = true;
+		printf( "FAIL theme builder: %s\n", $e->getMessage() );
+	}
+} else {
+	echo "WARN Elementor Pro not active: header/footer templates not checked\n";
 }
 exit( $fail ? 1 : 0 );

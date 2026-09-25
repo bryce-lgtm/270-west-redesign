@@ -101,7 +101,7 @@ def check_extra(src, path, scope):
 def check_archives():
     ok = True
     for path, marker, minimum in ARCHIVE_MINIMUMS:
-        n = fetch(path).count(f'class="{marker}"')
+        n = len(re.findall(r'class="[^"]*\\b' + re.escape(marker) + r'\\b[^"]*"', fetch(path)))
         good = n >= minimum
         ok = ok and good
         print(f'{"OK  " if good else "DIFF"} {path:45s} {n:5d} {marker} (expected >= {minimum})')

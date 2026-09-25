@@ -58,10 +58,137 @@ body:not(.elementor-editor-active) :where(.w-bare) { display: contents; }
 :where(.w-btn .elementor-button-content-wrapper, .w-btn .elementor-button-text) { display: inline; }
 .w-btn:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-/* 7. Images and HTML widgets: wrappers disappear on the frontend so the inner element is a
-   direct child of the prototype container (needed for absolute/overlay/grid children). */
-body:not(.elementor-editor-active) :where(.w-image, .w-html) { display: contents; }
+/* 7. Images, HTML widgets and whole lists: wrappers disappear on the frontend so the inner element
+   is a direct child of the prototype container (needed for absolute/overlay/grid children, and so a
+   <ul>/<ol> that is itself a grid is not boxed inside a wrapper). */
+body:not(.elementor-editor-active) :where(.w-image, .w-html, .w-list) { display: contents; }
+/* The Shortcode widget adds an inner div; it must vanish too, or an empty shortcode still takes a grid cell. */
+body:not(.elementor-editor-active) :where(.w-html > .elementor-shortcode) { display: contents; }
 .elementor-editor-active .w-image { text-align: inherit; }
+
+/* 7a. Native widgets generated from prototype blocks that used to ship as raw HTML.
+   FAQ: the Accordion widget (.w-faq) is restyled as the prototype's <details class="faq-item">;
+   Elementor's own accordion CSS is layered away, so only the properties it sets need restating. */
+.w-faq { width: auto; }
+.w-faq .e-n-accordion { display: block; }
+.w-faq .e-n-accordion-item { display: block; position: static; padding: 24px 0; margin: 0; border: none; border-bottom: 1px solid var(--rule); }
+.w-faq .e-n-accordion-item-title {
+  font-family: var(--font-display); font-size: 22px; font-weight: 600; cursor: pointer; line-height: 1.3;
+  display: flex; justify-content: space-between; align-items: center; gap: 0;
+  padding: 0; margin: 0; border: none; background: none; color: inherit; overflow-wrap: break-word;
+}
+.w-faq .e-n-accordion-item-title-header { display: contents; }
+.w-faq .e-n-accordion-item-title-text { font: inherit; color: inherit; margin: 0; padding: 0; }
+.w-faq .e-n-accordion-item-title::after { content: '+'; color: var(--accent); font-family: var(--font-mono); font-size: 14px; flex-shrink: 0; margin-left: 16px; }
+.w-faq .e-n-accordion-item[open] > .e-n-accordion-item-title::after { content: '−'; }
+.w-faq .e-n-accordion-item-title:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.w-faq .e-n-accordion-item > .e-con { display: block; padding: 0; margin: 0; border: none; }
+.w-faq .e-n-accordion-item p { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 16px 0 0; max-width: 720px; }
+/* The header logo is an Image widget: the prototype's .logo-full class lands on the wrapper, so its
+   sizing is restated on the <img> inside (an SVG with only a viewBox has no size of its own). */
+.site-header .logo-full > img { display: block; height: 44px; width: auto; }
+.site-header.is-scrolled .logo-full > img { height: 38px; }
+@media (max-width: 900px) { .site-header .logo-full > img, .site-header.is-scrolled .logo-full > img { height: 36px; } }
+/* Video cards: the poster <button> is a linked container; the poster image sits inside a
+   (display: contents) Image widget, so the prototype's child selector is restated here. */
+a.w-con.video-card { text-decoration: none; }
+.video-card .w-image > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* 7b. Elementor Pro Theme Builder header and footer. The templates are generated from the
+   prototype's <header>/<footer>, so .site-header/.site-footer keep styling them; only the
+   navigation is Pro's Nav Menu widget, whose markup is restated here in the prototype's terms. */
+.elementor-location-header { position: sticky; top: 0; z-index: 100; }
+.site-header.e-con { display: flex; justify-content: space-between; align-items: center; }
+.site-header .w-nav, .site-footer .w-nav { width: auto; }
+.site-header .elementor-nav-menu--main .elementor-nav-menu { display: flex; gap: 26px; align-items: center; margin: 0; padding: 0; list-style: none; }
+.site-header .elementor-nav-menu--main .elementor-nav-menu li { position: relative; margin: 0; }
+.site-header .elementor-nav-menu--main .elementor-nav-menu > li > a.elementor-item {
+  display: inline-flex; align-items: center; gap: 6px; position: relative; white-space: nowrap;
+  color: rgba(255,255,255,0.88); text-decoration: none; text-transform: uppercase; letter-spacing: 0.09em;
+  font-family: var(--font-sans); font-size: 12.5px; font-weight: 500; line-height: 1.2; padding: 0 0 5px;
+  transition: color var(--dur) var(--ease);
+}
+.site-header .elementor-nav-menu--main .elementor-nav-menu > li > a.elementor-item::after {
+  content: ""; position: absolute; left: 0; bottom: 0; height: 1.5px; width: 100%; background: var(--blue);
+  transform: scaleX(0); transform-origin: left; transition: transform var(--dur) var(--ease);
+}
+.site-header .elementor-nav-menu--main .elementor-nav-menu > li > a.elementor-item:hover,
+.site-header .elementor-nav-menu--main .elementor-nav-menu > li > a.elementor-item.elementor-item-active { color: #fff; }
+.site-header .elementor-nav-menu--main .elementor-nav-menu > li > a.elementor-item:hover::after,
+.site-header .elementor-nav-menu--main .elementor-nav-menu > li > a.elementor-item.elementor-item-active::after { transform: scaleX(1); }
+.site-header .elementor-nav-menu--main .sub-arrow { display: inline-flex; font-size: 9px; line-height: 1; }
+/* Visibility and position of the sub-menu are Pro's (SmartMenus toggles them inline); only the look is ours.
+   Sub-menu links carry elementor-sub-item, not elementor-item, so the rules match any link in the list. */
+.site-header .elementor-nav-menu--main .sub-menu {
+  min-width: 210px; margin: 0; padding: 8px; list-style: none;
+  background: var(--ink); border: 1px solid rgba(160,181,193,0.24); box-shadow: var(--shadow-md); z-index: 120;
+}
+.site-header .elementor-nav-menu--main .sub-menu li + li { margin-top: 2px; }
+.site-header .elementor-nav-menu--main .sub-menu a {
+  display: block; padding: 10px 12px; color: rgba(255,255,255,0.88); text-decoration: none;
+  font-family: var(--font-sans); font-size: 12.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.09em; line-height: 1.2;
+}
+.site-header .elementor-nav-menu--main .sub-menu a:hover { background: rgba(160,181,193,0.14); color: #fff; }
+.site-header .elementor-nav-menu--main li.nav-cta > a.elementor-item {
+  background: var(--teal); color: #fff; padding: 11px 18px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em;
+  transition: background var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.site-header .elementor-nav-menu--main li.nav-cta > a.elementor-item::after { display: none; }
+.site-header .elementor-nav-menu--main li.nav-cta > a.elementor-item:hover { background: var(--accent); box-shadow: var(--shadow-md); }
+/* Pro's hamburger and dropdown, dressed as the prototype's Menu button and .mobile-nav. */
+.site-header .elementor-menu-toggle {
+  border: 1px solid rgba(255,255,255,0.5); border-radius: 0; color: #fff; background: none; padding: 9px 14px;
+  font-family: var(--font-sans); font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.site-header .elementor-menu-toggle:hover, .site-header .elementor-menu-toggle.elementor-active { color: #fff; }
+/* The prototype hides `.site-header nav` under 900px for its own mobile menu; Pro's dropdown is a
+   <nav> in the header too, so restate which of Pro's two navs shows at each width (Pro's own rules
+   for this sit in the layer and would lose). Pro collapses/expands the dropdown with max-height. */
+.site-header nav.elementor-nav-menu--dropdown { display: none; }
+@media (max-width: 1024px) {
+  .site-header nav.elementor-nav-menu--main { display: none; }
+  .site-header nav.elementor-nav-menu--dropdown { display: block; }
+}
+.site-header nav.elementor-nav-menu--dropdown { background: var(--ink); border-top: 1px solid rgba(160,181,193,0.24); gap: 0; }
+.site-header nav.elementor-nav-menu--dropdown .elementor-nav-menu, .site-header nav.elementor-nav-menu--dropdown .sub-menu { margin: 0; padding: 0; list-style: none; }
+.site-header nav.elementor-nav-menu--dropdown a {
+  display: flex; justify-content: space-between; align-items: center; padding: 14px 20px;
+  color: rgba(255,255,255,0.9); text-decoration: none; text-transform: uppercase; letter-spacing: 0.09em;
+  font-family: var(--font-sans); font-size: 13px; font-weight: 500; border-bottom: 1px solid rgba(160,181,193,0.2);
+}
+.site-header nav.elementor-nav-menu--dropdown .sub-menu a { padding-left: 36px; color: var(--blue); }
+.site-header nav.elementor-nav-menu--dropdown li.nav-cta > a.elementor-item { color: var(--blue); font-weight: 600; }
+/* Footer link columns as vertical menus. */
+.site-footer .w-nav .elementor-nav-menu { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.site-footer .w-nav .elementor-nav-menu li { margin: 0; }
+.site-footer .w-nav a.elementor-item { display: inline; padding: 0; color: inherit; text-decoration: none; font-size: 13px; line-height: 1.6; }
+.site-footer .w-nav a.elementor-item:hover { color: #fff; }
+
+/* 7c. Resource templates in Elementor Pro (loop items, singles, archive pages). The generated
+   structure carries the prototype's classes; this maps Pro's Loop Grid and Taxonomy Filter
+   markup onto the prototype's archive rules. */
+.e-loop-item { display: block; }
+.e-loop-item > .e-con.guide-card, .e-loop-item > .e-con.story-card, .e-loop-item > .e-con.news-entry { height: 100%; }
+.archive-toolbar .e-filter { display: flex; flex-wrap: wrap; gap: 8px; }
+.archive-toolbar .e-filter-item[data-filter="__all"] { order: -1; }
+.archive-toolbar .e-filter-item {
+  font: inherit; font-size: 15px; font-weight: 500; padding: 8px 16px; cursor: pointer;
+  background: transparent; border: 1px solid var(--rule-strong); color: var(--muted); border-radius: 100px;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.archive-toolbar .e-filter-item:hover { border-color: var(--ink); color: var(--ink); }
+.archive-toolbar .e-filter-item[aria-pressed="true"], .archive-toolbar .e-filter-item.e-active { background: var(--ink); border-color: var(--ink); color: #fff; }
+.archive-toolbar .e-filter-item:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.archive-news .e-loop-item + .e-loop-item .news-entry { padding-top: 0; }
+/* Resources hub: two Loop Grids inside the prototype's 2fr 1fr 1fr featured block. */
+.resources-featured > .w-loop-hub-main { grid-column: 1; }
+.resources-featured > .w-loop-hub-sm { grid-column: 2 / 4; }
+.e-loop-item > .e-con.resource-card-main, .e-loop-item > .e-con.resource-card-sm, .e-loop-item > .e-con.news-item { height: 100%; }
+.e-loop-item > .e-con.news-item { height: auto; }
+@media (max-width: 900px) {
+  .resources-featured > .w-loop-hub-main, .resources-featured > .w-loop-hub-sm { grid-column: auto; }
+}
+.w-text.article-intro > p, .w-text.guide-card-p > p, .w-text.news-entry-p > p { margin: 0; }
 
 /* 8. Elementor resets the prototype relied on the UA for. */
 :where(.elementor a) { text-decoration: revert; }

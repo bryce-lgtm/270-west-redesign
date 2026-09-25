@@ -46,10 +46,13 @@ fi
 
 # 4. On the server: make sure Elementor + Hello exist, activate the theme, import content.
 [ "${W270_SG_SKIP_IMPORT:-}" = "1" ] && { echo "push done (import skipped)"; exit 0; }
+# W270_SG_REFRESH_TEMPLATES=1 re-seeds the Pro header/footer templates from the repo (they are
+# otherwise created once and then owned by wp-admin).
+REFRESH=""; [ "${W270_SG_REFRESH_TEMPLATES:-}" = "1" ] && REFRESH="--refresh-templates"
 $SSH "cd '$SG_PATH' && \
   wp plugin is-installed elementor || wp plugin install elementor && wp plugin activate elementor && \
   wp theme is-installed hello-elementor || wp theme install hello-elementor && \
   W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/activate-theme.php && \
-  W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/import.php --all && \
+  W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/import.php --all $REFRESH && \
   W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/render-check.php"
 echo "SITEGROUND DEPLOY OK — https://$SG_SITE_HOST/"
