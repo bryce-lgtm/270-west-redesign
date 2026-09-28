@@ -23,7 +23,8 @@
         "vac-application-checklist",
         "how-vac-disability-ratings-work",
         "common-reasons-applications-come-back"
-      ]
+      ],
+      "status": "draft"
     },
     {
       "slug": "vac-application-checklist",
@@ -40,7 +41,8 @@
         "Service health records covering the condition",
         "Any earlier VAC decision letters",
         "Supporting statements from family, peers or supervisors"
-      ]
+      ],
+      "status": "draft"
     },
     {
       "slug": "how-vac-disability-ratings-work",
@@ -52,7 +54,8 @@
       "order": 2,
       "summary": "VAC disability ratings reflect medical impairment and quality of life. Learn how VAC calculates the percentage, what it means and when it may change.",
       "seo_h1": "How VAC disability ratings work",
-      "content": "how-vac-disability-ratings-work.html"
+      "content": "how-vac-disability-ratings-work.html",
+      "status": "publish"
     },
     {
       "slug": "disability-benefits-what-they-cover",
@@ -60,7 +63,8 @@
       "title": "Disability Benefits — what they cover",
       "topic": "VAC eligibility & programs",
       "order": 10,
-      "summary": "Coming soon: a plain-language explainer from 270 West."
+      "summary": "Coming soon: a plain-language explainer from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "income-replacement-benefit-explained",
@@ -68,7 +72,8 @@
       "title": "Income Replacement Benefit explained",
       "topic": "VAC eligibility & programs",
       "order": 11,
-      "summary": "Coming soon: a plain-language explainer from 270 West."
+      "summary": "Coming soon: a plain-language explainer from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "career-transition-services",
@@ -76,7 +81,8 @@
       "title": "Career Transition Services",
       "topic": "VAC eligibility & programs",
       "order": 12,
-      "summary": "Coming soon: a plain-language explainer from 270 West."
+      "summary": "Coming soon: a plain-language explainer from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "family-caregiver-support",
@@ -84,7 +90,8 @@
       "title": "Family caregiver support",
       "topic": "VAC eligibility & programs",
       "order": 13,
-      "summary": "Coming soon: a plain-language explainer from 270 West."
+      "summary": "Coming soon: a plain-language explainer from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "what-to-expect-when-you-apply",
@@ -92,7 +99,8 @@
       "title": "What to expect when you apply",
       "topic": "Filing your first VAC claim",
       "order": 20,
-      "summary": "Coming soon: a plain-language guide from 270 West."
+      "summary": "Coming soon: a plain-language guide from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "building-your-service-related-health-record",
@@ -100,7 +108,8 @@
       "title": "Building your service-related health record",
       "topic": "Filing your first VAC claim",
       "order": 21,
-      "summary": "Coming soon: a checklist from 270 West."
+      "summary": "Coming soon: a checklist from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "getting-medical-documentation-right",
@@ -108,7 +117,8 @@
       "title": "Getting medical documentation right",
       "topic": "Filing your first VAC claim",
       "order": 22,
-      "summary": "Coming soon: a plain-language guide from 270 West."
+      "summary": "Coming soon: a plain-language guide from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "common-reasons-applications-come-back",
@@ -116,7 +126,8 @@
       "title": "Common reasons applications come back",
       "topic": "Filing your first VAC claim",
       "order": 23,
-      "summary": "Coming soon: a plain-language explainer from 270 West."
+      "summary": "Coming soon: a plain-language explainer from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "understanding-your-decision-letter",
@@ -124,7 +135,8 @@
       "title": "Understanding your decision letter",
       "topic": "After a VAC decision",
       "order": 30,
-      "summary": "Coming soon: a plain-language explainer from 270 West."
+      "summary": "Coming soon: a plain-language explainer from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "when-to-consider-a-re-assessment",
@@ -132,7 +144,8 @@
       "title": "When to consider a re-assessment",
       "topic": "After a VAC decision",
       "order": 31,
-      "summary": "Coming soon: a plain-language guide from 270 West."
+      "summary": "Coming soon: a plain-language guide from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "how-vac-appeals-work",
@@ -140,7 +153,8 @@
       "title": "How VAC appeals work",
       "topic": "After a VAC decision",
       "order": 32,
-      "summary": "Coming soon: a plain-language guide from 270 West."
+      "summary": "Coming soon: a plain-language guide from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "mental-health-wellness-resources",
@@ -148,7 +162,8 @@
       "title": "Mental health & wellness resources",
       "topic": "After a VAC decision",
       "order": 33,
-      "summary": "Coming soon: a plain-language guide from 270 West."
+      "summary": "Coming soon: a plain-language guide from 270 West.",
+      "status": "draft"
     },
     {
       "slug": "robyn-barnet-story",

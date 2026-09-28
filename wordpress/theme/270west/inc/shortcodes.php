@@ -168,7 +168,9 @@ add_shortcode( 'w270_archive_count', function ( $atts ) {
 		'post_type' => 'resource', 'post_status' => 'publish', 'numberposts' => -1, 'fields' => 'ids',
 		'tax_query' => [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => $types ] ],
 	] ) ) : 0;
-	return '<div class="archive-count">' . (int) $n . ' ' . esc_html( $a['label'] ) . '</div>';
+	$label = $a['label'];
+	if ( 1 === (int) $n && str_ends_with( $label, 's' ) ) { $label = substr( $label, 0, -1 ); } // "1 resource"
+	return '<div class="archive-count">' . (int) $n . ' ' . esc_html( $label ) . '</div>';
 } );
 
 // [w270_card_tag main=1 class=resource-card-main-tag] → "Featured guide · 2 min read" / "Checklist · 1 min"

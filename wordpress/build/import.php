@@ -418,7 +418,7 @@ function w270_import_resources( array $refresh = [] ) {
 				continue;
 			}
 			$post = [
-				'post_type' => 'resource', 'post_status' => 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
+				'post_type' => 'resource', 'post_status' => $r['status'] ?? 'publish', 'post_title' => $r['title'], 'post_name' => $r['slug'],
 				'post_excerpt' => $summary, 'menu_order' => (int) $r['order'],
 				'post_content' => $content,
 			];
