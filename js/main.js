@@ -435,6 +435,23 @@ function initVideoLightbox() {
   }));
 }
 
+// ── WordPress phone menu: parents toggle their sub-menu instead of navigating ──
+// Elementor Pro runs SmartMenus in its "default" collapsible mode: the first tap on Services opens
+// the sub-menu and the second tap (text or arrow) follows the link, so the sub-menu can never be
+// closed by hand. "accordion-toggle" makes every tap on the parent open/close it (and closes the
+// other open parent); the parent pages are reachable through their "All …" sub-items instead.
+function initMobileMenuToggle() {
+  let tries = 0;
+  const arm = () => {
+    const ul = document.querySelector('nav.elementor-nav-menu--dropdown .elementor-nav-menu');
+    if (!ul) return;
+    const sm = window.jQuery && window.jQuery(ul).data('smartmenus');
+    if (!sm) { if (tries++ < 40) setTimeout(arm, 250); return; }
+    sm.opts.collapsibleBehavior = 'accordion-toggle';
+  };
+  arm();
+}
+
 // ── Lead attribution: keep campaign data for the session and stamp it on every form ──
 function initLeadTracking() {
   const KEY = 'w270_lead_src';
@@ -639,6 +656,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const w270Lead = initLeadTracking();
   initScheduler(w270Lead);
   initVideoLightbox();
+  initMobileMenuToggle();
   // WordPress builds the FAQ as an Elementor accordion; on a page whose items all start open
   // (the FAQ page itself) the widget can only open the first, so open the rest here.
   document.querySelectorAll('.w-faq-open details:not([open])').forEach(d => {

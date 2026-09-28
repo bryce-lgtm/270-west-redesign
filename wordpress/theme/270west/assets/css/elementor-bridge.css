@@ -171,6 +171,17 @@ a.w-con.video-card { text-decoration: none; }
 .site-header nav.elementor-nav-menu--dropdown a.highlighted, .site-header nav.elementor-nav-menu--dropdown a:hover,
 .site-header nav.elementor-nav-menu--dropdown a:focus-visible { background: rgba(160,181,193,0.18); color: #fff; }
 .site-header nav.elementor-nav-menu--dropdown li.nav-cta > a.elementor-item { background: var(--teal); color: #fff; }
+/* In the phone menu SmartMenus opens a sub-menu on the first tap of the parent and follows the link on
+   the second; only the arrow collapses it. Pro's arrow was a 10px icon, so the arrow is now a full-height
+   56px tap target on the right of the row and turns over while the sub-menu is open. */
+.site-header nav.elementor-nav-menu--dropdown a.has-submenu { position: relative; padding-right: 72px; }
+.site-header nav.elementor-nav-menu--dropdown .sub-arrow {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 56px; margin: 0;
+  display: flex; align-items: center; justify-content: center; border-left: 1px solid rgba(160,181,193,0.2);
+}
+.site-header nav.elementor-nav-menu--dropdown .sub-arrow svg { width: 14px; height: 14px; transition: transform var(--dur) var(--ease); }
+.site-header nav.elementor-nav-menu--dropdown a.highlighted .sub-arrow svg,
+.site-header nav.elementor-nav-menu--dropdown li:has(> .sub-menu[style*="display: block"]) > a .sub-arrow svg { transform: rotate(180deg); }
 /* Footer link columns as vertical menus. */
 .site-footer .w-nav .elementor-nav-menu { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .site-footer .w-nav .elementor-nav-menu li { margin: 0; }
