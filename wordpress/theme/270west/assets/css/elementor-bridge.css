@@ -57,6 +57,8 @@ body:not(.elementor-editor-active) :where(.w-bare) { display: contents; }
 .w-btn .elementor-button::after { content: ""; position: absolute; inset: 0; }
 :where(.w-btn .elementor-button-content-wrapper, .w-btn .elementor-button-text) { display: inline; }
 .w-btn:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
+/* The prototype styles the <a> itself; here the <a> sits inside the wrapper, so its text never underlines. */
+.w-btn .elementor-button, .w-btn .elementor-button-text { text-decoration: none; }
 
 /* 7. Images, HTML widgets and whole lists: wrappers disappear on the frontend so the inner element
    is a direct child of the prototype container (needed for absolute/overlay/grid children, and so a
@@ -158,6 +160,15 @@ a.w-con.video-card { text-decoration: none; }
 }
 .site-header nav.elementor-nav-menu--dropdown .sub-menu a { padding-left: 36px; color: var(--blue); }
 .site-header nav.elementor-nav-menu--dropdown li.nav-cta > a.elementor-item { color: var(--blue); font-weight: 600; }
+/* Review round 1: the hamburger is a full-size white icon; open sub-menus and the active item keep the
+   dark palette (Pro's defaults were a white panel and a grey highlight). */
+.site-header .elementor-menu-toggle { border-color: rgba(255,255,255,0.8); padding: 9px 11px; }
+.site-header .elementor-menu-toggle svg { width: 22px; height: 22px; fill: #fff; }
+.site-header nav.elementor-nav-menu--dropdown .sub-menu { background: rgba(0,0,0,0.22); }
+.site-header nav.elementor-nav-menu--dropdown .sub-menu a { color: rgba(255,255,255,0.9); background: transparent; }
+.site-header nav.elementor-nav-menu--dropdown a.highlighted, .site-header nav.elementor-nav-menu--dropdown a:hover,
+.site-header nav.elementor-nav-menu--dropdown a:focus-visible { background: rgba(160,181,193,0.18); color: #fff; }
+.site-header nav.elementor-nav-menu--dropdown li.nav-cta > a.elementor-item { background: var(--teal); color: #fff; }
 /* Footer link columns as vertical menus. */
 .site-footer .w-nav .elementor-nav-menu { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .site-footer .w-nav .elementor-nav-menu li { margin: 0; }
@@ -169,7 +180,7 @@ a.w-con.video-card { text-decoration: none; }
    markup onto the prototype's archive rules. */
 .e-loop-item { display: block; }
 .e-loop-item > .e-con.guide-card, .e-loop-item > .e-con.story-card, .e-loop-item > .e-con.news-entry { height: 100%; }
-.archive-toolbar .e-filter { display: flex; flex-wrap: wrap; gap: 8px; }
+.archive-toolbar .e-filter { display: flex; flex-wrap: wrap; gap: 8px; flex: 1 1 auto; min-width: 0; max-width: 100%; }
 .archive-toolbar .e-filter-item[data-filter="__all"] { order: -1; }
 .archive-toolbar .e-filter-item {
   font: inherit; font-size: 15px; font-weight: 500; padding: 8px 16px; cursor: pointer;

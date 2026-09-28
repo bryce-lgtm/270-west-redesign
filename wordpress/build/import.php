@@ -55,22 +55,22 @@ function w270_page_by_slug( $slug ) {
 
 /** Menu definition items: [title, slug, classes, children]. */
 function w270_menu_defs() {
-	$services_children = [ [ 'Claims', 'claims' ], [ 'Appeals', 'appeals' ], [ 'Reassessment', 'reassessment' ], [ 'Support', 'support' ] ];
+	$services_children = [ [ 'VAC claims', 'claims' ], [ 'VAC appeals', 'appeals' ], [ 'VAC reassessments', 'reassessment' ], [ 'Ongoing support', 'support' ] ];
 	$resources_children = [ [ 'Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ], [ 'FAQ', 'faq' ] ];
 	$main = [
 		[ 'Services', 'services', '', $services_children ],
-		[ 'How It Works', 'how-it-works' ], [ 'About', 'about' ],
-		[ 'Resources', 'resources', '', $resources_children ], [ 'Contact', 'contact' ],
-		[ 'Book a Consult', 'book-a-consult', 'nav-cta' ],
+		[ 'How It Works', 'how-it-works' ], [ 'About us', 'about' ],
+		[ 'Resources', 'resources', '', $resources_children ], [ 'Contact us', 'contact' ],
+		[ 'Book a free call', 'book-a-consult', 'nav-cta' ],
 	];
 	return [
 		'Primary' => [ 'location' => 'primary', 'items' => $main ],
 		'Mobile'  => [ 'location' => 'mobile', 'items' => $main ],
 		'Footer Explore' => [ 'location' => 'footer-explore', 'items' => [
-			[ 'Services', 'services' ], [ 'How It Works', 'how-it-works' ], [ 'About', 'about' ], [ 'Resources', 'resources' ], [ 'Contact', 'contact' ],
+			[ 'Services', 'services' ], [ 'How It Works', 'how-it-works' ], [ 'About us', 'about' ], [ 'Resources', 'resources' ], [ 'Contact us', 'contact' ],
 		] ],
 		'Footer Services' => [ 'location' => 'footer-services', 'items' => [
-			[ 'VAC appeals', 'appeals' ], [ 'VAC claims', 'claims' ], [ 'VAC reassessments', 'reassessment' ], [ 'Support', 'support' ],
+			[ 'VAC appeals', 'appeals' ], [ 'VAC claims', 'claims' ], [ 'VAC reassessments', 'reassessment' ], [ 'Ongoing support', 'support' ],
 		] ],
 	];
 }
