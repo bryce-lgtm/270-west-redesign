@@ -119,6 +119,8 @@ a.w-con.video-card { text-decoration: none; }
 .site-header .elementor-nav-menu--main .elementor-nav-menu > li > a.elementor-item:hover::after,
 .site-header .elementor-nav-menu--main .elementor-nav-menu > li > a.elementor-item.elementor-item-active::after { transform: scaleX(1); }
 .site-header .elementor-nav-menu--main .sub-arrow { display: inline-flex; font-size: 9px; line-height: 1; }
+/* Pro's dropdown chevron is an inline SVG with a black fill; on the teal header it has to be white. */
+.site-header .sub-arrow svg { fill: #fff; width: 10px; height: 10px; }
 /* Visibility and position of the sub-menu are Pro's (SmartMenus toggles them inline); only the look is ours.
    Sub-menu links carry elementor-sub-item, not elementor-item, so the rules match any link in the list. */
 .site-header .elementor-nav-menu--main .sub-menu {
