@@ -207,6 +207,10 @@ a.w-con.video-card { text-decoration: none; }
 .archive-toolbar .e-filter-item[aria-pressed="true"], .archive-toolbar .e-filter-item.e-active { background: var(--ink); border-color: var(--ink); color: #fff; }
 .archive-toolbar .e-filter-item:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .archive-news .e-loop-item + .e-loop-item .news-entry { padding-top: 0; }
+/* Each entry is the only child of its loop item, so the prototype's `.news-entry:last-child`
+   (no bottom padding on the final entry) matched every entry and the list ran together. */
+.e-loop-item > .news-entry { padding-bottom: 40px; }
+.e-loop-item:last-child > .news-entry { padding-bottom: 0; }
 /* Resources hub: two Loop Grids inside the prototype's 2fr 1fr 1fr featured block. */
 .resources-featured > .w-loop-hub-main { grid-column: 1; }
 .resources-featured > .w-loop-hub-sm { grid-column: 2 / 4; }
