@@ -54,7 +54,17 @@ function initDecor() {
 function initHeaderScroll() {
   const header = document.querySelector('.site-header');
   if (!header) return;
-  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+  // The compact header is ~24px shorter. Because the header sits in the page flow (sticky),
+  // that change shifts the content and the browser's scroll anchoring moves scrollY to
+  // compensate. With a single threshold the compensation crosses it straight back, and the
+  // header (and its logo) flickers between the two sizes. Two thresholds further apart than
+  // the size change make each state stable.
+  const COMPACT_AT = 64, EXPAND_AT = 16;
+  const onScroll = () => {
+    const y = window.scrollY;
+    if (y > COMPACT_AT) header.classList.add('is-scrolled');
+    else if (y < EXPAND_AT) header.classList.remove('is-scrolled');
+  };
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 }
