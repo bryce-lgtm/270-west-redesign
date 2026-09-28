@@ -118,7 +118,12 @@ add_action( 'wp_enqueue_scripts', function () {
 // The article used to be a page under /resources/; it is now the featured guide.
 add_action( 'template_redirect', function () {
 	if ( ! is_404() ) { return; }
-	$map  = [ '/resources/vac-benefits-programs-guide/' => '/resources/guides/vac-benefits-programs-guide/' ];
+	$map  = [ '/resources/vac-benefits-programs-guide/' => 'vac-benefits-programs-guide' ];
 	$path = trailingslashit( parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) );
-	if ( isset( $map[ $path ] ) ) { wp_redirect( home_url( $map[ $path ] ), 301 ); exit; }
+	if ( ! isset( $map[ $path ] ) ) { return; }
+	// Send the old URL to the guide while it is published, otherwise to the Guides archive
+	// (unapproved guides sit in draft, and a redirect into a 404 helps nobody).
+	$post = get_page_by_path( $map[ $path ], OBJECT, 'resource' );
+	$to   = ( $post && 'publish' === $post->post_status ) ? get_permalink( $post ) : home_url( '/resources/guides/' );
+	wp_redirect( $to, 301 ); exit;
 } );
