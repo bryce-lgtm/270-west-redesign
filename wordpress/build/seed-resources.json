@@ -151,30 +151,30 @@
       "summary": "Coming soon: a plain-language guide from 270 West."
     },
     {
-      "slug": "sarah-macdonald-story",
+      "slug": "robyn-barnet-story",
       "type": "stories",
-      "order": 100,
-      "title": "Sarah's story: “I left knowing something was finally being done.”",
+      "order": 90,
+      "title": "Robyn's story: “I left knowing something was finally being done.”",
       "summary": "I came with no expectations. I left knowing something was finally being done.",
       "pull_quote": "I came with no expectations. I left knowing something was finally being done.",
-      "veteran_name": "Capt. Sarah Macdonald (Ret’d)",
-      "veteran_role": "Canadian Armed Forces Veteran",
+      "veteran_name": "Robyn Barnet",
+      "veteran_role": "Lieutenant-Commander (Ret’d), Royal Canadian Navy",
       "duration": 4,
       "story_number": 1,
-      "image": "veteran-sarah.jpg"
+      "image": "veteran-robyn-barnet.jpg"
     },
     {
-      "slug": "daniel-leblanc-story",
+      "slug": "michael-smith-story",
       "type": "stories",
-      "order": 101,
-      "title": "Daniel's story: “I had experts handling everything.”",
+      "order": 91,
+      "title": "Michael's story: “That was incredibly reassuring.”",
       "summary": "I had experts handling everything. That was incredibly reassuring.",
       "pull_quote": "I had experts handling everything. That was incredibly reassuring.",
-      "veteran_name": "Cpl. Daniel Leblanc (Ret’d)",
-      "veteran_role": "Canadian Armed Forces Veteran",
+      "veteran_name": "Michael Smith",
+      "veteran_role": "Lieutenant (Ret’d), Canadian Army",
       "duration": 5,
       "story_number": 2,
-      "image": "veteran-daniel.jpg"
+      "image": "veteran-michael-smith.jpg"
     },
     {
       "slug": "in-service-of-your-story-campaign",
