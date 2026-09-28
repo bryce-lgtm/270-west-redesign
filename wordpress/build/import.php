@@ -55,8 +55,8 @@ function w270_page_by_slug( $slug ) {
 
 /** Menu definition items: [title, slug, classes, children]. */
 function w270_menu_defs() {
-	$services_children = [ [ 'All services', 'services' ], [ 'VAC claims', 'claims' ], [ 'VAC appeals', 'appeals' ], [ 'VAC reassessments', 'reassessment' ], [ 'Ongoing support', 'support' ] ];
-	$resources_children = [ [ 'All resources', 'resources' ], [ 'Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ], [ 'FAQ', 'faq' ] ];
+	$services_children = [ [ 'All services', 'services', 'nav-overview' ], [ 'VAC claims', 'claims' ], [ 'VAC appeals', 'appeals' ], [ 'VAC reassessments', 'reassessment' ], [ 'Ongoing support', 'support' ] ];
+	$resources_children = [ [ 'All resources', 'resources', 'nav-overview' ], [ 'Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ], [ 'FAQ', 'faq' ] ];
 	$main = [
 		[ 'Services', 'services', '', $services_children ],
 		[ 'How It Works', 'how-it-works' ], [ 'About us', 'about' ],

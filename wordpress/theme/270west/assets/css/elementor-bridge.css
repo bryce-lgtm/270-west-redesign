@@ -171,6 +171,9 @@ a.w-con.video-card { text-decoration: none; }
 .site-header nav.elementor-nav-menu--dropdown a.highlighted, .site-header nav.elementor-nav-menu--dropdown a:hover,
 .site-header nav.elementor-nav-menu--dropdown a:focus-visible { background: rgba(160,181,193,0.18); color: #fff; }
 .site-header nav.elementor-nav-menu--dropdown li.nav-cta > a.elementor-item { background: var(--teal); color: #fff; }
+/* "All services" / "All resources" exist for the phone menu, where the parent row only toggles its
+   sub-menu; on desktop the parent link itself opens the hub, so the duplicates stay hidden. */
+.site-header .elementor-nav-menu--main li.nav-overview { display: none; }
 /* In the phone menu SmartMenus opens a sub-menu on the first tap of the parent and follows the link on
    the second; only the arrow collapses it. Pro's arrow was a 10px icon, so the arrow is now a full-height
    56px tap target on the right of the row and turns over while the sub-menu is open. */
