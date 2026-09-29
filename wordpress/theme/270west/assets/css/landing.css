@@ -207,9 +207,17 @@
 }
 /* Phones: the header keeps its jump-to-form button; the phone number shrinks to its icon. */
 @media (max-width: 600px) {
-  .lp-header-actions { gap: 14px; }
+  .lp-header-actions { gap: 10px; }
+  .lp-logo { flex-shrink: 0; }
+  .lp-logo img { height: 34px; width: auto; }
   .lp-phone { font-size: 0; gap: 0; padding: 8px; }
   .lp-phone svg { width: 20px; height: 20px; }
+  /* WordPress wraps the number in a text widget; hide it visually but keep it as the link's name. */
+  .lp-phone .w-text, .lp-phone .elementor-widget-text-editor {
+    display: block !important; position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .lp-header-cta, .lp-header-cta .elementor-button { white-space: normal; text-align: center; line-height: 1.25; }
+  .lp-header-cta { padding: 8px 12px; font-size: 11px; max-width: 160px; }
 }
 /* Phones: the booking cards hold a 320px-minimum calendar, so they get slimmer gutters and padding. */
 @media (max-width: 620px) {
