@@ -21,6 +21,17 @@ function w270_checker_questions() {
 	];
 }
 
+/** The consent wording, read from the form's consent field so wp-admin edits carry through. */
+function w270_checker_consent_text() {
+	$id = w270_checker_form_id();
+	if ( $id && class_exists( 'GFAPI' ) ) {
+		foreach ( ( GFAPI::get_form( $id )['fields'] ?? [] ) as $field ) {
+			if ( 'consent' === $field->type && '' !== (string) $field->checkboxLabel ) { return (string) $field->checkboxLabel; }
+		}
+	}
+	return 'I agree to be contacted by a member of the 270 West Consulting team.';
+}
+
 function w270_checker_form_id() {
 	$ids = get_option( 'w270_form_ids', [] );
 	return (int) ( $ids['checker'] ?? 0 );
@@ -59,6 +70,9 @@ function w270_checker_submit( WP_REST_Request $req ) {
 	if ( '' === $name || ! is_email( $email ) ) {
 		return new WP_Error( 'w270_checker_invalid', 'Please enter your name and a valid email address.', [ 'status' => 400 ] );
 	}
+	if ( true !== ( $p['consent'] ?? false ) ) {
+		return new WP_Error( 'w270_checker_consent', 'Please agree to be contacted so an advisor can follow up.', [ 'status' => 400 ] );
+	}
 	$parts = preg_split( '/\s+/', $name, 2 );
 
 	$answers = (array) ( $p['answers'] ?? [] );
@@ -68,13 +82,18 @@ function w270_checker_submit( WP_REST_Request $req ) {
 		'input_2'   => $email,
 		'input_5'   => $phone,
 	];
-	$summary = [ 'Submitted through the VAC status checker.' ];
+	// Creatio's Commentary gets one line, the way the events team writes it:
+	// "VAC status checker. Service: Regular Force; VAC disability rating: No rating; …"
+	$summary = [];
 	foreach ( w270_checker_questions() as $k => [ $field_id, $label ] ) {
 		$v = mb_substr( sanitize_text_field( $answers[ $k ] ?? '' ), 0, 80 );
 		$values[ "input_{$field_id}" ] = $v;
-		$summary[] = $label . ': ' . ( '' === $v ? '(not answered)' : $v );
+		$summary[] = $label . ': ' . ( '' === $v ? 'not answered' : $v );
 	}
-	$values['input_20'] = implode( "\n", $summary );
+	$values['input_20'] = 'VAC status checker. ' . implode( '; ', $summary ) . '.';
+	// Consent (same field as the Contact Form): the box, and the wording the visitor agreed to.
+	$values['input_18_1'] = '1';
+	$values['input_18_2'] = w270_checker_consent_text();
 	// Creatio's "claims submitted before" column is a yes/no: map the checker's answer onto it.
 	$filed = (string) ( $answers['filed'] ?? '' );
 	$values['input_15'] = str_starts_with( $filed, 'Yes' ) ? 'True' : ( 'No' === $filed ? 'False' : '' );

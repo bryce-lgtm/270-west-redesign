@@ -5,6 +5,7 @@
  *   "$PHP" -c "$INI" wordpress/build/import.php --pages --only=home
  *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-resources=slug-a,slug-b   # re-seed named resources
  *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-templates               # re-seed the Pro header/footer
+ *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-forms=checker           # re-apply a form + feed definition
  */
 if ( PHP_SAPI !== 'cli' ) { http_response_code( 403 ); exit; } // never runnable over HTTP
 $site = getenv( 'W270_SITE' ) ?: '/Users/Bryce/Local Sites/270-west/app/public';
@@ -261,7 +262,7 @@ function w270_media_urls( $html ) {
  * option. Forms that already exist are left untouched: they are the client's to edit in wp-admin,
  * unlike our generated pages, so re-running the importer must never clobber their changes.
  */
-function w270_import_forms() {
+function w270_import_forms( array $refresh = [] ) {
 	if ( ! class_exists( 'GFAPI' ) ) {
 		echo "forms: Gravity Forms not active — skipped\n";
 		return;
@@ -274,6 +275,14 @@ function w270_import_forms() {
 		$title = $form['title'];
 		if ( isset( $by_title[ $title ] ) ) {
 			$ids[ $key ] = $by_title[ $title ];
+			if ( in_array( $key, $refresh, true ) ) {
+				// --refresh-forms=<key>: an explicit request to re-apply the repo's definition.
+				$form['id'] = $ids[ $key ];
+				$r = GFAPI::update_form( $form );
+				echo is_wp_error( $r ) ? "form {$key}: ERROR " . $r->get_error_message() . "\n" : "form {$key}: #{$ids[$key]} refreshed from the repo\n";
+				if ( is_wp_error( $r ) ) { $GLOBALS['w270_failed'] = true; }
+				continue;
+			}
 			echo "form {$key}: #{$ids[$key]} already present, left as-is\n";
 			continue;
 		}
@@ -288,7 +297,7 @@ function w270_import_forms() {
 		echo "form {$key}: #{$id} created ({$title})\n";
 	}
 	update_option( 'w270_form_ids', $ids );
-	w270_import_form_feeds();
+	w270_import_form_feeds( $refresh );
 }
 
 /**
@@ -296,7 +305,7 @@ function w270_import_forms() {
  * themselves, an existing feed with the same name is left alone — the endpoint and the Creatio
  * column mapping belong to the client, and a re-run must not overwrite a change they made.
  */
-function w270_import_form_feeds() {
+function w270_import_form_feeds( array $refresh = [] ) {
 	if ( ! class_exists( 'GFAPI' ) ) { return; }
 	$file = __DIR__ . '/gravity-forms-feeds.json';
 	if ( ! file_exists( $file ) ) { return; }
@@ -316,7 +325,12 @@ function w270_import_form_feeds() {
 		}
 		foreach ( GFAPI::get_feeds( null, $form_id, $addon, null ) ?: [] as $existing ) {
 			if ( rgars( $existing, 'meta/feedName' ) === $def['meta']['feedName'] ) {
-				echo "feed {$key}: #{$existing['id']} already present, left as-is\n";
+				if ( in_array( $key, $refresh, true ) ) {
+					GFAPI::update_feed( $existing['id'], $def['meta'], $form_id );
+					echo "feed {$key}: #{$existing['id']} refreshed from the repo\n";
+				} else {
+					echo "feed {$key}: #{$existing['id']} already present, left as-is\n";
+				}
 				continue 2;
 			}
 		}
@@ -689,13 +703,15 @@ function w270_main( $argv ) {
 	$flags = array_fill_keys( array_map( fn( $a ) => explode( '=', ltrim( $a, '-' ) )[0], array_slice( $argv, 1 ) ), true );
 	$only  = null;
 	$refresh = [];
+	$refresh_forms = [];
 	foreach ( $argv as $a ) {
 		if ( str_starts_with( $a, '--only=' ) ) { $only = substr( $a, 7 ); }
 		if ( str_starts_with( $a, '--refresh-resources=' ) ) { $refresh = array_filter( explode( ',', substr( $a, 20 ) ) ); }
+		if ( str_starts_with( $a, '--refresh-forms=' ) ) { $refresh_forms = array_filter( explode( ',', substr( $a, 16 ) ) ); }
 	}
 	$all = isset( $flags['all'] );
 	if ( $all || isset( $flags['media'] ) ) { function_exists( 'w270_import_media' ) && w270_import_media(); }
-	if ( $all || isset( $flags['forms'] ) ) { w270_import_forms(); }
+	if ( $all || isset( $flags['forms'] ) || $refresh_forms ) { w270_import_forms( $refresh_forms ); }
 	// Templates before pages: the Resources hub's Loop Grids name their loop-item templates.
 	$GLOBALS['w270_refresh_templates'] = isset( $flags['refresh-templates'] );
 	if ( $all || isset( $flags['templates'] ) || isset( $flags['refresh-templates'] ) ) { w270_import_templates( isset( $flags['refresh-templates'] ) ); }

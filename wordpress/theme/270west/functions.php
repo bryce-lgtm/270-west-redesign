@@ -44,7 +44,10 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_script( 'w270-main', W270_ASSETS . '/js/main.js', [], filemtime( $dir . '/assets/js/main.js' ), true );
 	$w270 = [ 'assets' => W270_ASSETS, 'gfFields' => w270_gf_attribution_map() ];
 	// The status checker posts to the theme endpoint only once its Gravity Form exists.
-	if ( function_exists( 'w270_checker_form_id' ) && w270_checker_form_id() ) { $w270['checker'] = esc_url_raw( rest_url( 'w270/v1/checker' ) ); }
+	if ( function_exists( 'w270_checker_form_id' ) && w270_checker_form_id() ) {
+		$w270['checker']        = esc_url_raw( rest_url( 'w270/v1/checker' ) );
+		$w270['checkerConsent'] = w270_checker_consent_text();
+	}
 	wp_add_inline_script( 'w270-main', 'window.W270 = ' . wp_json_encode( $w270 ) . ';', 'before' );
 }, 20 );
 

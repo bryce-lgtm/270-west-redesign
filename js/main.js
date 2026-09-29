@@ -187,7 +187,7 @@ const QUIZ_QUESTIONS = [
 function initQuiz(containerId) {
   const container = document.getElementById(containerId || 'quiz-widget');
   if (!container) return;
-  let step = 0, answers = {}, contact = { name:'', email:'', phone:'', website:'' }, error = '', sending = false;
+  let step = 0, answers = {}, contact = { name:'', email:'', phone:'', website:'', consent:false }, error = '', sending = false;
   const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
   const N = QUIZ_QUESTIONS.length;
   const total = N + 2;
@@ -236,6 +236,7 @@ function initQuiz(containerId) {
           <div class="quiz-field"><label class="quiz-field-label" for="qf-phone">Phone</label><input type="tel" id="qf-phone" autocomplete="tel" value="${esc(contact.phone)}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
           <input type="text" class="quiz-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" oninput="quizContact('website',this.value)"/>
         </div>
+        <label class="quiz-consent"><input type="checkbox" id="qf-consent"${contact.consent ? ' checked' : ''} onchange="quizContact('consent',this.checked)"/><span>${esc((window.W270 && window.W270.checkerConsent) || 'I agree to be contacted by a member of the 270 West Consulting team.')}</span></label>
         <div class="quiz-error" role="alert">${esc(error)}</div>
         <button class="quiz-start-btn" onclick="quizSubmit()"${sending ? ' disabled' : ''}>${sending ? 'Sending…' : 'Get my results →'}</button>
         <div class="quiz-privacy">🔒 Confidential. We never share your info.</div>`;
@@ -266,7 +267,7 @@ function initQuiz(containerId) {
     setTimeout(() => { step = s + 1; render(); }, 220);
   };
   window.quizContact = function(key, val) { contact[key] = val; };
-  window.quizReset = function() { step = 0; answers = {}; contact = {name:'',email:'',phone:'',website:''}; error = ''; sending = false; render(); };
+  window.quizReset = function() { step = 0; answers = {}; contact = {name:'',email:'',phone:'',website:'',consent:false}; error = ''; sending = false; render(); };
   // Final step: in WordPress the answers go to the theme endpoint, which submits them to the
   // "VAC Status Checker" Gravity Form (its Webhooks feed sends the lead to Creatio). The static
   // prototype has no endpoint and simply shows the result.
@@ -276,6 +277,7 @@ function initQuiz(containerId) {
     if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       error = 'Please enter your name and a valid email address.'; render(); return;
     }
+    if (!contact.consent) { error = 'Please agree to be contacted so an advisor can follow up.'; render(); return; }
     const url = window.W270 && window.W270.checker;
     if (!url) { error = ''; step = N + 2; render(); return; }
     let lead = {};
@@ -284,7 +286,7 @@ function initQuiz(containerId) {
     try {
       const res = await fetch(url, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, phone: contact.phone || '', website: contact.website || '', answers, lead })
+        body: JSON.stringify({ name, email, phone: contact.phone || '', website: contact.website || '', consent: true, answers, lead })
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error(data.message || 'We could not send your answers. Please try again.');

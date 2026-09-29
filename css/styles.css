@@ -1860,3 +1860,5 @@ p, li { text-wrap: pretty; }
 .quiz-error:empty { display: none; }
 .quiz-error { margin: 12px 0 0; padding: 10px 12px; font-size: 15px; color: #fff; background: rgba(162,34,34,0.85); }
 .quiz-start-btn[disabled] { opacity: 0.7; cursor: progress; }
+.quiz-consent { display: flex; gap: 12px; align-items: flex-start; margin: 18px 0 0; font-size: 15px; line-height: 1.5; color: #D6DFE1; cursor: pointer; }
+.quiz-consent input { width: 20px; height: 20px; margin: 2px 0 0; flex: 0 0 auto; accent-color: var(--accent); cursor: pointer; }

@@ -49,6 +49,8 @@ fi
 # W270_SG_REFRESH_TEMPLATES=1 re-seeds the Pro header/footer templates from the repo (they are
 # otherwise created once and then owned by wp-admin).
 REFRESH=""; [ "${W270_SG_REFRESH_TEMPLATES:-}" = "1" ] && REFRESH="--refresh-templates"
+# W270_SG_REFRESH_FORMS=checker re-applies those Gravity Forms (and their feeds) from the repo.
+[ -n "${W270_SG_REFRESH_FORMS:-}" ] && REFRESH="$REFRESH --refresh-forms=${W270_SG_REFRESH_FORMS}"
 $SSH "cd '$SG_PATH' && \
   wp plugin is-installed elementor || wp plugin install elementor && wp plugin activate elementor && \
   wp theme is-installed hello-elementor || wp theme install hello-elementor && \
