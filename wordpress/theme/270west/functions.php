@@ -10,6 +10,7 @@ define( 'W270_ASSETS', get_stylesheet_directory_uri() . '/assets' );
 require_once get_stylesheet_directory() . '/inc/class-w270-nav-walker.php';
 require_once get_stylesheet_directory() . '/inc/resources.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes.php';
+require_once get_stylesheet_directory() . '/inc/checker.php';
 
 // Hello's reset/theme CSS would fight the prototype stylesheet; the prototype assumes UA defaults.
 add_filter( 'hello_elementor_enqueue_style', '__return_false' );
@@ -41,7 +42,10 @@ add_action( 'wp_enqueue_scripts', function () {
 		wp_enqueue_style( 'w270-generated', W270_ASSETS . '/css/generated.css', [ 'w270-bridge' ], filemtime( $dir . '/assets/css/generated.css' ) );
 	}
 	wp_enqueue_script( 'w270-main', W270_ASSETS . '/js/main.js', [], filemtime( $dir . '/assets/js/main.js' ), true );
-	wp_add_inline_script( 'w270-main', 'window.W270 = ' . wp_json_encode( [ 'assets' => W270_ASSETS, 'gfFields' => w270_gf_attribution_map() ] ) . ';', 'before' );
+	$w270 = [ 'assets' => W270_ASSETS, 'gfFields' => w270_gf_attribution_map() ];
+	// The status checker posts to the theme endpoint only once its Gravity Form exists.
+	if ( function_exists( 'w270_checker_form_id' ) && w270_checker_form_id() ) { $w270['checker'] = esc_url_raw( rest_url( 'w270/v1/checker' ) ); }
+	wp_add_inline_script( 'w270-main', 'window.W270 = ' . wp_json_encode( $w270 ) . ';', 'before' );
 }, 20 );
 
 // Preconnect for Google Fonts + favicon, as in the prototype <head>.

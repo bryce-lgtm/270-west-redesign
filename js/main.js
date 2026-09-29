@@ -187,7 +187,8 @@ const QUIZ_QUESTIONS = [
 function initQuiz(containerId) {
   const container = document.getElementById(containerId || 'quiz-widget');
   if (!container) return;
-  let step = 0, answers = {}, contact = { name:'', email:'', phone:'' };
+  let step = 0, answers = {}, contact = { name:'', email:'', phone:'', website:'' }, error = '', sending = false;
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
   const N = QUIZ_QUESTIONS.length;
   const total = N + 2;
 
@@ -230,14 +231,16 @@ function initQuiz(containerId) {
         <div class="quiz-h3">Where should we send your next step?</div>
         <div class="quiz-lead">An advisor will review your answers and reach out within one business day.</div>
         <div class="quiz-fields">
-          <div class="quiz-field"><label class="quiz-field-label" for="qf-name">Full name</label><input type="text" id="qf-name" value="${contact.name}" oninput="quizContact('name',this.value)" placeholder="Your name"/></div>
-          <div class="quiz-field"><label class="quiz-field-label" for="qf-email">Email</label><input type="email" id="qf-email" value="${contact.email}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
-          <div class="quiz-field"><label class="quiz-field-label" for="qf-phone">Phone</label><input type="tel" id="qf-phone" value="${contact.phone}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-name">Full name</label><input type="text" id="qf-name" autocomplete="name" required value="${esc(contact.name)}" oninput="quizContact('name',this.value)" placeholder="Your name"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-email">Email</label><input type="email" id="qf-email" autocomplete="email" required value="${esc(contact.email)}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-phone">Phone</label><input type="tel" id="qf-phone" autocomplete="tel" value="${esc(contact.phone)}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
+          <input type="text" class="quiz-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" oninput="quizContact('website',this.value)"/>
         </div>
-        <button class="quiz-start-btn" onclick="quizGo(${N+2})">Get my results →</button>
+        <div class="quiz-error" role="alert">${esc(error)}</div>
+        <button class="quiz-start-btn" onclick="quizSubmit()"${sending ? ' disabled' : ''}>${sending ? 'Sending…' : 'Get my results →'}</button>
         <div class="quiz-privacy">🔒 Confidential. We never share your info.</div>`;
     } else {
-      const name = contact.name || 'you';
+      const name = esc(contact.name) || 'you';
       body = `
         <div class="quiz-result-label">● Result ready</div>
         <div class="quiz-result-h">Thanks. We'll be in touch shortly.</div>
@@ -263,7 +266,34 @@ function initQuiz(containerId) {
     setTimeout(() => { step = s + 1; render(); }, 220);
   };
   window.quizContact = function(key, val) { contact[key] = val; };
-  window.quizReset = function() { step = 0; answers = {}; contact = {name:'',email:'',phone:''}; render(); };
+  window.quizReset = function() { step = 0; answers = {}; contact = {name:'',email:'',phone:'',website:''}; error = ''; sending = false; render(); };
+  // Final step: in WordPress the answers go to the theme endpoint, which submits them to the
+  // "VAC Status Checker" Gravity Form (its Webhooks feed sends the lead to Creatio). The static
+  // prototype has no endpoint and simply shows the result.
+  window.quizSubmit = async function() {
+    if (sending) return;
+    const name = (contact.name || '').trim(), email = (contact.email || '').trim();
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      error = 'Please enter your name and a valid email address.'; render(); return;
+    }
+    const url = window.W270 && window.W270.checker;
+    if (!url) { error = ''; step = N + 2; render(); return; }
+    let lead = {};
+    try { lead = JSON.parse(sessionStorage.getItem('w270_lead_src') || '{}'); } catch (e) { lead = {}; }
+    sending = true; error = ''; render();
+    try {
+      const res = await fetch(url, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone: contact.phone || '', website: contact.website || '', answers, lead })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.message || 'We could not send your answers. Please try again.');
+      step = N + 2;
+    } catch (e) {
+      error = e.message || 'We could not send your answers. Please try again.';
+    }
+    sending = false; render();
+  };
 
   render();
 }

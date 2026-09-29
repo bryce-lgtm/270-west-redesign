@@ -1854,3 +1854,9 @@ p, li { text-wrap: pretty; }
   .site-footer .footer-col-items { gap: 0; }
   .site-footer .footer-col-items a { display: block; padding: 10px 0; }
 }
+
+/* Status checker: spam trap (never visible) and the send error. */
+.quiz-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.quiz-error:empty { display: none; }
+.quiz-error { margin: 12px 0 0; padding: 10px 12px; font-size: 15px; color: #fff; background: rgba(162,34,34,0.85); }
+.quiz-start-btn[disabled] { opacity: 0.7; cursor: progress; }
