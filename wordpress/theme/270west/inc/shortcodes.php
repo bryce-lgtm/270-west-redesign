@@ -126,21 +126,84 @@ add_shortcode( 'w270_story_media', function ( $atts ) {
 } );
 
 // [w270_story_meta] → Story 01 · Video · 4 min
-add_shortcode( 'w270_story_meta', function ( $atts ) {
-	$id   = w270_sc_id( $atts );
-	$num  = (int) w270_field( 'story_number', $id );
-	$mins = (int) w270_field( 'duration', $id );
-	return '<div class="story-card-meta">Story ' . esc_html( str_pad( (string) $num, 2, '0', STR_PAD_LEFT ) ) . ' · Video' . ( $mins ? ' · ' . $mins . ' min' : '' ) . '</div>';
-} );
-
-// [w270_story_link] → Watch Sarah's story →
-add_shortcode( 'w270_story_link', function ( $atts ) {
-	$id    = w270_sc_id( $atts );
-	// "Capt. Sarah Macdonald (Ret’d)" → "Sarah": skip rank abbreviations, take the first given name.
+/** First given name from the veteran_name field, skipping rank abbreviations ("Capt. Sarah …" → "Sarah"). */
+function w270_story_first_name( $id ) {
 	$name  = trim( preg_replace( '/\s*\(.*$/', '', (string) w270_field( 'veteran_name', $id ) ) );
 	$words = array_values( array_filter( explode( ' ', $name ), fn( $w ) => '' !== $w && ! str_ends_with( $w, '.' ) ) );
-	$first = $words[0] ?? '';
-	return '<span class="story-card-link">Watch' . ( $first ? ' ' . esc_html( $first ) . "'s" : '' ) . ' story →</span>';
+	return $words[0] ?? '';
+}
+
+/** True when the story has a video; otherwise it is a written story. */
+function w270_story_has_video( $id ) {
+	return (bool) w270_embed_url( w270_field( 'video_url', $id ) );
+}
+
+// [w270_story_meta] → "Story 01 · 5 min read" (written) or "Story 01 · Video · 4 min" (video).
+add_shortcode( 'w270_story_meta', function ( $atts ) {
+	$id  = w270_sc_id( $atts );
+	$num = 'Story ' . str_pad( (string) (int) w270_field( 'story_number', $id ), 2, '0', STR_PAD_LEFT );
+	if ( w270_story_has_video( $id ) ) {
+		$mins = (int) w270_field( 'duration', $id );
+		return '<div class="story-card-meta">' . esc_html( $num ) . ' · Video' . ( $mins ? ' · ' . $mins . ' min' : '' ) . '</div>';
+	}
+	return '<div class="story-card-meta">' . esc_html( $num ) . ' · ' . (int) w270_read_time( $id ) . ' min read</div>';
+} );
+
+// [w270_story_link] → "Read Robyn's story →" (or "Watch …" for a video story).
+add_shortcode( 'w270_story_link', function ( $atts ) {
+	$id    = w270_sc_id( $atts );
+	$first = w270_story_first_name( $id );
+	$verb  = w270_story_has_video( $id ) ? 'Watch' : 'Read';
+	return '<span class="story-card-link">' . $verb . ( $first ? ' ' . esc_html( $first ) . "'s" : '' ) . ' story →</span>';
+} );
+
+// [w270_story_play] → the play badge, only for a story that has a video.
+add_shortcode( 'w270_story_play', function ( $atts ) {
+	return w270_story_has_video( w270_sc_id( $atts ) )
+		? '<span class="story-card-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>'
+		: '';
+} );
+
+/**
+ * [w270_story_card slug="robyn-barnet-story" variant="tcard|hero" class="…" pos="center 30%"]
+ * A testimonial card rendered from the story post, so the quote, name, rank and photo are edited once
+ * (on the story) and every card links to its story page. The generator emits this for the prototype's
+ * cards marked data-story. Renders nothing if the story is missing or unpublished.
+ */
+add_shortcode( 'w270_story_card', function ( $atts ) {
+	$a    = shortcode_atts( [ 'slug' => '', 'variant' => 'tcard', 'class' => '', 'pos' => 'center 30%', 'priority' => '' ], (array) $atts );
+	$post = $a['slug'] ? get_page_by_path( $a['slug'], OBJECT, 'resource' ) : null;
+	if ( ! $post || 'publish' !== $post->post_status ) {
+		if ( $a['slug'] ) { error_log( "w270: story card for missing or unpublished story '{$a['slug']}'" ); }
+		return '';
+	}
+	$id    = $post->ID;
+	$quote = (string) w270_field( 'pull_quote', $id );
+	$name  = (string) w270_field( 'veteran_name', $id );
+	$role  = (string) ( w270_field( 'veteran_role', $id ) ?: 'Canadian Armed Forces Veteran' );
+	$first = w270_story_first_name( $id );
+	$link  = ( w270_story_has_video( $id ) ? 'Watch ' : 'Read ' ) . ( $first ? $first . "'s" : 'the' ) . ' story →';
+	$img   = get_the_post_thumbnail( $id, 'large', array_filter( [
+		'style'         => 'object-position:' . preg_replace( '/[^a-z0-9%. ]/i', '', $a['pos'] ),
+		'loading'       => $a['priority'] ? 'eager' : 'lazy',
+		'fetchpriority' => $a['priority'] ? 'high' : '',
+		'alt'           => trim( $name . ( $role ? ', ' . $role : '' ) ),
+	] ) );
+	$mark  = '<svg class="%s" width="%d" height="%d" viewBox="0 0 56 42" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 41V14C1 6.8 6.8 1 14 1h9v20h-9v20H1zM33 41V14c0-7.2 5.8-13 13-13h9v20h-9v20H33z"/></svg>';
+	$cls   = trim( preg_replace( '/[^a-z0-9 _-]/i', '', $a['class'] ) );
+	$href  = esc_url( get_permalink( $id ) );
+	if ( 'hero' === $a['variant'] ) {
+		return '<a class="' . esc_attr( $cls ?: 'hero-quote' ) . '" href="' . $href . '">' . $img
+			. '<div class="hero-quote-scrim"></div><div class="hero-quote-body">' . sprintf( $mark, 'hero-quote-mark', 56, 42 )
+			. '<blockquote class="hero-quote-q">' . esc_html( $quote ) . '</blockquote>'
+			. '<div class="hero-quote-cite"><span class="hero-quote-name">' . esc_html( $name ) . '</span><span class="hero-quote-role">' . esc_html( $role ) . '</span></div>'
+			. '<span class="story-quote-link">' . esc_html( $link ) . '</span></div></a>';
+	}
+	return '<a class="' . esc_attr( $cls ?: 'tcard' ) . '" href="' . $href . '"><div class="tcard-img">' . $img . '</div><div class="tcard-scrim"></div>'
+		. '<div class="tcard-body">' . sprintf( $mark, 'tcard-quote-icon', 32, 24 )
+		. '<blockquote class="tcard-quote">' . esc_html( $quote ) . '</blockquote>'
+		. '<div class="tcard-cite"><span class="tcard-name">' . esc_html( $name ) . '</span><span class="tcard-handle">' . esc_html( $role ) . '</span></div>'
+		. '<span class="story-quote-link">' . esc_html( $link ) . '</span></div></a>';
 } );
 
 // [w270_news_meta] → date + category chip(s)

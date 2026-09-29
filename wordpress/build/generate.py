@@ -255,6 +255,19 @@ class Converter:
             markup = f'<{node.tag}{_attr_str(attrs)}>{self.doc.inner_html(node)}</{node.tag}>'
         return self.widget('html', {'html': rewrite_links(markup), '_css_classes': 'w-html'})
 
+    def story_card(self, node):
+        slug = node.attrs['data-story']
+        variant = 'hero' if 'hero-quote' in node.classes else 'tcard'
+        img = next((n for n in node.iter() if not n.is_text and n.tag == 'img'), None)
+        style = img.attrs.get('style', '') if img is not None else ''
+        pos = re.search(r'object-position:\s*([^;"]+)', style)
+        attrs = [f'slug="{slug}"', f'variant="{variant}"', 'class="%s"' % ' '.join(node.classes)]
+        if pos:
+            attrs.append('pos="%s"' % pos.group(1).strip())
+        if img is not None and img.attrs.get('fetchpriority') == 'high':
+            attrs.append('priority="1"')
+        return self.widget('shortcode', {'shortcode': '[w270_story_card %s]' % ' '.join(attrs), '_css_classes': 'w-html'})
+
     def accordion(self, items):
         """A run of <details class="faq-item"> siblings becomes one native Accordion widget: each
         question is a repeater item the editor can retitle, each answer a child container of
@@ -361,6 +374,10 @@ class Converter:
             # is design reference only.
             import templates as resource_templates
             return resource_templates.hub_loop(node.attrs['data-loop'], ' '.join(node.classes))
+        if 'data-story' in node.attrs:
+            # A testimonial card in the prototype is the story post's card in WordPress: the quote,
+            # name, rank and photo come from the story (edited once, in wp-admin) and it links there.
+            return self.story_card(node)
         if tag == 'img':
             return self.image(node)
         if tag in HEADINGS and self.inline_only(node):

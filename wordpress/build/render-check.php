@@ -19,6 +19,12 @@ foreach ( $pages as $p ) {
 		$html = \Elementor\Plugin::$instance->frontend->get_builder_content_for_display( $p->ID );
 		if ( strlen( $html ) < 500 ) { throw new RuntimeException( 'rendered only ' . strlen( $html ) . ' bytes' ); }
 		if ( str_contains( $html, '__W270_ASSETS__' ) || str_contains( $html, '__media__' ) || str_contains( $html, '__W270_FORM__' ) ) { throw new RuntimeException( 'unresolved placeholder in output' ); }
+		// Testimonial cards render from their story post; each must point at a published story.
+		preg_match_all( '/w270_story_card slug=\\?"([a-z0-9-]+)/', (string) get_post_meta( $p->ID, '_elementor_data', true ), $sm );
+		foreach ( array_unique( $sm[1] ) as $story ) {
+			$sp = get_page_by_path( $story, OBJECT, 'resource' );
+			if ( ! $sp || 'publish' !== $sp->post_status ) { throw new RuntimeException( "story card points at missing or unpublished story '{$story}'" ); }
+		}
 		// The FAQ is a native Accordion widget (one item per question), not a raw <details> block.
 		if ( 'faq' === $p->post_name ) {
 			$n = substr_count( $html, 'class="e-n-accordion-item-title"' );

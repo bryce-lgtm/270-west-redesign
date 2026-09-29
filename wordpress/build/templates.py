@@ -104,7 +104,7 @@ def card_guide():
 
 def card_story():
     return con('story-card', [
-        con('story-card-media', [featured_image(), raw(PLAY)]),
+        con('story-card-media', [featured_image(), sc('[w270_story_play]')]),
         con('story-card-body', [
             sc('[w270_story_meta]'),
             sc('[w270_field name="pull_quote" wrap="blockquote" class="story-card-quote"]'),
@@ -243,6 +243,8 @@ def single_story():
         con('page-hero', [
             hero_kicker('Veteran story'),
             heading('', 'h1', 'page-hero-h1', dynamic=shortcode_tag('[w270_seo_h1]')),
+            heading('', 'h2', 'page-hero-lead', dynamic=shortcode_tag('[w270_marketing_h2]')),
+            sc('[w270_story_meta]'),
         ], html_tag='section'),
         con('story-single', [
             sc('[w270_story_media]'),

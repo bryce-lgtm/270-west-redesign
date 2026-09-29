@@ -1864,3 +1864,14 @@ p, li { text-wrap: pretty; }
 .quiz-start-btn[disabled] { opacity: 0.7; cursor: progress; }
 .quiz-consent { display: flex; gap: 12px; align-items: flex-start; margin: 18px 0 0; font-size: 15px; line-height: 1.5; color: #D6DFE1; cursor: pointer; }
 .quiz-consent input { width: 20px; height: 20px; margin: 2px 0 0; flex: 0 0 auto; accent-color: var(--accent); cursor: pointer; }
+
+/* Testimonial cards link to the veteran's story (Sept 29 2026). */
+a.tcard, a.hero-quote { color: inherit; text-decoration: none; }
+a.hero-quote { display: block; }
+a.tcard:focus-visible, a.hero-quote:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.story-quote-link { display: inline-block; margin-top: 14px; font-size: 14px; font-weight: 600; letter-spacing: 0.02em; color: #fff;
+  border-bottom: 1.5px solid rgba(255,255,255,0.6); padding-bottom: 2px; transition: border-color var(--dur) var(--ease); }
+a.tcard:hover .story-quote-link, a.hero-quote:hover .story-quote-link { border-bottom-color: #fff; }
+a.hero-quote:hover img { transform: scale(1.03); }
+a.hero-quote img { transition: transform 1.2s var(--ease); }
+.tcard-quote { overflow-wrap: break-word; }

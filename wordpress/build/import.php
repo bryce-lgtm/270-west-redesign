@@ -4,7 +4,8 @@
  *   "$PHP" -c "$INI" wordpress/build/import.php --all
  *   "$PHP" -c "$INI" wordpress/build/import.php --pages --only=home
  *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-resources=slug-a,slug-b   # re-seed named resources
- *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-templates               # re-seed the Pro header/footer
+ *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-templates               # re-seed every Pro template
+ *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-templates=w270-single-story  # re-seed named templates only
  *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-forms=checker           # re-apply a form + feed definition
  */
 if ( PHP_SAPI !== 'cli' ) { http_response_code( 403 ); exit; } // never runnable over HTTP
@@ -417,6 +418,12 @@ function w270_import_resources( array $refresh = [] ) {
 				if ( is_wp_error( $u ) ) { throw new RuntimeException( $u->get_error_message() ); }
 				update_post_meta( $existing->ID, 'summary', $summary );
 				update_post_meta( $existing->ID, 'seo_h1', $r['seo_h1'] ?? '' );
+				// Stories: the card and page fields come from the seed too (quote, name, rank, number).
+				foreach ( [ 'pull_quote', 'veteran_name', 'veteran_role', 'duration', 'story_number' ] as $k ) {
+					if ( isset( $r[ $k ] ) ) { update_post_meta( $existing->ID, $k, $r[ $k ] ); }
+				}
+				if ( isset( $r['order'] ) ) { wp_update_post( [ 'ID' => $existing->ID, 'menu_order' => (int) $r['order'] ] ); }
+				if ( ! empty( $r['image'] ) && ( $mid = w270_media_id( $r['image'] ) ) ) { set_post_thumbnail( $existing->ID, $mid ); }
 				if ( $acf ) {
 					update_field( 'field_270w_summary', $summary, $existing->ID );
 					update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $existing->ID );
@@ -640,7 +647,9 @@ function w270_import_templates( $refresh = false ) {
 			$def      = json_decode( file_get_contents( $file ), true, 512, JSON_THROW_ON_ERROR );
 			$found    = get_posts( [ 'post_type' => 'elementor_library', 'name' => $def['slug'], 'post_status' => 'any', 'numberposts' => 1 ] );
 			$existing = $found ? $found[0] : null;
-			if ( $existing && ! $refresh ) { echo "template {$def['slug']}: #{$existing->ID} already present, left as-is\n"; continue; }
+			// $refresh: true re-seeds every template; an array names the ones to re-seed (header/footer stay).
+			$again = true === $refresh || ( is_array( $refresh ) && in_array( $def['slug'], $refresh, true ) );
+			if ( $existing && ! $again ) { echo "template {$def['slug']}: #{$existing->ID} already present, left as-is\n"; continue; }
 			$elements = w270_resolve_placeholders( w270_resolve( $def['elements'], $assets ) );
 			if ( $existing ) {
 				$id = $existing->ID;
@@ -704,17 +713,21 @@ function w270_main( $argv ) {
 	$only  = null;
 	$refresh = [];
 	$refresh_forms = [];
+	$refresh_tpl = null;
 	foreach ( $argv as $a ) {
 		if ( str_starts_with( $a, '--only=' ) ) { $only = substr( $a, 7 ); }
 		if ( str_starts_with( $a, '--refresh-resources=' ) ) { $refresh = array_filter( explode( ',', substr( $a, 20 ) ) ); }
 		if ( str_starts_with( $a, '--refresh-forms=' ) ) { $refresh_forms = array_filter( explode( ',', substr( $a, 16 ) ) ); }
+		if ( str_starts_with( $a, '--refresh-templates=' ) ) { $refresh_tpl = array_values( array_filter( explode( ',', substr( $a, 20 ) ) ) ); }
 	}
 	$all = isset( $flags['all'] );
 	if ( $all || isset( $flags['media'] ) ) { function_exists( 'w270_import_media' ) && w270_import_media(); }
 	if ( $all || isset( $flags['forms'] ) || $refresh_forms ) { w270_import_forms( $refresh_forms ); }
 	// Templates before pages: the Resources hub's Loop Grids name their loop-item templates.
-	$GLOBALS['w270_refresh_templates'] = isset( $flags['refresh-templates'] );
-	if ( $all || isset( $flags['templates'] ) || isset( $flags['refresh-templates'] ) ) { w270_import_templates( isset( $flags['refresh-templates'] ) ); }
+	// --refresh-templates re-seeds all templates (and the archive pages); --refresh-templates=a,b only those.
+	$tpl_refresh = $refresh_tpl ?? isset( $flags['refresh-templates'] );
+	$GLOBALS['w270_refresh_templates'] = true === $tpl_refresh;
+	if ( $all || isset( $flags['templates'] ) || isset( $flags['refresh-templates'] ) ) { w270_import_templates( $tpl_refresh ); }
 	if ( $all || isset( $flags['pages'] ) ) { function_exists( 'w270_import_pages' ) && w270_import_pages( $only ); }
 	if ( $all || isset( $flags['menus'] ) ) { w270_import_menus(); }
 	if ( $all || isset( $flags['resources'] ) || $refresh || isset( $flags['refresh-templates'] ) ) { w270_import_resources( $refresh ); }

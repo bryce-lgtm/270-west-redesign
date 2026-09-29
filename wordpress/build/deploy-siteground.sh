@@ -48,7 +48,11 @@ fi
 [ "${W270_SG_SKIP_IMPORT:-}" = "1" ] && { echo "push done (import skipped)"; exit 0; }
 # W270_SG_REFRESH_TEMPLATES=1 re-seeds the Pro header/footer templates from the repo (they are
 # otherwise created once and then owned by wp-admin).
-REFRESH=""; [ "${W270_SG_REFRESH_TEMPLATES:-}" = "1" ] && REFRESH="--refresh-templates"
+REFRESH=""
+if [ "${W270_SG_REFRESH_TEMPLATES:-}" = "1" ]; then REFRESH="--refresh-templates"
+elif [ -n "${W270_SG_REFRESH_TEMPLATES:-}" ]; then REFRESH="--refresh-templates=${W270_SG_REFRESH_TEMPLATES}"; fi
+# W270_SG_REFRESH_RESOURCES=slug-a,slug-b re-seeds those resources' copy and fields from the repo.
+[ -n "${W270_SG_REFRESH_RESOURCES:-}" ] && REFRESH="$REFRESH --refresh-resources=${W270_SG_REFRESH_RESOURCES}"
 # W270_SG_REFRESH_FORMS=checker re-applies those Gravity Forms (and their feeds) from the repo.
 [ -n "${W270_SG_REFRESH_FORMS:-}" ] && REFRESH="$REFRESH --refresh-forms=${W270_SG_REFRESH_FORMS}"
 $SSH "cd '$SG_PATH' && \

@@ -12,10 +12,10 @@ class SeedResourcesTests(unittest.TestCase):
         with open(os.path.join(BUILD, 'seed-resources.json'), encoding='utf-8') as f:
             self.seed = json.load(f)
 
-    def test_seed_has_22_resources_with_unique_slugs_and_valid_subtypes(self):
+    def test_seed_has_26_resources_with_unique_slugs_and_valid_subtypes(self):
         res = self.seed['resources']
-        self.assertEqual(len(res), 22)
-        self.assertEqual(len({r['slug'] for r in res}), 22)
+        self.assertEqual(len(res), 26)
+        self.assertEqual(len({r['slug'] for r in res}), 26)
         valid = ('guides', 'checklists', 'explainers', 'stories', 'news')
         for r in res:
             self.assertIn(r['type'], valid, r['slug'])
@@ -30,11 +30,15 @@ class SeedResourcesTests(unittest.TestCase):
         by_type = {}
         for r in self.seed['resources']:
             by_type.setdefault(r['type'], []).append(r)
-        self.assertEqual(len(by_type['stories']), 2)
+        self.assertEqual(len(by_type['stories']), 6)
         self.assertEqual(len(by_type['news']), 5)
         for s in by_type['stories']:
             self.assertTrue(s['pull_quote'], s['slug'])
             self.assertTrue(s['veteran_name'], s['slug'])
+            self.assertTrue(s['seo_h1'], s['slug'])
+            # Written stories: the body is a content file and the photo is the veteran's portrait.
+            self.assertTrue(os.path.exists(os.path.join(BUILD, 'content', s['content'])), s['slug'])
+            self.assertTrue(os.path.exists(os.path.join(BUILD, '..', '..', 'img', s['image'])), s['slug'])
         cats = {'Campaign', 'Community', 'Sponsorship', 'New guide', 'Team'}
         for n in by_type['news']:
             self.assertIn(n['news_category'], cats, n['slug'])
