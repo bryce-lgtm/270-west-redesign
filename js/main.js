@@ -229,7 +229,6 @@ function initQuiz(containerId) {
       body = `
         <div class="quiz-step-label">Almost there</div>
         <div class="quiz-h3">Where should we send your next step?</div>
-        <div class="quiz-lead">An advisor will review your answers and reach out within one business day.</div>
         <div class="quiz-fields">
           <div class="quiz-field"><label class="quiz-field-label" for="qf-name">Full name</label><input type="text" id="qf-name" autocomplete="name" required value="${esc(contact.name)}" oninput="quizContact('name',this.value)" placeholder="Your name"/></div>
           <div class="quiz-field"><label class="quiz-field-label" for="qf-email">Email</label><input type="email" id="qf-email" autocomplete="email" required value="${esc(contact.email)}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
