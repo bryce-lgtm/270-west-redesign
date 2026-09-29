@@ -124,7 +124,7 @@
   .lp-proof { padding: 20px 24px; gap: 16px 28px; }
 }
 @media (max-width: 620px) {
-  .lp-header-cta { display: none; }
+  .lp-header-cta { padding: 10px 14px; font-size: 12px; white-space: nowrap; }
   .lp-form-row { grid-template-columns: 1fr; }
   .lp-form-card { padding: 24px 20px; }
   .lp-hero { padding-top: 48px; padding-bottom: 48px; }
@@ -174,3 +174,46 @@
 .lp-hero .btn-outline:hover { background: var(--ink); color: var(--bg); }
 .lp-hero .mono-label-olive { color: var(--teal); }
 @media (max-width: 600px) { .lp-section .journey-steps-grid { grid-template-columns: 1fr; } }
+/* Plain stats band (top-of-funnel page): sits between the light hero and the dark services section. */
+.lp-stats-band { background: var(--bg); padding: 64px 48px; border-top: 1px solid var(--rule); }
+.lp-stats-inner { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; gap: 56px; align-items: end; }
+.lp-stats-lead { display: flex; flex-wrap: wrap; gap: 32px 64px; }
+.lp-stats-item { display: flex; flex-direction: column; gap: 8px; }
+.lp-stats-num { font-family: var(--font-sans); font-weight: 500; font-size: clamp(40px, 4.4vw, 60px); line-height: 1; letter-spacing: -0.02em; color: var(--ink); }
+.lp-stats-label { font-size: 16px; line-height: 1.4; color: var(--muted); }
+.lp-stats-branch { border-left: 1px solid var(--rule); padding-left: 48px; }
+.lp-stats-branch-label { font-size: 15px; color: var(--muted); margin-bottom: 16px; }
+.lp-stats-branch-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.lp-stats-branch .lp-stats-num { font-size: clamp(30px, 3vw, 40px); }
+@media (max-width: 1000px) {
+  .lp-stats-band { padding: 48px 24px; }
+  .lp-stats-inner { grid-template-columns: 1fr; gap: 32px; }
+  .lp-stats-branch { border-left: none; padding-left: 0; border-top: 1px solid var(--rule); padding-top: 28px; }
+}
+@media (max-width: 480px) { .lp-stats-branch-row { gap: 16px; } }
+/* Closing form sections (middle and bottom of funnel). Anchored sections clear the sticky header. */
+.lp-form-section .lp-form-card { max-width: 720px; margin: 0 auto; }
+#start, #book-section, #checker, #how { scroll-margin-top: 90px; }
+.lp-book-card-form .lp-form-card-plain { padding: 0; box-shadow: none; background: none; }
+/* Centred copy-only heros (middle and bottom of funnel): every line centred, left-aligned on phones. */
+.lp-hero-inner-centred, .lp-hero-inner-centred .lp-hero-copy { text-align: center; }
+.lp-hero-inner-centred .lp-h1 { margin-left: auto; margin-right: auto; text-align: center; }
+.lp-hero-inner-centred .lp-lead { text-align: center; }
+.lp-hero-inner-centred .lp-trust { justify-content: center; }
+@media (max-width: 900px) {
+  .lp-hero-inner-centred, .lp-hero-inner-centred .lp-hero-copy, .lp-hero-inner-centred .lp-h1, .lp-hero-inner-centred .lp-lead { text-align: left; }
+  .lp-hero-inner-centred .lp-h1, .lp-hero-inner-centred .lp-lead { margin-left: 0; }
+  .lp-hero-centred .mono-label, .lp-hero-inner-centred .lp-hero-btns, .lp-hero-inner-centred .lp-trust { justify-content: flex-start; }
+}
+/* Phones: the header keeps its jump-to-form button; the phone number shrinks to its icon. */
+@media (max-width: 600px) {
+  .lp-header-actions { gap: 14px; }
+  .lp-phone { font-size: 0; gap: 0; padding: 8px; }
+  .lp-phone svg { width: 20px; height: 20px; }
+}
+/* Phones: the booking cards hold a 320px-minimum calendar, so they get slimmer gutters and padding. */
+@media (max-width: 620px) {
+  .lp-section-form { padding-left: 16px; padding-right: 16px; }
+  .lp-book-card { padding: 20px 16px; }
+  .lp-booking-split > * { min-width: 0; }
+}
