@@ -324,3 +324,6 @@ a.w-con.video-card { text-decoration: none; }
 
 /* The reassurance line the prototype ran beside the submit button. */
 .w270-gf-note p { font-size: 15px; line-height: 1.5; color: var(--muted); margin: 14px 0 0; }
+
+/* WordPress swaps emoji for <img class="emoji"> SVGs; they must stay text-sized wherever they appear. */
+img.emoji, img.wp-smiley { display: inline !important; width: 1em !important; height: 1em !important; margin: 0 0.07em !important; vertical-align: -0.1em !important; border: none !important; box-shadow: none !important; background: none !important; padding: 0 !important; }

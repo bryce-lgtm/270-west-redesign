@@ -239,7 +239,7 @@ function initQuiz(containerId) {
         <label class="quiz-consent"><input type="checkbox" id="qf-consent"${contact.consent ? ' checked' : ''} onchange="quizContact('consent',this.checked)"/><span>${esc((window.W270 && window.W270.checkerConsent) || 'I agree to be contacted by a member of the 270 West Consulting team.')}</span></label>
         <div class="quiz-error" role="alert">${esc(error)}</div>
         <button class="quiz-start-btn" onclick="quizSubmit()"${sending ? ' disabled' : ''}>${sending ? 'Sending…' : 'Get my results →'}</button>
-        <div class="quiz-privacy">🔒 Confidential. We never share your info.</div>`;
+        <div class="quiz-privacy"><svg class="quiz-privacy-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>Confidential. We never share your info.</div>`;
     } else {
       const name = esc(contact.name) || 'you';
       body = `
@@ -383,7 +383,7 @@ function initConsultWidget(containerId) {
           <div class="consult-field"><label class="consult-field-label" for="ci-topic">What would you like to focus on?</label><input type="text" id="ci-topic" value="${info.topic}" oninput="consultInfo('topic',this.value)" placeholder="First claim, appeal, reassessment..."/></div>
         </div>
         <button class="consult-confirm" onclick="consultConfirm()">Confirm booking →</button>
-        <div class="consult-privacy">🔒 Confidential. No obligation. Free of charge.</div>
+        <div class="consult-privacy"><svg class="quiz-privacy-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>Confidential. No obligation. Free of charge.</div>
       </div>`;
 
     } else {
