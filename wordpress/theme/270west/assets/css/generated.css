@@ -53,5 +53,6 @@
 .w270-s52.w270-s52.w270-s52.w270-s52{margin-top:32px;padding:20px 24px;background:var(--bg2);border-left:2px solid var(--olive)}
 .w270-s53.w270-s53.w270-s53.w270-s53{font-size:13px;color:var(--muted);line-height:1.55;font-style:italic}
 .w270-s54.w270-s54.w270-s54.w270-s54{margin-top:40px}
-.w270-s55.w270-s55.w270-s55.w270-s55{line-height:1.6}
+.w270-s55.w270-s55.w270-s55.w270-s55{color:var(--bg)}
+.w270-s56.w270-s56.w270-s56.w270-s56{line-height:1.6}
 @media (max-width:900px){.w270-s16.w270-s16.w270-s16.w270-s16{font-size:clamp(28px,7.4vw,36px) !important}.w270-s25.w270-s25.w270-s25.w270-s25{grid-template-columns:1fr !important;gap:24px !important}.w270-s25.w270-s25.w270-s25.w270-s25>*{min-width:0}.w270-s26.w270-s26.w270-s26.w270-s26{font-size:clamp(28px,7.4vw,36px) !important}.w270-s29.w270-s29.w270-s29.w270-s29{grid-template-columns:1fr !important;gap:24px !important}.w270-s29.w270-s29.w270-s29.w270-s29>*{min-width:0}.w270-s37.w270-s37.w270-s37.w270-s37{font-size:clamp(28px,7.4vw,36px) !important}}

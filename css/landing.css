@@ -71,7 +71,7 @@
 .lp-split { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: start; }
 .lp-form-split { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr 470px; gap: 56px; align-items: start; }
 .lp-section .journey-steps-grid, .lp-card-grid, .lp-quote-grid { max-width: 1240px; margin: 0 auto; }
-.lp-section .journey-steps-grid { list-style: none; padding: 0; grid-template-columns: repeat(3, 1fr); }
+.lp-section .journey-steps-grid { list-style: none; padding: 0; grid-template-columns: repeat(4, 1fr); }
 
 /* Cards */
 .lp-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
@@ -117,7 +117,8 @@
 
 @media (max-width: 1000px) {
   .lp-hero-inner, .lp-hero-inner-video, .lp-split, .lp-form-split { grid-template-columns: 1fr; gap: 36px; }
-  .lp-section .journey-steps-grid, .lp-card-grid, .lp-card-grid-3 { grid-template-columns: 1fr; }
+  .lp-card-grid, .lp-card-grid-3 { grid-template-columns: 1fr; }
+  .lp-section .journey-steps-grid { grid-template-columns: repeat(2, 1fr); }
   .lp-hero, .lp-section, .lp-cta, .lp-footer { padding-left: 24px; padding-right: 24px; }
   .lp-header { padding: 12px 20px; }
   .lp-proof { padding: 20px 24px; gap: 16px 28px; }
@@ -157,3 +158,19 @@
 .lp-third-btn { border-color: var(--bg); color: var(--bg); flex-shrink: 0; }
 .lp-third-btn:hover { background: var(--bg); color: var(--ink); }
 @media (max-width: 700px) { .lp-third-option { flex-direction: column; align-items: flex-start; } .lp-third-btn { width: 100%; justify-content: center; } }
+
+/* ── Funnel set (Sept 29 2026): top = status checker, middle = lead form, bottom = booking + form ── */
+.lp-checker { max-width: 760px; margin: 0 auto; }
+.lp-book-solo { max-width: 920px; margin: 0 auto; }
+.lp-book-solo + .lp-third-option { max-width: 920px; margin: 32px auto 0; }
+.lp-guide-link { text-align: center; margin: 32px 0 0; }
+.lp-guide-link .esg-snapshot-link { margin-top: 0; }
+.lp-hero-copy .lp-lead + .lp-lead { margin-top: -6px; }
+.lp-section .services-2col { max-width: 1240px; margin: 0 auto; }
+.lp-section .service-card { cursor: default; }
+.lp-section .service-card:hover { transform: none; }
+.svc-preview-section .svc-preview-card:not(a) { cursor: default; }
+.lp-hero .btn-outline { color: var(--ink); border-color: var(--ink); }
+.lp-hero .btn-outline:hover { background: var(--ink); color: var(--bg); }
+.lp-hero .mono-label-olive { color: var(--teal); }
+@media (max-width: 600px) { .lp-section .journey-steps-grid { grid-template-columns: 1fr; } }
