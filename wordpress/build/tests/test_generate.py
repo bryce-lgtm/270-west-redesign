@@ -203,10 +203,10 @@ class NativeWidgetTests(unittest.TestCase):
 
 class StoryCardTests(unittest.TestCase):
     def test_testimonial_card_becomes_the_story_card_shortcode(self):
-        c = first('<a href="story.html" class="tcard" data-story="robyn-barnet-story"><div class="tcard-img"><img src="img/a.jpg" alt="" style="object-position:center 25%"/></div><blockquote class="tcard-quote">Q</blockquote></a>')
+        c = first('<a href="story.html" class="tcard" data-story="robyn-story"><div class="tcard-img"><img src="img/a.jpg" alt="" style="object-position:center 25%"/></div><blockquote class="tcard-quote">Q</blockquote></a>')
         self.assertEqual(c['widgetType'], 'shortcode')
-        self.assertEqual(c['settings']['shortcode'], '[w270_story_card slug="robyn-barnet-story" variant="tcard" class="tcard" pos="center 25%"]')
+        self.assertEqual(c['settings']['shortcode'], '[w270_story_card slug="robyn-story" variant="tcard" class="tcard" pos="center 25%"]')
 
     def test_hero_quote_card_keeps_its_classes_and_priority(self):
-        c = first('<a href="story.html" class="hero-quote page-hero-quote" data-story="todd-brayman-story"><img src="img/t.jpg" alt="" fetchpriority="high" style="object-position:center 30%"/></a>')
-        self.assertEqual(c['settings']['shortcode'], '[w270_story_card slug="todd-brayman-story" variant="hero" class="hero-quote page-hero-quote" pos="center 30%" priority="1"]')
+        c = first('<a href="story.html" class="hero-quote page-hero-quote" data-story="todd-story"><img src="img/t.jpg" alt="" fetchpriority="high" style="object-position:center 30%"/></a>')
+        self.assertEqual(c['settings']['shortcode'], '[w270_story_card slug="todd-story" variant="hero" class="hero-quote page-hero-quote" pos="center 30%" priority="1"]')

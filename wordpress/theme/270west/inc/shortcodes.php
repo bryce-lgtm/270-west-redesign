@@ -165,7 +165,7 @@ add_shortcode( 'w270_story_play', function ( $atts ) {
 } );
 
 /**
- * [w270_story_card slug="robyn-barnet-story" variant="tcard|hero" class="…" pos="center 30%"]
+ * [w270_story_card slug="robyn-story" variant="tcard|hero" class="…" pos="center 30%"]
  * A testimonial card rendered from the story post, so the quote, name, rank and photo are edited once
  * (on the story) and every card links to its story page. The generator emits this for the prototype's
  * cards marked data-story. Renders nothing if the story is missing or unpublished.
