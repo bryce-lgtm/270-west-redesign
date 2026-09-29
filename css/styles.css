@@ -1875,3 +1875,9 @@ a.tcard:hover .story-quote-link, a.hero-quote:hover .story-quote-link { border-b
 a.hero-quote:hover img { transform: scale(1.03); }
 a.hero-quote img { transition: transform 1.2s var(--ease); }
 .tcard-quote { overflow-wrap: break-word; }
+
+/* Home hero: the brand-film card is landscape (the portraits are shot landscape) and takes an
+   equal share of the width, so it fills the space beside the copy (Sept 29 2026). */
+@media (min-width: 901px) { .hero-home .hero-grid { grid-template-columns: 1fr 1fr; gap: 56px; } }
+.hero-video { aspect-ratio: 4 / 3; }
+.hero-video > img, .hero-video .w-image > img { object-position: center 35% !important; }
