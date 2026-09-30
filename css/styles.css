@@ -1889,3 +1889,5 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
 .sponsor-h, .sponsor-meta { text-align: center; }
 /* Footer language links: the current language is marked, not linked-looking. */
 .site-footer .footer-col-items a[aria-current] { color: #fff; font-weight: 600; }
+/* Checker badges and progress line keep their capitals via CSS (the words themselves are sentence case so they translate). */
+.quiz-badges, .quiz-nav { text-transform: uppercase; }

@@ -176,6 +176,18 @@ function initMobileMenu() {
 }
 
 // ── VAC Status Checker ──
+// Interface wording for the widgets that draw their text with JavaScript (the status checker and the
+// video lightbox). In WordPress the theme prints the same wording, hidden, in #w270-i18n; TranslatePress
+// translates it with the rest of the page, so on /fr/ these widgets are French from the first paint.
+// The English fallbacks here are the prototype's (and must match inc/checker.php's w270_ui_strings()).
+function t(key, fallback, vars) {
+  const el = document.querySelector('#w270-i18n [data-k="' + key + '"]');
+  let s = (el && el.textContent.trim()) || fallback;
+  if (vars) Object.keys(vars).forEach(k => { s = s.split('{' + k + '}').join(vars[k]); });
+  return s;
+}
+
+// Option values are what the checker submits (English, for Creatio); the labels shown are translated.
 const QUIZ_QUESTIONS = [
   { id:'served', q:'Have you served in the Canadian Armed Forces?', options:['Regular Force','Reserve Force','RCMP','No'] },
   { id:'rating', q:'Do you currently have a VAC disability rating?', options:['No rating','0–30%','40–70%','80%+'] },
@@ -187,10 +199,14 @@ const QUIZ_QUESTIONS = [
 function initQuiz(containerId) {
   const container = document.getElementById(containerId || 'quiz-widget');
   if (!container) return;
+  // Its wording is already translated (from #w270-i18n); TranslatePress would otherwise hide each new
+  // step for a moment while it re-checks the text.
+  container.setAttribute('data-no-dynamic-translation', '');
   let step = 0, answers = {}, contact = { name:'', email:'', phone:'', website:'', consent:false }, error = '', sending = false;
   const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
   const N = QUIZ_QUESTIONS.length;
   const total = N + 2;
+  const pad = n => String(n).padStart(2, '0');
 
   function progress() {
     return step === 0 ? 0 : Math.min(1, step / total);
@@ -198,70 +214,71 @@ function initQuiz(containerId) {
 
   function render() {
     const pct = Math.round(progress() * 100);
-    const stepLabel = step === 0 ? '00' : String(Math.min(step, total)).padStart(2,'0');
+    const stepLabel = step === 0 ? '00' : pad(Math.min(step, total));
     let body = '';
 
     if (step === 0) {
       body = `
-        <div class="quiz-step-label">Step 01 · Intake</div>
-        <div class="quiz-h3">Where are you in your VAC benefits process?</div>
-        <div class="quiz-lead">Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We'll get back to you with a clear next step.</div>
+        <div class="quiz-step-label">${esc(t('quiz.intro.label', 'Step 01 · Intake'))}</div>
+        <div class="quiz-h3">${esc(t('quiz.intro.h', 'Where are you in your VAC benefits process?'))}</div>
+        <div class="quiz-lead">${esc(t('quiz.intro.lead', 'Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We’ll get back to you with a clear next step.'))}</div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-          <button class="quiz-start-btn" onclick="quizGo(1)">Start now →</button>
-          <div class="quiz-badges"><span>● 2 MIN</span><span>● CONFIDENTIAL</span><span>● NO COST</span></div>
+          <button class="quiz-start-btn" onclick="quizGo(1)">${esc(t('quiz.intro.start', 'Start now →'))}</button>
+          <div class="quiz-badges"><span>● ${esc(t('quiz.badge.time', '2 min'))}</span><span>● ${esc(t('quiz.badge.private', 'Confidential'))}</span><span>● ${esc(t('quiz.badge.free', 'No cost'))}</span></div>
         </div>`;
     } else if (step >= 1 && step <= N) {
       const Q = QUIZ_QUESTIONS[step - 1];
       const twoCol = Q.options.length > 3 ? ' two-col' : '';
-      const opts = Q.options.map(opt => {
+      const opts = Q.options.map((opt, i) => {
         const sel = answers[Q.id] === opt ? ' selected' : '';
-        return `<button class="quiz-option${sel}" onclick="quizAnswer('${Q.id}','${opt.replace(/'/g,"\\'")}',${step})">${opt}<span class="quiz-option-arrow">→</span></button>`;
+        return `<button class="quiz-option${sel}" onclick="quizAnswer('${Q.id}',${i},${step})">${esc(t('quiz.' + Q.id + '.' + i, opt))}<span class="quiz-option-arrow">→</span></button>`;
       }).join('');
       body = `
-        <div class="quiz-step-label">Question ${String(step).padStart(2,'0')} of ${String(N).padStart(2,'0')}</div>
-        <div class="quiz-h3">${Q.q}</div>
+        <div class="quiz-step-label">${esc(t('quiz.question.label', 'Question {n} of {total}', { n: pad(step), total: pad(N) }))}</div>
+        <div class="quiz-h3">${esc(t('quiz.' + Q.id + '.q', Q.q))}</div>
         <div class="quiz-options${twoCol}">${opts}</div>
         <div class="quiz-nav">
-          ${step > 1 ? `<button class="quiz-back" onclick="quizGo(${step-1})">← BACK</button>` : '<span></span>'}
-          <span>${pct}% COMPLETE</span>
+          ${step > 1 ? `<button class="quiz-back" onclick="quizGo(${step-1})">${esc(t('quiz.back', '← Back'))}</button>` : '<span></span>'}
+          <span>${esc(t('quiz.progress', '{pct}% complete', { pct }))}</span>
         </div>`;
     } else if (step === N + 1) {
       body = `
-        <div class="quiz-step-label">Almost there</div>
-        <div class="quiz-h3">Where should we send your next step?</div>
+        <div class="quiz-step-label">${esc(t('quiz.contact.label', 'Almost there'))}</div>
+        <div class="quiz-h3">${esc(t('quiz.contact.h', 'Where should we send your next step?'))}</div>
         <div class="quiz-fields">
-          <div class="quiz-field"><label class="quiz-field-label" for="qf-name">Full name</label><input type="text" id="qf-name" autocomplete="name" required value="${esc(contact.name)}" oninput="quizContact('name',this.value)" placeholder="Your name"/></div>
-          <div class="quiz-field"><label class="quiz-field-label" for="qf-email">Email</label><input type="email" id="qf-email" autocomplete="email" required value="${esc(contact.email)}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
-          <div class="quiz-field"><label class="quiz-field-label" for="qf-phone">Phone</label><input type="tel" id="qf-phone" autocomplete="tel" value="${esc(contact.phone)}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-name">${esc(t('quiz.field.name', 'Full name'))}</label><input type="text" id="qf-name" autocomplete="name" required value="${esc(contact.name)}" oninput="quizContact('name',this.value)" placeholder="${esc(t('quiz.field.name.ph', 'Your name'))}"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-email">${esc(t('quiz.field.email', 'Email'))}</label><input type="email" id="qf-email" autocomplete="email" required value="${esc(contact.email)}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-phone">${esc(t('quiz.field.phone', 'Phone'))}</label><input type="tel" id="qf-phone" autocomplete="tel" value="${esc(contact.phone)}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
           <input type="text" class="quiz-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" oninput="quizContact('website',this.value)"/>
         </div>
-        <label class="quiz-consent"><input type="checkbox" id="qf-consent"${contact.consent ? ' checked' : ''} onchange="quizContact('consent',this.checked)"/><span>${esc((window.W270 && window.W270.checkerConsent) || 'I agree to be contacted by a member of the 270 West Consulting team.')}</span></label>
+        <label class="quiz-consent"><input type="checkbox" id="qf-consent"${contact.consent ? ' checked' : ''} onchange="quizContact('consent',this.checked)"/><span>${esc(t('quiz.consent', 'I agree to be contacted by a member of the 270 West Consulting team.'))}</span></label>
         <div class="quiz-error" role="alert">${esc(error)}</div>
-        <button class="quiz-start-btn" onclick="quizSubmit()"${sending ? ' disabled' : ''}>${sending ? 'Sending…' : 'Submit'}</button>
-        <div class="quiz-privacy"><svg class="quiz-privacy-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>Confidential. We never share your info.</div>`;
+        <button class="quiz-start-btn" onclick="quizSubmit()"${sending ? ' disabled' : ''}>${esc(sending ? t('quiz.sending', 'Sending…') : t('quiz.submit', 'Submit'))}</button>
+        <div class="quiz-privacy"><svg class="quiz-privacy-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>${esc(t('quiz.privacy', 'Confidential. We never share your info.'))}</div>`;
     } else {
-      const first = esc((contact.name || '').trim().split(/\s+/)[0]);
+      const first = (contact.name || '').trim().split(/\s+/)[0];
       body = `
-        <div class="quiz-result-label">● Answers received</div>
-        <div class="quiz-result-h">Thank you${first ? ', ' + first : ''}.</div>
-        <div class="quiz-result-p">A member of our team will review your answers and be in touch to discuss your options.</div>
+        <div class="quiz-result-label">● ${esc(t('quiz.done.label', 'Answers received'))}</div>
+        <div class="quiz-result-h">${esc(first ? t('quiz.done.h.named', 'Thank you, {name}.', { name: first }) : t('quiz.done.h', 'Thank you.'))}</div>
+        <div class="quiz-result-p">${esc(t('quiz.done.p', 'A member of our team will review your answers and be in touch to discuss your options.'))}</div>
         <div class="quiz-result-btns">
-          <a href="${window.W270 ? '/book-a-consult/' : 'consult.html'}" class="btn-accent" style="font-size:14px;padding:16px 28px">Book a free call →</a>
-          <button class="quiz-restart" onclick="quizReset()">Restart</button>
+          <a href="${window.W270 ? (location.pathname.startsWith('/fr/') ? '/fr/book-a-consult/' : '/book-a-consult/') : 'consult.html'}" class="btn-accent" style="font-size:14px;padding:16px 28px">${esc(t('quiz.done.book', 'Book a free call →'))}</a>
+          <button class="quiz-restart" onclick="quizReset()">${esc(t('quiz.restart', 'Restart'))}</button>
         </div>`;
     }
 
     container.innerHTML = `
       <div class="quiz-widget">
-        <div class="quiz-header"><span>VAC Status Check</span><span>${stepLabel} / ${String(total).padStart(2,'0')}</span></div>
+        <div class="quiz-header"><span>${esc(t('quiz.title', 'VAC Status Check'))}</span><span>${stepLabel} / ${pad(total)}</span></div>
         <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
         ${body}
       </div>`;
   }
 
   window.quizGo = function(s) { step = s; render(); };
-  window.quizAnswer = function(id, val, s) {
-    answers[id] = val;
+  window.quizAnswer = function(id, idx, s) {
+    const Q = QUIZ_QUESTIONS.find(q => q.id === id);
+    answers[id] = Q ? Q.options[idx] : idx;   // the English value, whatever language is showing
     render();
     setTimeout(() => { step = s + 1; render(); }, 220);
   };
@@ -270,13 +287,17 @@ function initQuiz(containerId) {
   // Final step: in WordPress the answers go to the theme endpoint, which submits them to the
   // "VAC Status Checker" Gravity Form (its Webhooks feed sends the lead to Creatio). The static
   // prototype has no endpoint and simply shows the result.
+  const ERR = {
+    invalid: () => t('quiz.err.invalid', 'Please enter your name and a valid email address.'),
+    consent: () => t('quiz.err.consent', 'Please agree to be contacted so an advisor can follow up.'),
+    busy:    () => t('quiz.err.busy', 'Too many submissions. Please try again in a few minutes.'),
+    failed:  () => t('quiz.err.failed', 'We could not send your answers. Please try again.'),
+  };
   window.quizSubmit = async function() {
     if (sending) return;
     const name = (contact.name || '').trim(), email = (contact.email || '').trim();
-    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      error = 'Please enter your name and a valid email address.'; render(); return;
-    }
-    if (!contact.consent) { error = 'Please agree to be contacted so an advisor can follow up.'; render(); return; }
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { error = ERR.invalid(); render(); return; }
+    if (!contact.consent) { error = ERR.consent(); render(); return; }
     const url = window.W270 && window.W270.checker;
     if (!url) { error = ''; step = N + 2; render(); return; }
     let lead = {};
@@ -288,10 +309,15 @@ function initQuiz(containerId) {
         body: JSON.stringify({ name, email, phone: contact.phone || '', website: contact.website || '', consent: true, answers, lead })
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) throw new Error(data.message || 'We could not send your answers. Please try again.');
-      step = N + 2;
+      if (!res.ok || !data.ok) {
+        // The endpoint answers in English; show the translated message for its error code.
+        const code = String(data.code || '').replace('w270_checker_', '');
+        error = (ERR[code] || ERR.failed)();
+      } else {
+        step = N + 2;
+      }
     } catch (e) {
-      error = e.message || 'We could not send your answers. Please try again.';
+      error = ERR.failed();
     }
     sending = false; render();
   };
@@ -439,7 +465,8 @@ function initVideoLightbox() {
   function build() {
     dialog = document.createElement('dialog');
     dialog.className = 'video-lightbox';
-    dialog.innerHTML = '<div class="video-lightbox-inner"><button type="button" class="video-lightbox-close">Close ✕</button><div class="video-lightbox-frame"></div></div>';
+    dialog.setAttribute('data-no-dynamic-translation', '');
+    dialog.innerHTML = '<div class="video-lightbox-inner"><button type="button" class="video-lightbox-close">' + t('video.close', 'Close') + ' ✕</button><div class="video-lightbox-frame"></div></div>';
     frame = dialog.querySelector('.video-lightbox-frame');
     dialog.querySelector('.video-lightbox-close').addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
@@ -460,7 +487,7 @@ function initVideoLightbox() {
         ? `<video src="${src}" controls autoplay playsinline></video>`
         : `<iframe src="${src}" title="${title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
     } else {
-      frame.innerHTML = `<div class="video-lightbox-pending"><strong>${title}</strong><span>Coming soon. This film is in production.</span></div>`;
+      frame.innerHTML = `<div class="video-lightbox-pending"><strong>${title}</strong><span>${t('video.pending', 'Coming soon. This film is in production.')}</span></div>`;
     }
     dialog.showModal();
   }));

@@ -125,3 +125,85 @@ function w270_checker_submit( WP_REST_Request $req ) {
 	}
 	return [ 'ok' => true ];
 }
+
+/**
+ * Wording for the widgets main.js draws after page load (status checker, video lightbox). Printed hidden in
+ * the footer so TranslatePress translates it with the page: on /fr/ the widgets read French text from it.
+ * TranslatePress 3.3 never machine-translates text that only appears after load, so without this the
+ * checker would stay in English. Keys and English text must match the fallbacks in main.js
+ * (tests/test_ui_strings.py checks this).
+ */
+function w270_ui_strings() {
+	return [
+		"quiz.intro.label" => "Step 01 · Intake",
+		"quiz.intro.h" => "Where are you in your VAC benefits process?",
+		"quiz.intro.lead" => "Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We’ll get back to you with a clear next step.",
+		"quiz.intro.start" => "Start now →",
+		"quiz.badge.time" => "2 min",
+		"quiz.badge.private" => "Confidential",
+		"quiz.badge.free" => "No cost",
+		"quiz.question.label" => "Question {n} of {total}",
+		"quiz.back" => "← Back",
+		"quiz.progress" => "{pct}% complete",
+		"quiz.contact.label" => "Almost there",
+		"quiz.contact.h" => "Where should we send your next step?",
+		"quiz.field.name" => "Full name",
+		"quiz.field.name.ph" => "Your name",
+		"quiz.field.email" => "Email",
+		"quiz.field.phone" => "Phone",
+		"quiz.sending" => "Sending…",
+		"quiz.submit" => "Submit",
+		"quiz.privacy" => "Confidential. We never share your info.",
+		"quiz.done.label" => "Answers received",
+		"quiz.done.h.named" => "Thank you, {name}.",
+		"quiz.done.h" => "Thank you.",
+		"quiz.done.p" => "A member of our team will review your answers and be in touch to discuss your options.",
+		"quiz.done.book" => "Book a free call →",
+		"quiz.restart" => "Restart",
+		"quiz.title" => "VAC Status Check",
+		"quiz.err.invalid" => "Please enter your name and a valid email address.",
+		"quiz.err.consent" => "Please agree to be contacted so an advisor can follow up.",
+		"quiz.err.busy" => "Too many submissions. Please try again in a few minutes.",
+		"quiz.err.failed" => "We could not send your answers. Please try again.",
+		"video.close" => "Close",
+		"video.pending" => "Coming soon. This film is in production.",
+		"hide_gdpr_banner" => "1",
+		"quiz.served.q" => "Have you served in the Canadian Armed Forces?",
+		"quiz.served.0" => "Regular Force",
+		"quiz.served.1" => "Reserve Force",
+		"quiz.served.2" => "RCMP",
+		"quiz.served.3" => "No",
+		"quiz.rating.q" => "Do you currently have a VAC disability rating?",
+		"quiz.rating.0" => "No rating",
+		"quiz.rating.1" => "0–30%",
+		"quiz.rating.2" => "40–70%",
+		"quiz.rating.3" => "80%+",
+		"quiz.health.q" => "Are you experiencing service-related health issues?",
+		"quiz.health.0" => "Yes",
+		"quiz.health.1" => "Not sure",
+		"quiz.health.2" => "No",
+		"quiz.filed.q" => "Have you previously filed a claim with VAC?",
+		"quiz.filed.0" => "Yes, approved",
+		"quiz.filed.1" => "Yes, denied",
+		"quiz.filed.2" => "No",
+		"quiz.goal.q" => "What are you looking to do?",
+		"quiz.goal.0" => "File a new claim",
+		"quiz.goal.1" => "Increase an existing rating",
+		"quiz.goal.2" => "Appeal a denial",
+		"quiz.goal.3" => "Not sure yet",
+		"quiz.consent" => w270_checker_consent_text(),
+	];
+}
+
+add_action( 'wp_footer', function () {
+	if ( is_admin() ) { return; }
+	echo '<div id="w270-i18n" hidden>';
+	foreach ( w270_ui_strings() as $k => $v ) {
+		echo '<span data-k="' . esc_attr( $k ) . '">' . esc_html( $v ) . '</span>';
+	}
+	echo '</div>';
+}, 5 );
+
+// TranslatePress first calls its own trp-ajax.php, which SiteGround's folder protection blocks (403),
+// then falls back to admin-ajax.php. Point it straight at admin-ajax so there is no failing request.
+add_filter( 'trp_custom_ajax_url', fn() => admin_url( 'admin-ajax.php' ) );
