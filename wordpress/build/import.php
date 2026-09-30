@@ -111,6 +111,40 @@ function w270_import_menus() {
 	set_theme_mod( 'nav_menu_locations', $locations );
 }
 
+/**
+ * TranslatePress: Canadian English + Canadian French at /fr/, switched only by the footer links (no floating
+ * switcher, no flags — never a US flag), Google machine translation with a daily cap, and the company name kept
+ * as written. Seed-once: applied only while French is not yet configured, so wp-admin changes are kept. The
+ * Google API key is never set here; the client enters it in TranslatePress → Automatic Translation.
+ */
+function w270_import_translatepress() {
+	if ( ! class_exists( 'TRP_Translate_Press' ) ) { echo "translatepress: not active — skipped\n"; return; }
+	$s = get_option( 'trp_settings', [] );
+	if ( in_array( 'fr_CA', (array) ( $s['translation-languages'] ?? [] ), true ) ) { echo "translatepress: already configured, left as-is\n"; return; }
+	$s = array_merge( $s, [
+		'default-language' => 'en_CA', 'translation-languages' => [ 'en_CA', 'fr_CA' ], 'publish-languages' => [ 'en_CA', 'fr_CA' ],
+		'url-slugs' => [ 'en_CA' => 'en', 'fr_CA' => 'fr' ], 'native_or_english_name' => 'native_name', 'trp-ls-floater' => 'no',
+		'shortcode-options' => 'full-names', 'menu-options' => 'full-names', 'floater-options' => 'full-names',
+	] );
+	$settings = TRP_Translate_Press::get_trp_instance()->get_component( 'settings' );
+	update_option( 'trp_settings', method_exists( $settings, 'sanitize_settings' ) ? $settings->sanitize_settings( $s ) : $s );
+	$ls = get_option( 'trp_language_switcher_settings', [] );
+	$ls['floater']['enabled'] = false;
+	foreach ( [ 'floater', 'shortcode', 'menu' ] as $k ) {
+		foreach ( [ 'desktop', 'mobile' ] as $d ) { $ls[ $k ]['layoutCustomizer'][ $d ]['flagIconPosition'] = 'hide'; }
+	}
+	update_option( 'trp_language_switcher_settings', $ls );
+	$mt = array_merge( (array) get_option( 'trp_machine_translation_settings', [] ), [
+		'machine-translation' => 'yes', 'translation-engine' => 'google_translate_v2', 'block-crawlers' => 'yes',
+		'machine_translation_limit_enabled' => 'yes', 'machine_translation_limit' => 300000, 'machine_translation_log' => 'no',
+	] );
+	update_option( 'trp_machine_translation_settings', $mt );
+	$adv = (array) get_option( 'trp_advanced_settings', [] );
+	$adv['exclude_words_from_auto_translate'] = [ 'words' => [ '270 West Consulting', '270 West' ] ];
+	update_option( 'trp_advanced_settings', $adv );
+	echo "translatepress: configured en_CA + fr_CA (/fr/), footer-only switching, Google MT (key to be added in wp-admin)\n";
+}
+
 function w270_import_settings() {
 	update_option( 'blogname', '270 West Consulting' );
 	update_option( 'blogdescription', 'VAC Claims Support for Canadian Veterans' );
@@ -740,6 +774,7 @@ function w270_main( $argv ) {
 	if ( $all || isset( $flags['templates'] ) || isset( $flags['refresh-templates'] ) ) { w270_refresh_chrome_conditions(); }
 	if ( $all || isset( $flags['kit'] ) ) { function_exists( 'w270_import_kit' ) && w270_import_kit(); }
 	if ( $all || isset( $flags['settings'] ) ) { w270_import_settings(); }
+	if ( $all || isset( $flags['settings'] ) ) { w270_import_translatepress(); }
 	if ( class_exists( '\Elementor\Plugin' ) ) { \Elementor\Plugin::$instance->files_manager->clear_cache(); }
 	if ( ! empty( $GLOBALS['w270_failed'] ) ) { fwrite( STDERR, "IMPORT FAILED\n" ); exit( 1 ); }
 }

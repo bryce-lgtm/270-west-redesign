@@ -58,6 +58,14 @@ add_action( 'wp_head', function () {
 	echo '<link rel="icon" href="' . esc_url( W270_ASSETS . '/img/brand/favicon.svg' ) . '" type="image/svg+xml">' . "\n";
 }, 1 );
 
+// TranslatePress: the footer links are the only language switcher (no floater, no flags), so its
+// switcher assets aren't needed — except inside its translation editor.
+add_action( 'wp_enqueue_scripts', function () {
+	if ( isset( $_GET['trp-edit-translation'] ) ) { return; }
+	wp_dequeue_style( 'trp-language-switcher-v2' );
+	wp_dequeue_script( 'trp-language-switcher-js-v2' );
+}, 100 );
+
 // Hello's header/footer experiment styles its own dynamic header; ours is the prototype markup.
 add_action( 'wp_enqueue_scripts', function () {
 	wp_dequeue_style( 'hello-elementor-header-footer' );

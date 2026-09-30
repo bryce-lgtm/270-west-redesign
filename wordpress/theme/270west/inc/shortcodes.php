@@ -301,7 +301,8 @@ add_action( 'elementor/query/w270_hub_guides', function ( $query ) use ( $w270_l
  * rewriting the English link to /fr/ on French pages. Without TranslatePress, plain labels.
  */
 add_shortcode( 'w270_language_links', function () {
-	$langs = [ 'en_US' => [ 'English', 'en' ], 'fr_CA' => [ 'Français (Canada)', 'fr-CA' ] ];
+	// Canadian English and Canadian French only (the site never shows US English or its flag).
+	$langs = [ 'en_CA' => [ 'English', 'en-CA' ], 'fr_CA' => [ 'Français (Canada)', 'fr-CA' ] ];
 	if ( ! class_exists( 'TRP_Translate_Press' ) ) {
 		return '<div class="footer-col-items">' . implode( '', array_map( fn( $l ) => '<span>' . esc_html( $l[0] ) . '</span>', $langs ) ) . '</div>';
 	}
@@ -309,7 +310,7 @@ add_shortcode( 'w270_language_links', function () {
 	$converter = TRP_Translate_Press::get_trp_instance()->get_component( 'url_converter' );
 	$out = '';
 	foreach ( $langs as $code => [ $label, $hreflang ] ) {
-		$current = ( $TRP_LANGUAGE ?? 'en_US' ) === $code;
+		$current = ( $TRP_LANGUAGE ?? 'en_CA' ) === $code;
 		$out    .= sprintf( '<a href="%s" hreflang="%s" lang="%s"%s>%s</a>', esc_url( $converter->get_url_for_language( $code, null, '' ) ),
 			esc_attr( $hreflang ), esc_attr( $hreflang ), $current ? ' aria-current="true"' : '', esc_html( $label ) );
 	}
