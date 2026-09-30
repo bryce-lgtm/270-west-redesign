@@ -135,7 +135,8 @@ function w270_import_media() {
 	require_once ABSPATH . 'wp-admin/includes/image.php';
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 	require_once ABSPATH . 'wp-admin/includes/media.php';
-	foreach ( glob( W270_IMG . '/*.{jpg,jpeg,png}', GLOB_BRACE ) as $file ) {
+	// Top-level photos plus the community logos in img/events/ (matched by file name, like the rest).
+	foreach ( array_merge( glob( W270_IMG . '/*.{jpg,jpeg,png}', GLOB_BRACE ), glob( W270_IMG . '/events/*.{jpg,jpeg,png}', GLOB_BRACE ) ) as $file ) {
 		$name = basename( $file );
 		if ( w270_media_id( $name ) ) { echo "media {$name}: exists\n"; continue; }
 		$tmp = wp_tempnam( $name );

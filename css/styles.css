@@ -1881,3 +1881,6 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
 @media (min-width: 901px) { .hero-home .hero-grid { grid-template-columns: 1fr 1fr; gap: 56px; } }
 .hero-video { aspect-ratio: 4 / 3; }
 .hero-video > img, .hero-video .w-image > img { object-position: center 35% !important; }
+
+/* Community logos: the dashed placeholder box is only for entries still waiting on a logo. */
+.sponsor-logo:has(img) { background: none; border-color: transparent; }
