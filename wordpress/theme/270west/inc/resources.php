@@ -115,11 +115,25 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_style( 'w270-resources', W270_ASSETS . '/css/resources.css', [ 'w270-styles' ], filemtime( $dir . '/assets/css/resources.css' ) );
 }, 25 );
 
+// A resource reached under the wrong sub-type folder (e.g. the old /resources/explainers/x/ after it
+// moved to Guides) is the same post; send it to its real address so there is one URL per resource.
+add_action( 'template_redirect', function () {
+	if ( ! is_singular( w270_resource_types() ) || is_preview() ) { return; }
+	$want = wp_parse_url( get_permalink( get_queried_object_id() ), PHP_URL_PATH );
+	$have = trailingslashit( wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) );
+	if ( $want && $have !== $want ) { wp_safe_redirect( get_permalink( get_queried_object_id() ), 301 ); exit; }
+}, 5 );
+
 // The article used to be a page under /resources/; it is now the featured guide.
 add_action( 'template_redirect', function () {
 	if ( ! is_404() ) { return; }
 	$map  = [ '/resources/vac-benefits-programs-guide/' => 'vac-benefits-programs-guide' ];
 	$path = trailingslashit( parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) );
+	// A resource moved to another sub-type (e.g. /resources/explainers/x/ -> /resources/guides/x/).
+	if ( ! isset( $map[ $path ] ) && preg_match( '#^/resources/[a-z-]+/([a-z0-9-]+)/$#', $path, $m ) ) {
+		$moved = get_page_by_path( $m[1], OBJECT, w270_resource_types() );
+		if ( $moved && 'publish' === $moved->post_status ) { wp_redirect( get_permalink( $moved ), 301 ); exit; }
+	}
 	if ( ! isset( $map[ $path ] ) ) { return; }
 	// Send the old URL to the guide while it is published, otherwise to the Guides archive
 	// (unapproved guides sit in draft, and a redirect into a 404 helps nobody).

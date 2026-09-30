@@ -12,16 +12,16 @@ class SeedResourcesTests(unittest.TestCase):
         with open(os.path.join(BUILD, 'seed-resources.json'), encoding='utf-8') as f:
             self.seed = json.load(f)
 
-    def test_seed_has_26_resources_with_unique_slugs_and_valid_subtypes(self):
+    def test_seed_has_27_resources_with_unique_slugs_and_valid_subtypes(self):
         res = self.seed['resources']
-        self.assertEqual(len(res), 26)
-        self.assertEqual(len({r['slug'] for r in res}), 26)
+        self.assertEqual(len(res), 27)
+        self.assertEqual(len({r['slug'] for r in res}), 27)
         valid = ('guides', 'checklists', 'explainers', 'stories', 'news')
         for r in res:
             self.assertIn(r['type'], valid, r['slug'])
             self.assertTrue(r['summary'], r['slug'])
         articles = [r for r in res if r['type'] in ('guides', 'checklists', 'explainers')]
-        self.assertEqual(len(articles), 15)
+        self.assertEqual(len(articles), 16)
         for r in articles:
             self.assertIn(r['topic'], self.seed['topics'], r['slug'])
             self.assertNotIn('read_time', r)  # reading time is computed by the theme now

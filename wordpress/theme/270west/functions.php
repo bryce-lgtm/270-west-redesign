@@ -91,6 +91,10 @@ add_filter( 'document_title_parts', function ( $parts ) {
 	if ( is_front_page() && ( $front = (int) get_option( 'page_on_front' ) ) && ( $t = get_the_title( $front ) ) ) {
 		return [ 'title' => $t ];
 	}
+	// Resources can carry a full SEO title from the copy deck ("VAC disability ratings: How they work | 270 West").
+	if ( is_singular( w270_resource_types() ) && ( $seo = trim( (string) w270_field( 'seo_title', get_queried_object_id() ) ) ) ) {
+		return [ 'title' => $seo ];
+	}
 	if ( is_singular() && ! empty( $parts['title'] ) && ! empty( $parts['site'] ) && false !== stripos( $parts['title'], $parts['site'] ) ) {
 		unset( $parts['site'] );
 	}

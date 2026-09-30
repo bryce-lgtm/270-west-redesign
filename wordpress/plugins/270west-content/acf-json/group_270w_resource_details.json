@@ -43,6 +43,13 @@
             "name": "seo_h1",
             "type": "text",
             "instructions": "Keyword-led heading. When set it becomes the H1 and the post title renders as the H2 beneath it."
+        },
+        {
+            "key": "field_270w_seo_title",
+            "label": "SEO title",
+            "name": "seo_title",
+            "type": "text",
+            "instructions": "The browser/search title, written in full (e.g. “VAC disability ratings: How they work | 270 West”). Leave empty to use the post title."
         }
     ],
     "location": [
@@ -61,5 +68,5 @@
     "instruction_placement": "label",
     "active": true,
     "show_in_rest": 0,
-    "modified": 1790336797
+    "modified": 1790778278
 }

@@ -418,6 +418,7 @@ function w270_import_resources( array $refresh = [] ) {
 				if ( is_wp_error( $u ) ) { throw new RuntimeException( $u->get_error_message() ); }
 				update_post_meta( $existing->ID, 'summary', $summary );
 				update_post_meta( $existing->ID, 'seo_h1', $r['seo_h1'] ?? '' );
+				update_post_meta( $existing->ID, 'seo_title', $r['seo_title'] ?? '' );
 				// Stories: the card and page fields come from the seed too (quote, name, rank, number).
 				foreach ( [ 'pull_quote', 'veteran_name', 'veteran_role', 'duration', 'story_number' ] as $k ) {
 					if ( isset( $r[ $k ] ) ) { update_post_meta( $existing->ID, $k, $r[ $k ] ); }
@@ -427,6 +428,7 @@ function w270_import_resources( array $refresh = [] ) {
 				if ( $acf ) {
 					update_field( 'field_270w_summary', $summary, $existing->ID );
 					update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $existing->ID );
+					update_field( 'field_270w_seo_title', $r['seo_title'] ?? '', $existing->ID );
 				}
 				echo "resource {$r['slug']}: #{$existing->ID} refreshed from the seed\n";
 				continue;
@@ -459,6 +461,7 @@ function w270_import_resources( array $refresh = [] ) {
 			update_post_meta( $pid, 'summary', $summary );
 			update_post_meta( $pid, 'featured', empty( $r['featured'] ) ? 0 : 1 );
 			update_post_meta( $pid, 'seo_h1', $r['seo_h1'] ?? '' );
+			update_post_meta( $pid, 'seo_title', $r['seo_title'] ?? '' );
 			if ( 'guides' === $subtype ) {
 				update_post_meta( $pid, 'show_toc', 1 );
 				if ( $is_article ) {
@@ -472,6 +475,7 @@ function w270_import_resources( array $refresh = [] ) {
 				update_field( 'field_270w_summary', $summary, $pid );
 				update_field( 'field_270w_featured', empty( $r['featured'] ) ? 0 : 1, $pid );
 				update_field( 'field_270w_seo_h1', $r['seo_h1'] ?? '', $pid );
+				update_field( 'field_270w_seo_title', $r['seo_title'] ?? '', $pid );
 				if ( 'guides' === $subtype ) {
 					update_field( 'field_270w_show_toc', 1, $pid );
 					if ( $is_article ) {

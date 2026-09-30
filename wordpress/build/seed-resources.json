@@ -46,7 +46,7 @@
     },
     {
       "slug": "how-vac-disability-ratings-work",
-      "type": "explainers",
+      "type": "guides",
       "title": "How VAC disability ratings work",
       "topic": "After a VAC decision",
       "featured": true,
@@ -55,6 +55,20 @@
       "summary": "VAC disability ratings reflect medical impairment and quality of life. Learn how VAC calculates the percentage, what it means and when it may change.",
       "seo_h1": "How VAC disability ratings work",
       "content": "how-vac-disability-ratings-work.html",
+      "status": "publish",
+      "seo_title": "VAC disability ratings: How they work | 270 West"
+    },
+    {
+      "slug": "vac-pain-and-suffering-compensation",
+      "type": "guides",
+      "title": "VAC Pain and Suffering Compensation explained",
+      "topic": "After a VAC decision",
+      "image": "forest-fog.jpg",
+      "order": 3,
+      "summary": "Learn what VAC Pain and Suffering Compensation covers, how the amount is determined, and what to consider when choosing monthly or lump-sum payments.",
+      "seo_h1": "VAC Pain and Suffering Compensation explained",
+      "seo_title": "VAC Pain and Suffering Compensation | 270 West Consulting",
+      "content": "vac-pain-and-suffering-compensation.html",
       "status": "publish"
     },
     {
