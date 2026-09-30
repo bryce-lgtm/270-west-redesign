@@ -1884,3 +1884,6 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
 
 /* Community logos: the dashed placeholder box is only for entries still waiting on a logo. */
 .sponsor-logo:has(img) { background: none; border-color: transparent; }
+/* Community cards: the logo sits centred, so the name and note beneath it are centred to match. */
+.sponsor { text-align: center; }
+.sponsor-h, .sponsor-meta { text-align: center; }
