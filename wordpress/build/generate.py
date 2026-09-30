@@ -374,6 +374,8 @@ class Converter:
             # is design reference only.
             import templates as resource_templates
             return resource_templates.hub_loop(node.attrs['data-loop'], ' '.join(node.classes))
+        if 'data-shortcode' in node.attrs:
+            return self.widget('shortcode', {'shortcode': node.attrs['data-shortcode'], '_css_classes': 'w-html'})
         if 'data-story' in node.attrs:
             # A testimonial card in the prototype is the story post's card in WordPress: the quote,
             # name, rank and photo come from the story (edited once, in wp-admin) and it links there.

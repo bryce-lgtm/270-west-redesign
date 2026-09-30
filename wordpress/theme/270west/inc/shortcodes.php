@@ -294,3 +294,24 @@ add_action( 'elementor/query/w270_hub_guides', function ( $query ) use ( $w270_l
 	$running = false;
 } );
 
+
+/**
+ * [w270_language_links] → the footer's "English / Français (Canada)" links, each pointing at the
+ * current page in that language (TranslatePress). data-no-translation keeps TranslatePress from
+ * rewriting the English link to /fr/ on French pages. Without TranslatePress, plain labels.
+ */
+add_shortcode( 'w270_language_links', function () {
+	$langs = [ 'en_US' => [ 'English', 'en' ], 'fr_CA' => [ 'Français (Canada)', 'fr-CA' ] ];
+	if ( ! class_exists( 'TRP_Translate_Press' ) ) {
+		return '<div class="footer-col-items">' . implode( '', array_map( fn( $l ) => '<span>' . esc_html( $l[0] ) . '</span>', $langs ) ) . '</div>';
+	}
+	global $TRP_LANGUAGE;
+	$converter = TRP_Translate_Press::get_trp_instance()->get_component( 'url_converter' );
+	$out = '';
+	foreach ( $langs as $code => [ $label, $hreflang ] ) {
+		$current = ( $TRP_LANGUAGE ?? 'en_US' ) === $code;
+		$out    .= sprintf( '<a href="%s" hreflang="%s" lang="%s"%s>%s</a>', esc_url( $converter->get_url_for_language( $code, null, '' ) ),
+			esc_attr( $hreflang ), esc_attr( $hreflang ), $current ? ' aria-current="true"' : '', esc_html( $label ) );
+	}
+	return '<div class="footer-col-items" data-no-translation>' . $out . '</div>';
+} );

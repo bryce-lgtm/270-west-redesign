@@ -57,6 +57,8 @@ elif [ -n "${W270_SG_REFRESH_TEMPLATES:-}" ]; then REFRESH="--refresh-templates=
 [ -n "${W270_SG_REFRESH_FORMS:-}" ] && REFRESH="$REFRESH --refresh-forms=${W270_SG_REFRESH_FORMS}"
 $SSH "cd '$SG_PATH' && \
   wp plugin is-installed elementor || wp plugin install elementor && wp plugin activate elementor && \
+  { wp plugin is-installed translatepress-multilingual || wp plugin install translatepress-multilingual; } && wp plugin activate translatepress-multilingual && \
+  { wp language core is-installed fr_CA || wp language core install fr_CA; } && \
   wp theme is-installed hello-elementor || wp theme install hello-elementor && \
   W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/activate-theme.php && \
   W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/import.php --all $REFRESH && \
