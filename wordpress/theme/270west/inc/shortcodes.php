@@ -115,6 +115,34 @@ add_shortcode( 'w270_related', function () {
 	return ob_get_clean();
 } );
 
+// [w270_rail_links type="stories|guides" title="…"] → a story-page rail box of links to other
+// published resources of that sub-type (never the current post), plus a link to the archive.
+add_shortcode( 'w270_rail_links', function ( $atts ) {
+	$a     = shortcode_atts( [ 'type' => 'stories', 'title' => '', 'limit' => 4 ], $atts );
+	$types = 'guides' === $a['type'] ? [ 'guides', 'checklists', 'explainers' ] : [ 'stories' ];
+	$posts = get_posts( [
+		'post_type'      => 'resource',
+		'post_status'    => 'publish',
+		'posts_per_page' => (int) $a['limit'],
+		'post__not_in'   => [ get_the_ID() ],
+		'orderby'        => 'menu_order',
+		'order'          => 'ASC',
+		'tax_query'      => [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => $types ] ],
+	] );
+	if ( ! $posts ) {
+		return '';
+	}
+	$links = '';
+	foreach ( $posts as $p ) {
+		$name   = 'stories' === $a['type'] ? w270_story_first_name( $p->ID ) : '';
+		$label  = $name ? $name . ': ' . get_the_title( $p ) : get_the_title( $p );
+		$links .= '<a href="' . esc_url( get_permalink( $p ) ) . '">' . esc_html( $label ) . ' →</a>';
+	}
+	$archive = 'guides' === $a['type'] ? [ '/resources/guides/', 'All guides' ] : [ '/resources/stories/', 'All veteran stories' ];
+	$links  .= '<a href="' . esc_url( home_url( $archive[0] ) ) . '">' . esc_html( $archive[1] ) . ' →</a>';
+	return '<div class="story-rail-box"><h3 class="story-rail-h">' . esc_html( $a['title'] ) . '</h3><div class="story-rail-links">' . $links . '</div></div>';
+} );
+
 // [w270_story_media] → the 16:9 band: the video embed when a URL is set, else the featured photo.
 add_shortcode( 'w270_story_media', function ( $atts ) {
 	$id    = w270_sc_id( $atts );

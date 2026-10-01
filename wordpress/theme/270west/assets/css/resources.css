@@ -25,7 +25,13 @@
 .story-single-quote { font-family: var(--font-serif); font-size: 30px; font-weight: 400; line-height: 1.35; letter-spacing: -0.01em; color: var(--ink); margin: 0 0 20px; max-width: 760px; }
 .story-single-cite { display: flex; flex-direction: column; gap: 4px; margin: 0 0 48px; }
 .story-single .article-body { max-width: 720px; }
+/* Copy column beside a sticky rail (book-a-call box, more stories, guides), as in the prototype. */
+.story-single-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 72px; align-items: start; }
+.story-single-main { min-width: 0; }
+.story-single-main .article-body { max-width: 800px; }
 @media (max-width: 900px) {
   .story-single { padding: 32px 20px 56px; }
   .story-single-quote { font-size: 22px; }
+  .story-single-layout { grid-template-columns: 1fr; gap: 48px; }
+  .story-single .story-rail { position: static; }
 }

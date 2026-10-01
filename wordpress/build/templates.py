@@ -248,12 +248,26 @@ def single_story():
         ], html_tag='section'),
         con('story-single', [
             sc('[w270_story_media]'),
-            sc('[w270_field name="pull_quote" wrap="blockquote" class="story-single-quote"]'),
-            con('story-single-cite', [
-                sc('[w270_field name="veteran_name" wrap="span" class="story-card-name"]'),
-                sc('[w270_field name="veteran_role" wrap="span" class="story-card-role" default="Canadian Armed Forces Veteran"]'),
+            con('story-single-layout', [
+                con('story-single-main', [
+                    sc('[w270_field name="pull_quote" wrap="blockquote" class="story-single-quote"]'),
+                    con('story-single-cite', [
+                        sc('[w270_field name="veteran_name" wrap="span" class="story-card-name"]'),
+                        sc('[w270_field name="veteran_role" wrap="span" class="story-card-role" default="Canadian Armed Forces Veteran"]'),
+                    ]),
+                    con('article-body', [widget('theme-post-content', {'_css_classes': 'w-html'})]),
+                ], html_tag='article'),
+                con('story-rail', [
+                    con('article-rail-cta', [
+                        text('Sound familiar?', 'article-rail-label'),
+                        heading('Start with a conversation.', 'h3', 'article-rail-h'),
+                        text('A free 30-minute call with a benefits navigator. No documents needed.', 'article-rail-p'),
+                        button('Book a free call →', '/book-a-consult/', 'article-rail-btn'),
+                    ]),
+                    sc('[w270_rail_links type="stories" title="More stories"]'),
+                    sc('[w270_rail_links type="guides" title="Guides"]'),
+                ], html_tag='aside'),
             ]),
-            con('article-body', [widget('theme-post-content', {'_css_classes': 'w-html'})]),
         ], html_tag='section'),
     ], html_tag='main', extra={'_element_id': 'content'})
 
