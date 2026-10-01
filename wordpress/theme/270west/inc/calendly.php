@@ -126,6 +126,13 @@ function w270_calendly_values( array $p ) {
 		if ( ! $phone && preg_match( '/phone/i', (string) ( $qa['question'] ?? '' ) ) ) { $phone = $qa['answer'] ?? ''; }
 	}
 
+	// The form's phone field takes North American numbers as (###) ###-####; Calendly sends "+1 902-555-0100".
+	// Anything that is not a 10-digit NANP number goes in the summary line instead of failing validation.
+	$raw_phone = trim( (string) $phone );
+	$digits    = preg_replace( '/\D/', '', $raw_phone );
+	if ( 11 === strlen( $digits ) && '1' === $digits[0] ) { $digits = substr( $digits, 1 ); }
+	$phone = 10 === strlen( $digits ) ? sprintf( '(%s) %s-%s', substr( $digits, 0, 3 ), substr( $digits, 3, 3 ), substr( $digits, 6 ) ) : '';
+
 	$start = '';
 	if ( ! empty( $event['start_time'] ) ) {
 		try {
@@ -142,6 +149,7 @@ function w270_calendly_values( array $p ) {
 	$line = [ 'Calendly booking' . ( ! empty( $p['old_invitee'] ) ? ' (rescheduled)' : '' ) ];
 	if ( $start ) { $line[] = 'When: ' . $start; }
 	if ( $where ) { $line[] = 'How: ' . $where; }
+	if ( '' === $phone && '' !== $raw_phone ) { $line[] = 'Phone: ' . $clean( $raw_phone, 40 ); }
 	foreach ( $answers as $qa ) {
 		if ( '' !== trim( (string) ( $qa['answer'] ?? '' ) ) ) { $line[] = rtrim( $clean( $qa['question'] ?? '', 80 ), ' .:?' ) . ': ' . rtrim( $clean( $qa['answer'], 400 ), ' .;' ); }
 	}
