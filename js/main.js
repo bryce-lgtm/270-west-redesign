@@ -190,10 +190,10 @@ function t(key, fallback, vars) {
 // Option values are what the checker submits (English, for Creatio); the labels shown are translated.
 const QUIZ_QUESTIONS = [
   { id:'served', q:'Have you served in the Canadian Armed Forces?', options:['Regular Force','Reserve Force','RCMP','No'] },
-  { id:'rating', q:'Do you currently have a VAC disability rating?', options:['No rating','0–30%','40–70%','80%+'] },
+  { id:'rating', q:'Do you currently have a VAC disability assessment?', options:['No assessment yet','0–30%','40–70%','80%+'] },
   { id:'health', q:'Are you experiencing service-related health issues?', options:['Yes','Not sure','No'] },
   { id:'filed', q:'Have you previously filed a claim with VAC?', options:['Yes, approved','Yes, denied','No'] },
-  { id:'goal', q:'What are you looking to do?', options:['File a new claim','Increase an existing rating','Appeal a denial','Not sure yet'] }
+  { id:'goal', q:'What are you looking to do?', options:['File a new claim','Reassess a condition that has worsened','Appeal a denial','Not sure yet'] }
 ];
 
 function initQuiz(containerId) {
@@ -289,7 +289,7 @@ function initQuiz(containerId) {
   // prototype has no endpoint and simply shows the result.
   const ERR = {
     invalid: () => t('quiz.err.invalid', 'Please enter your name and a valid email address.'),
-    consent: () => t('quiz.err.consent', 'Please agree to be contacted so an advisor can follow up.'),
+    consent: () => t('quiz.err.consent', 'Please agree to be contacted so a benefits navigator can follow up.'),
     busy:    () => t('quiz.err.busy', 'Too many submissions. Please try again in a few minutes.'),
     failed:  () => t('quiz.err.failed', 'We could not send your answers. Please try again.'),
   };
@@ -379,14 +379,14 @@ function initConsultWidget(containerId) {
       container.innerHTML = `<div class="consult-widget">
         <div class="consult-header"><span>Benefits Analysis Consult</span><span>30 min · free</span></div>
         <h3 class="consult-h3">Book a free 30-minute consult.</h3>
-        <p class="consult-lead">One-on-one with a 270 West advisor. We'll review your situation, walk through which VAC programs may apply, and answer your questions. No obligation.</p>
+        <p class="consult-lead">One-on-one with a 270 West benefits navigator. We'll review your situation, walk through which VAC programs may apply, and answer your questions. No obligation.</p>
         <div class="consult-advisor-row">
           <div class="consult-avatars">
             <span class="consult-avatar" style="background:var(--olive)">JM</span>
             <span class="consult-avatar" style="background:#8a95a6">SK</span>
             <span class="consult-avatar" style="background:#5a6472">AT</span>
           </div>
-          <span class="consult-advisor-label">Matched with the next available advisor</span>
+          <span class="consult-advisor-label">Matched with the next available benefits navigator</span>
         </div>
         <div class="consult-sublabel">1. Choose a day</div>
         <div class="consult-days">${dayBtns}</div>

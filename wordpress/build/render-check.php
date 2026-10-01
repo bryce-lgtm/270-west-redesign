@@ -108,7 +108,7 @@ if ( function_exists( 'acf_get_field_groups' ) ) {
 // The three archives must be template-driven and list live entries, not a hand-built list.
 try {
 	// Guides: only the approved copy is published (the rest sit in draft until each write-up is signed off).
-	foreach ( [ 'resources/guides' => 1, 'resources/stories' => 2, 'resources/news' => 5 ] as $path => $min ) {
+	foreach ( [ 'resources/guides' => 1, 'resources/stories' => 2, 'resources/news' => 4 ] as $path => $min ) {
 		$page = get_page_by_path( $path, OBJECT, 'page' );
 		if ( ! $page ) { throw new RuntimeException( "no page at /{$path}/" ); }
 		$is_php  = 'template-resource-archive.php' === get_post_meta( $page->ID, '_wp_page_template', true );

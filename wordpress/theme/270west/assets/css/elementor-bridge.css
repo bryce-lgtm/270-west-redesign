@@ -88,9 +88,9 @@ body:not(.elementor-editor-active) :where(.w-html > .elementor-shortcode) { disp
 .w-faq .e-n-accordion-item p { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 16px 0 0; max-width: 720px; }
 /* The header logo is an Image widget: the prototype's .logo-full class lands on the wrapper, so its
    sizing is restated on the <img> inside (an SVG with only a viewBox has no size of its own). */
-.site-header .logo-full > img { display: block; height: 44px; width: auto; }
-.site-header.is-scrolled .logo-full > img { height: 38px; }
-@media (max-width: 900px) { .site-header .logo-full > img, .site-header.is-scrolled .logo-full > img { height: 36px; } }
+.site-header .logo-full > img { display: block; height: 54px; width: auto; }
+.site-header.is-scrolled .logo-full > img { height: 44px; }
+@media (max-width: 900px) { .site-header .logo-full > img, .site-header.is-scrolled .logo-full > img { height: 42px; } }
 /* Video cards: the poster <button> is a linked container; the poster image sits inside a
    (display: contents) Image widget, so the prototype's child selector is restated here. */
 a.w-con.video-card { text-decoration: none; }

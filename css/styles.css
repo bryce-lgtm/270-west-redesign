@@ -1891,3 +1891,18 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
 .site-footer .footer-col-items a[aria-current] { color: #fff; font-weight: 600; }
 /* Checker badges and progress line keep their capitals via CSS (the words themselves are sentence case so they translate). */
 .quiz-badges, .quiz-nav { text-transform: uppercase; }
+
+/* ── Review round 2 (Oct 2026) ── */
+/* Larger header logo */
+.site-header .logo-full, .site-header .logo-full > img { height: 54px; }
+.site-header.is-scrolled .logo-full, .site-header.is-scrolled .logo-full > img { height: 44px; }
+@media (max-width: 900px) {
+  .site-header .logo-full, .site-header.is-scrolled .logo-full,
+  .site-header .logo-full > img, .site-header.is-scrolled .logo-full > img { height: 42px; }
+}
+/* Approach steps no longer carry time tags */
+.svc-approach-step { grid-template-columns: 60px 1fr; }
+@media (max-width: 900px) { .svc-approach-step { grid-template-columns: 1fr; } }
+/* Small text the reviewers flagged: service-card bullets and the lead-magnet meta/footer */
+.service-card-bullet { font-size: 16px; }
+.lm-meta, .lm-foot { font-size: 16px; }

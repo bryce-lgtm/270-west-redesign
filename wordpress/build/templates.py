@@ -228,7 +228,7 @@ def single_library():
             con('article-rail', [
                 con('article-rail-cta', [
                     text('Need help?', 'article-rail-label'),
-                    heading('Talk to an advisor — free.', 'h3', 'article-rail-h'),
+                    heading('Talk to a benefits navigator — free.', 'h3', 'article-rail-h'),
                     text('Two-minute VAC status check. No pressure, no obligation.', 'article-rail-p'),
                     button('Check your VAC status →', '/vac-status-checker/', 'article-rail-btn'),
                 ]),

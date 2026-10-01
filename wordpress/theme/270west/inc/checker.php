@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 function w270_checker_questions() {
 	return [
 		'served' => [ 30, 'Service' ],
-		'rating' => [ 31, 'VAC disability rating' ],
+		'rating' => [ 31, 'VAC disability assessment' ],
 		'health' => [ 32, 'Service-related health issues' ],
 		'filed'  => [ 33, 'Previous VAC claim' ],
 		'goal'   => [ 34, 'Looking to' ],
@@ -71,7 +71,7 @@ function w270_checker_submit( WP_REST_Request $req ) {
 		return new WP_Error( 'w270_checker_invalid', 'Please enter your name and a valid email address.', [ 'status' => 400 ] );
 	}
 	if ( true !== ( $p['consent'] ?? false ) ) {
-		return new WP_Error( 'w270_checker_consent', 'Please agree to be contacted so an advisor can follow up.', [ 'status' => 400 ] );
+		return new WP_Error( 'w270_checker_consent', 'Please agree to be contacted so a benefits navigator can follow up.', [ 'status' => 400 ] );
 	}
 	$parts = preg_split( '/\s+/', $name, 2 );
 
@@ -162,7 +162,7 @@ function w270_ui_strings() {
 		"quiz.restart" => "Restart",
 		"quiz.title" => "VAC Status Check",
 		"quiz.err.invalid" => "Please enter your name and a valid email address.",
-		"quiz.err.consent" => "Please agree to be contacted so an advisor can follow up.",
+		"quiz.err.consent" => "Please agree to be contacted so a benefits navigator can follow up.",
 		"quiz.err.busy" => "Too many submissions. Please try again in a few minutes.",
 		"quiz.err.failed" => "We could not send your answers. Please try again.",
 		"video.close" => "Close",
@@ -173,8 +173,8 @@ function w270_ui_strings() {
 		"quiz.served.1" => "Reserve Force",
 		"quiz.served.2" => "RCMP",
 		"quiz.served.3" => "No",
-		"quiz.rating.q" => "Do you currently have a VAC disability rating?",
-		"quiz.rating.0" => "No rating",
+		"quiz.rating.q" => "Do you currently have a VAC disability assessment?",
+		"quiz.rating.0" => "No assessment yet",
 		"quiz.rating.1" => "0–30%",
 		"quiz.rating.2" => "40–70%",
 		"quiz.rating.3" => "80%+",
@@ -188,7 +188,7 @@ function w270_ui_strings() {
 		"quiz.filed.2" => "No",
 		"quiz.goal.q" => "What are you looking to do?",
 		"quiz.goal.0" => "File a new claim",
-		"quiz.goal.1" => "Increase an existing rating",
+		"quiz.goal.1" => "Reassess a condition that has worsened",
 		"quiz.goal.2" => "Appeal a denial",
 		"quiz.goal.3" => "Not sure yet",
 		"quiz.consent" => w270_checker_consent_text(),

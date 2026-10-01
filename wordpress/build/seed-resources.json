@@ -184,7 +184,7 @@
       "type": "stories",
       "order": 90,
       "title": "Having the skills did not make it easy to do alone",
-      "seo_h1": "Robyn: a Royal Canadian Navy veteran’s VAC claims story",
+      "seo_h1": "Robyn: A Royal Canadian Navy veteran’s VAC claims story",
       "summary": "Robyn knew how to research, write and work through complex documents. As a military legal officer, those skills had been central to her career.",
       "pull_quote": "I didn’t feel like a number. I didn’t feel like a file.",
       "veteran_name": "Robyn",
@@ -199,7 +199,7 @@
       "type": "stories",
       "order": 91,
       "title": "Room to tell the whole story",
-      "seo_h1": "Michael: a Canadian Army veteran’s VAC claims and appeals story",
+      "seo_h1": "Michael: A Canadian Army veteran’s VAC claims and appeals story",
       "summary": "Music brought Michael into military life. As a young cadet and trumpet player, he found a path that allowed him to serve while doing something he loved.",
       "pull_quote": "If I didn’t think the process was great, I certainly wouldn’t be recommending it to my own brother.",
       "veteran_name": "Michael",
@@ -214,7 +214,7 @@
       "type": "stories",
       "order": 92,
       "title": "Finding a way forward after he had stopped trying",
-      "seo_h1": "Todd: a Royal Canadian Navy veteran’s VAC claims and appeals story",
+      "seo_h1": "Todd: A Royal Canadian Navy veteran’s VAC claims and appeals story",
       "summary": "Todd had put considerable effort into his first disability claim. He understood forms, wrote carefully and believed he had explained his shoulder injury clearly.",
       "pull_quote": "I didn’t have to coordinate. I got an appointment. I showed up.",
       "veteran_name": "Todd",
@@ -229,7 +229,7 @@
       "type": "stories",
       "order": 93,
       "title": "A familiar voice through loss and uncertainty",
-      "seo_h1": "Norma: a veteran’s widow on VAC claims and family support",
+      "seo_h1": "Norma: A veteran’s widow on VAC claims and family support",
       "summary": "When Norma talks about her husband, Ralph, she returns to his kindness.",
       "pull_quote": "She offers a friendly hand any time I need it.",
       "veteran_name": "Norma",
@@ -244,7 +244,7 @@
       "type": "stories",
       "order": 94,
       "title": "Discovering support she did not know was there",
-      "seo_h1": "Leanne: a Royal Canadian Navy veteran’s VAC claims story",
+      "seo_h1": "Leanne: A Royal Canadian Navy veteran’s VAC claims story",
       "summary": "Leanne first saw 270 West as a place she could refer other veterans. She had not considered that she might need our support herself.",
       "pull_quote": "I felt looked after.",
       "veteran_name": "Leanne",
@@ -259,8 +259,8 @@
       "type": "stories",
       "order": 95,
       "title": "Making time for the support he had put off",
-      "seo_h1": "Michael: a Royal Canadian Air Force veteran’s VAC claims story",
-      "summary": "Michael had been meaning to complete his Veterans Affairs Canada paperwork. But retirement had brought new responsibilities, and the forms kept slipping down his list.",
+      "seo_h1": "Michael: A Royal Canadian Air Force veteran’s VAC claims story",
+      "summary": "Michael had been meaning to complete his Veterans Affairs Canada paperwork. Retirement, however, had brought new responsibilities, and the forms kept slipping down his to-do list.",
       "pull_quote": "They opened the door to Veterans Affairs for me.",
       "veteran_name": "Michael",
       "veteran_role": "Captain (Ret’d), Royal Canadian Air Force",
@@ -284,7 +284,7 @@
       "order": 201,
       "date": "2026-09-02",
       "news_category": "Community",
-      "title": "Where to find us this Remembrance season",
+      "title": "Where to find us during Veterans’ Week",
       "summary": "Legion events, family days and wellness gatherings we’re supporting across Nova Scotia this fall."
     },
     {
@@ -298,12 +298,13 @@
     },
     {
       "slug": "plain-language-guide-published",
+      "status": "draft",
       "type": "news",
       "order": 203,
       "date": "2026-07-30",
       "news_category": "New guide",
       "title": "A plain-language guide to VAC’s main benefits programs",
-      "summary": "Our most-requested explainer, updated for 2026, covering the four programmes veterans ask us about most.",
+      "summary": "A plain-language explainer, updated for 2026, covering the four programs veterans ask us about most.",
       "external_link": "/resources/guides/vac-benefits-programs-guide/"
     },
     {
@@ -312,8 +313,8 @@
       "order": 204,
       "date": "2026-07-08",
       "news_category": "Team",
-      "title": "Meet the advisors joining us in the Ottawa Valley",
-      "summary": "Two new claims advisors have joined the team, adding capacity for veterans in Petawawa and Pembroke."
+      "title": "Meet the benefits navigators joining us in the Ottawa Valley",
+      "summary": "Two new benefits navigators have joined the team, adding capacity for veterans in Petawawa and Pembroke."
     }
   ]
 }
