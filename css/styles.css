@@ -1662,7 +1662,6 @@ strong, b { font-weight: 500; }
 @media (max-width: 700px) { .commitments-grid { grid-template-columns: 1fr; } }
 .about-founder-h { font-family: var(--font-serif); font-size: clamp(30px, 3.4vw, 44px); font-weight: 400; line-height: 1.2; margin: 0 0 8px; }
 .about-founder-sub { font-family: var(--font-serif); font-size: 26px; font-weight: 400; line-height: 1.25; letter-spacing: -0.01em; margin: 40px 0 16px; }
-.commitments-grid::after { content: ""; background: var(--bg); }
 
 /* ── CONSULT PAGE: two options, side by side ── */
 .consult-options { padding: 40px 80px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
