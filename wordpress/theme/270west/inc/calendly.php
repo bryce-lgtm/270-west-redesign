@@ -146,7 +146,7 @@ function w270_calendly_values( array $p ) {
 	$where = [ 'outbound_call' => 'Phone call (we call)', 'inbound_call' => 'Phone call (they call)', 'physical' => 'In person', 'zoom' => 'Zoom', 'google_conference' => 'Google Meet', 'microsoft_teams_conference' => 'Microsoft Teams' ][ $location['type'] ?? '' ] ?? ( $location['type'] ?? '' );
 
 	// Creatio's Commentary gets one line, like the checker's.
-	$line = [ 'Calendly booking' . ( ! empty( $p['old_invitee'] ) ? ' (rescheduled)' : '' ) ];
+	$line = [ 'Calendly call request, to be confirmed' . ( ! empty( $p['old_invitee'] ) ? ' (rescheduled)' : '' ) ];
 	if ( $start ) { $line[] = 'When: ' . $start; }
 	if ( $where ) { $line[] = 'How: ' . $where; }
 	if ( '' === $phone && '' !== $raw_phone ) { $line[] = 'Phone: ' . $clean( $raw_phone, 40 ); }
