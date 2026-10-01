@@ -170,9 +170,15 @@ function w270_calendly_api( $method, $path, $token, $body = null ) {
 	return [ (int) wp_remote_retrieve_response_code( $r ), (array) json_decode( wp_remote_retrieve_body( $r ), true ) ];
 }
 
+/** Calendly answers a token without the right permissions with 403 and a required_scopes list: name them. */
+function w270_calendly_scopes_hint( array $res ) {
+	$scopes = (array) ( $res['required_scopes'] ?? $res['details']['required_scopes'] ?? [] );
+	return $scopes ? ' Create a token with these scopes: ' . implode( ', ', array_map( 'sanitize_text_field', $scopes ) ) . '.' : '';
+}
+
 function w270_calendly_subscribe( $token ) {
 	[ $code, $me ] = w270_calendly_api( 'GET', '/users/me', $token );
-	if ( 200 !== $code ) { return 'Calendly did not accept the token (' . $code . ': ' . ( $me['message'] ?? 'unknown error' ) . ').'; }
+	if ( 200 !== $code ) { return 'Calendly did not accept the token (' . $code . ': ' . ( $me['message'] ?? 'unknown error' ) . ').' . w270_calendly_scopes_hint( $me ); }
 	$user = $me['resource']['uri'] ?? '';
 	$org  = $me['resource']['current_organization'] ?? '';
 	$base = [ 'url' => w270_calendly_webhook_url(), 'events' => [ 'invitee.created', 'invitee.canceled' ], 'organization' => $org, 'signing_key' => w270_calendly_signing_key() ];
@@ -190,7 +196,7 @@ function w270_calendly_subscribe( $token ) {
 	}
 	$detail = $res['message'] ?? '';
 	if ( ! empty( $res['details'] ) ) { $detail .= ' ' . wp_json_encode( $res['details'] ); }
-	return 'Calendly refused the webhook (' . $code . ': ' . trim( $detail ) . '). Webhooks need a paid Calendly plan (Standard or above).';
+	return 'Calendly refused the webhook (' . $code . ': ' . trim( $detail ) . ').' . ( 403 === $code ? w270_calendly_scopes_hint( $res ) : ' Webhooks need a paid Calendly plan (Standard or above).' );
 }
 
 function w270_calendly_settings_page() {
@@ -215,7 +221,7 @@ function w270_calendly_settings_page() {
 			<tr><th scope="row">Booking form</th><td><?php echo w270_calendly_form_id() ? '<a href="' . esc_url( admin_url( 'admin.php?page=gf_entries&id=' . w270_calendly_form_id() ) ) . '">View entries</a>' : 'Not imported'; ?></td></tr>
 		</table>
 		<h2>Connect</h2>
-		<p>In Calendly, go to <strong>Integrations &amp; apps → API and webhooks</strong>, generate a personal access token, and paste it below. It is used once to create the webhook and is not saved.</p>
+		<p>In Calendly, go to <strong>Integrations &amp; apps → API and webhooks</strong>, generate a personal access token with the <strong>users:read</strong> and <strong>webhooks:write</strong> scopes, and paste it below. It is used once to create the webhook and is not saved.</p>
 		<form method="post">
 			<?php wp_nonce_field( 'w270_calendly' ); ?>
 			<input type="password" name="w270_calendly_token" class="regular-text" autocomplete="off" placeholder="Personal access token" />
