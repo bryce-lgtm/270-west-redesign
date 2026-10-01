@@ -150,7 +150,8 @@ add_action( 'wp_enqueue_scripts', function () {
 }, 21 );
 
 add_filter( 'wp_robots', function ( $robots ) {
-	if ( w270_is_landing() ) {
+	// Landing pages, and the page Calendly redirects to after a booking request.
+	if ( w270_is_landing() || is_page( 'call-request-received' ) ) {
 		$robots['noindex'] = true;
 		$robots['follow']  = true;
 		unset( $robots['max-image-preview'], $robots['max-snippet'], $robots['max-video-preview'] );
@@ -163,6 +164,8 @@ add_filter( 'wp_sitemaps_posts_query_args', function ( $args, $post_type ) {
 	$args['meta_query'] = array_merge( $args['meta_query'] ?? [], [
 		[ 'key' => '_w270_landing', 'compare' => 'NOT EXISTS' ],
 	] );
+	$received = get_page_by_path( 'call-request-received' );
+	if ( $received ) { $args['post__not_in'] = array_merge( $args['post__not_in'] ?? [], [ $received->ID ] ); }
 	return $args;
 }, 10, 2 );
 

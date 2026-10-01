@@ -28,6 +28,7 @@ function w270_page_paths() {
 		'stories' => '/resources/stories/', 'guides' => '/resources/guides/', 'news' => '/resources/news/',
 		'contact' => '/contact/', 'faq' => '/faq/', 'vac-status-checker' => '/vac-status-checker/', 'book-a-consult' => '/book-a-consult/',
 		'privacy' => '/privacy/', 'terms' => '/terms/', 'accessibility' => '/accessibility/',
+		'call-request-received' => '/call-request-received/',
 		// Advertising landing pages: noindex, no site chrome, never linked from a menu.
 		'vac-claim-help' => '/vac-claim-help/', 'vac-benefits-simplified' => '/vac-benefits-simplified/',
 		'what-to-expect' => '/what-to-expect/',

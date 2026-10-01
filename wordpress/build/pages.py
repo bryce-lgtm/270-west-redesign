@@ -16,6 +16,8 @@ PAGES = [
     ('privacy.html', 'privacy', None),
     ('terms.html', 'terms', None),
     ('accessibility.html', 'accessibility', None),
+    # Where Calendly redirects after a booking request. noindex (functions.php), not in any menu.
+    ('call-request-received.html', 'call-request-received', None),
 ]
 
 # Advertising landing pages. They carry their own header and footer instead of the site nav,
