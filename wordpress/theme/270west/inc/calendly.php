@@ -32,6 +32,13 @@ function w270_calendly_signing_key() {
 	return $key;
 }
 
+/** Keep the last 10 deliveries (time, event, outcome) for the Settings → Calendly page. No personal data. */
+function w270_calendly_log( $event, $outcome ) {
+	$log = (array) get_option( 'w270_calendly_log', [] );
+	array_unshift( $log, [ 'time' => current_time( 'mysql' ), 'event' => (string) $event, 'outcome' => (string) $outcome ] );
+	update_option( 'w270_calendly_log', array_slice( $log, 0, 10 ), false );
+}
+
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'w270/v1', '/calendly', [
 		'methods'             => 'POST',
@@ -56,13 +63,15 @@ function w270_calendly_signature_ok( $header, $body, $key, $now = null ) {
 }
 
 function w270_calendly_receive( WP_REST_Request $req ) {
+	$data = json_decode( $req->get_body(), true );
 	if ( ! w270_calendly_signature_ok( $req->get_header( 'calendly_webhook_signature' ), $req->get_body(), w270_calendly_signing_key() ) ) {
+		w270_calendly_log( $data['event'] ?? '?', $req->get_header( 'calendly_webhook_signature' ) ? 'rejected: signature did not match' : 'rejected: no signature' );
 		return new WP_Error( 'w270_calendly_signature', 'Invalid signature.', [ 'status' => 401 ] );
 	}
-	$data = json_decode( $req->get_body(), true );
 	// Only new bookings become leads. Cancellations (and the cancel half of a reschedule) are acknowledged
 	// so Calendly does not retry them.
 	if ( 'invitee.created' !== ( $data['event'] ?? '' ) ) {
+		w270_calendly_log( $data['event'] ?? '?', 'ignored (not a new booking)' );
 		return [ 'ok' => true, 'ignored' => $data['event'] ?? '' ];
 	}
 	$payload = (array) ( $data['payload'] ?? [] );
@@ -70,7 +79,7 @@ function w270_calendly_receive( WP_REST_Request $req ) {
 	// Calendly retries anything that is not a 2xx; never create the same booking twice.
 	$uri  = (string) ( $payload['uri'] ?? '' );
 	$seen = 'w270_cal_' . md5( $uri );
-	if ( '' !== $uri && get_transient( $seen ) ) { return [ 'ok' => true, 'duplicate' => true ]; }
+	if ( '' !== $uri && get_transient( $seen ) ) { w270_calendly_log( 'invitee.created', 'duplicate, skipped' ); return [ 'ok' => true, 'duplicate' => true ]; }
 
 	$form_id = w270_calendly_form_id();
 	if ( ! class_exists( 'GFAPI' ) || ! $form_id ) {
@@ -86,10 +95,12 @@ function w270_calendly_receive( WP_REST_Request $req ) {
 	}
 	$result = GFAPI::submit_form( $form_id, $values );
 	if ( is_wp_error( $result ) || empty( $result['is_valid'] ) ) {
+		w270_calendly_log( 'invitee.created', 'failed: form submission error' );
 		error_log( 'w270 calendly: submit_form failed: ' . ( is_wp_error( $result ) ? $result->get_error_message() : wp_json_encode( $result['validation_messages'] ?? [] ) ) );
 		return new WP_Error( 'w270_calendly_failed', 'Could not record the booking.', [ 'status' => 500 ] );
 	}
 	if ( '' !== $uri ) { set_transient( $seen, 1, 14 * DAY_IN_SECONDS ); }
+	w270_calendly_log( 'invitee.created', 'saved as entry #' . (int) ( $result['entry_id'] ?? 0 ) . ' and sent to the Creatio feed' );
 	return [ 'ok' => true ];
 }
 
@@ -220,6 +231,17 @@ function w270_calendly_settings_page() {
 			<tr><th scope="row">Status</th><td><?php echo $sub ? esc_html( 'Connected (' . ( $sub['scope'] ?? '' ) . ' scope) on ' . ( $sub['created'] ?? '' ) ) : 'Not connected yet'; ?></td></tr>
 			<tr><th scope="row">Booking form</th><td><?php echo w270_calendly_form_id() ? '<a href="' . esc_url( admin_url( 'admin.php?page=gf_entries&id=' . w270_calendly_form_id() ) ) . '">View entries</a>' : 'Not imported'; ?></td></tr>
 		</table>
+		<h2>Recent deliveries</h2>
+		<?php $log = (array) get_option( 'w270_calendly_log', [] ); ?>
+		<?php if ( ! $log ) : ?>
+			<p>Nothing received yet. Calendly sends a booking here as soon as it is made.</p>
+		<?php else : ?>
+			<table class="widefat striped" style="max-width:820px"><thead><tr><th>Time</th><th>Calendly event</th><th>Outcome</th></tr></thead><tbody>
+			<?php foreach ( $log as $row ) : ?>
+				<tr><td><?php echo esc_html( $row['time'] ); ?></td><td><?php echo esc_html( $row['event'] ); ?></td><td><?php echo esc_html( $row['outcome'] ); ?></td></tr>
+			<?php endforeach; ?>
+			</tbody></table>
+		<?php endif; ?>
 		<h2>Connect</h2>
 		<p>In Calendly, go to <strong>Integrations &amp; apps → API and webhooks</strong>, generate a personal access token with the <strong>users:read</strong> and <strong>webhooks:write</strong> scopes, and paste it below. It is used once to create the webhook and is not saved.</p>
 		<form method="post">
