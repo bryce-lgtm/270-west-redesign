@@ -4323,7 +4323,8 @@
      "notification_conditional_logic": "0",
      "conditionalLogic": null,
      "cc": "",
-     "enableAttachments": false
+     "enableAttachments": false,
+     "isActive": false
     }
    ]
   }
