@@ -60,6 +60,10 @@ function w270_page_by_slug( $slug ) {
 function w270_menu_defs() {
 	$services_children = [ [ 'All services', 'services', 'nav-overview' ], [ 'VAC claims', 'claims' ], [ 'VAC appeals', 'appeals' ], [ 'VAC reassessments', 'reassessment' ], [ 'Ongoing support', 'support' ] ];
 	$resources_children = [ [ 'All resources', 'resources', 'nav-overview' ], [ 'Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ], [ 'FAQ', 'faq' ] ];
+	// Guides and News are switched off for now (pages.py HIDDEN_FEATURES → w270_hidden_features).
+	if ( in_array( 'library', (array) get_option( 'w270_hidden_features', [] ), true ) ) {
+		$resources_children = array_values( array_filter( $resources_children, fn( $c ) => ! in_array( $c[1], [ 'guides', 'news' ], true ) ) );
+	}
 	$main = [
 		[ 'Services', 'services', '', $services_children ],
 		[ 'How It Works', 'how-it-works' ], [ 'About us', 'about' ],
@@ -761,6 +765,12 @@ function w270_main( $argv ) {
 		if ( str_starts_with( $a, '--refresh-templates=' ) ) { $refresh_tpl = array_values( array_filter( explode( ',', substr( $a, 20 ) ) ) ); }
 	}
 	$all = isset( $flags['all'] );
+	// Sections switched off in pages.py (generate.py writes out/features.json); read before pages and menus.
+	if ( file_exists( W270_OUT . '/features.json' ) ) {
+		$hidden = (array) ( json_decode( (string) file_get_contents( W270_OUT . '/features.json' ), true )['hidden'] ?? [] );
+		update_option( 'w270_hidden_features', array_values( $hidden ) );
+		echo 'hidden features: ' . ( $hidden ? implode( ', ', $hidden ) : 'none' ) . "\n";
+	}
 	if ( $all || isset( $flags['media'] ) ) { function_exists( 'w270_import_media' ) && w270_import_media(); }
 	if ( $all || isset( $flags['forms'] ) || $refresh_forms ) { w270_import_forms( $refresh_forms ); }
 	// Templates before pages: the Resources hub's Loop Grids name their loop-item templates.

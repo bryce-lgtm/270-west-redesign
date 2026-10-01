@@ -138,6 +138,48 @@ add_action( 'template_redirect', function () {
 	// Send the old URL to the guide while it is published, otherwise to the Guides archive
 	// (unapproved guides sit in draft, and a redirect into a 404 helps nobody).
 	$post = get_page_by_path( $map[ $path ], OBJECT, 'resource' );
-	$to   = ( $post && 'publish' === $post->post_status ) ? get_permalink( $post ) : home_url( '/resources/guides/' );
+	$to   = ( $post && 'publish' === $post->post_status && ! w270_feature_hidden( 'library' ) ) ? get_permalink( $post ) : home_url( w270_feature_hidden( 'library' ) ? '/resources/' : '/resources/guides/' );
 	wp_redirect( $to, 301 ); exit;
 } );
+
+/* ── Switched-off sections ────────────────────────────────────────────────────
+ * wordpress/build/pages.py HIDDEN_FEATURES is the one switch; the importer copies it into the
+ * w270_hidden_features option. While "library" is hidden (Guides and News, Oct 2026), their menu
+ * items, the story rail's Guides box and their sitemap entries are left out, and their archives and
+ * posts send visitors to /resources/ with a temporary redirect, so the URLs come back unchanged when
+ * the sections are switched on again.
+ */
+function w270_feature_hidden( $feature ) {
+	return in_array( $feature, (array) get_option( 'w270_hidden_features', [] ), true );
+}
+
+/** Resource sub-types that belong to the Guides and News sections. */
+function w270_library_subtypes() {
+	return [ 'guides', 'checklists', 'explainers', 'news' ];
+}
+
+add_action( 'template_redirect', function () {
+	if ( ! w270_feature_hidden( 'library' ) || is_preview() || current_user_can( 'edit_posts' ) ) { return; }
+	$path = trailingslashit( (string) wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) );
+	$path = preg_replace( '#^/fr/#', '/', $path ); // French URLs carry a /fr/ prefix
+	$hidden_archive = (bool) preg_match( '#^/resources/(guides|checklists|explainers|news)/#', $path );
+	$hidden_post    = is_singular( w270_resource_types() ) && in_array( w270_subtype_slug( get_queried_object_id() ), w270_library_subtypes(), true );
+	if ( $hidden_archive || $hidden_post ) {
+		wp_safe_redirect( home_url( '/resources/' ), 302 );
+		exit;
+	}
+}, 4 );
+
+add_filter( 'wp_sitemaps_posts_query_args', function ( $args, $post_type ) {
+	if ( ! w270_feature_hidden( 'library' ) ) { return $args; }
+	if ( in_array( $post_type, w270_resource_types(), true ) ) {
+		$args['tax_query'] = [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => w270_library_subtypes(), 'operator' => 'NOT IN' ] ];
+	}
+	if ( 'page' === $post_type ) {
+		foreach ( [ 'resources/guides', 'resources/news' ] as $p ) {
+			$page = get_page_by_path( $p );
+			if ( $page ) { $args['post__not_in'] = array_merge( $args['post__not_in'] ?? [], [ $page->ID ] ); }
+		}
+	}
+	return $args;
+}, 20, 2 );

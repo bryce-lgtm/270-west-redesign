@@ -11,7 +11,7 @@ import sys
 import uuid
 
 from htmldom import parse
-from pages import PAGES, LANDING_PAGES, LINK_MAP, TITLE_SUFFIX, path_for
+from pages import PAGES, LANDING_PAGES, LINK_MAP, TITLE_SUFFIX, HIDDEN_FEATURES, path_for
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUT = os.path.join(os.path.dirname(__file__), 'out')
@@ -423,8 +423,23 @@ class Converter:
         return el
 
 
+def prune_features(doc):
+    """Drop elements for switched-off sections (pages.HIDDEN_FEATURES): data-feature="x" goes while x is
+    hidden, data-feature-off="x" (its stand-in) goes while x is shown."""
+    def keep(n):
+        f, off = n.attrs.get('data-feature'), n.attrs.get('data-feature-off')
+        return not ((f and f in HIDDEN_FEATURES) or (off and off not in HIDDEN_FEATURES))
+    def walk(node):
+        node.children = [c for c in node.children if c.is_text or keep(c)]
+        for c in node.children:
+            if not c.is_text:
+                walk(c)
+    walk(doc.root)
+    return doc
+
+
 def convert_fragment(html_text, decor=None):
-    doc = parse(html_text)
+    doc = prune_features(parse(html_text))
     conv = Converter(doc, decor)
     return [conv.convert(n) for n in doc.root.elements()]
 
@@ -477,7 +492,7 @@ class TemplateConverter(Converter):
 
 def convert_templates():
     with open(os.path.join(ROOT, 'index.html'), encoding='utf-8') as f:
-        doc = parse(f.read())
+        doc = prune_features(parse(f.read()))
     conv = TemplateConverter(doc, {})
     nodes = {n.tag: n for n in doc.body().elements() if n.tag in ('header', 'footer')}
     out = []
@@ -492,7 +507,7 @@ def convert_templates():
 def convert_page(src_file, slug, parent, landing=False):
     with open(os.path.join(ROOT, src_file), encoding='utf-8') as f:
         source = f.read()
-    doc = parse(source)
+    doc = prune_features(parse(source))
     body = doc.body()
     decor = {}
     for s in body.find(lambda n: n.tag == 'script' and 'src' not in n.attrs):
@@ -533,6 +548,11 @@ def main(argv):
         if only and slug != only:
             continue
         page, warnings = convert_page(src, slug, parent, landing)
+        leaked = [f for f in HIDDEN_FEATURES if f'data-feature="{f}"' in json.dumps(page['elements'], ensure_ascii=False).replace('\\"', '"')]
+        if leaked:
+            # Text and HTML widgets copy their markup from the source, so a hidden element nested inside
+            # one would survive pruning. Mark the enclosing block instead.
+            raise SystemExit(f'{slug}: hidden feature {leaked} is inside a text/HTML widget; mark its parent block')
         with open(os.path.join(OUT, f'{slug}.json'), 'w', encoding='utf-8') as f:
             json.dump(page, f, ensure_ascii=False, indent=1)
         n = sum(1 for _ in _walk(page['elements']))
@@ -548,6 +568,9 @@ def main(argv):
         print('   ', w)
     import templates as resource_templates
     print('resource templates:', ', '.join(resource_templates.build(OUT)))
+    with open(os.path.join(OUT, 'features.json'), 'w', encoding='utf-8') as f:
+        json.dump({'hidden': sorted(HIDDEN_FEATURES)}, f)
+    print('hidden features:', ', '.join(sorted(HIDDEN_FEATURES)) or 'none')
     with open(GENERATED_CSS, 'w', encoding='utf-8') as f:
         f.write(STYLES.css())
     print(f'generated.css: {len(STYLES.rules)} rules')

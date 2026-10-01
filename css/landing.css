@@ -192,6 +192,17 @@
   .lp-stats-branch { border-left: none; padding-left: 0; border-top: 1px solid var(--rule); padding-top: 28px; }
 }
 @media (max-width: 480px) { .lp-stats-branch-row { gap: 16px; } }
+/* Single stat (client total only, Oct 2026): one centred figure with its label beside it. */
+.lp-stats-inner.lp-stats-single { display: flex; justify-content: center; }
+.lp-stats-single .lp-stats-item { flex-direction: row; align-items: center; gap: 32px; }
+.lp-stats-single .lp-stats-num { font-family: var(--font-serif); font-weight: 400; font-size: clamp(56px, 6.4vw, 92px); color: var(--teal, var(--ink)); }
+.lp-stats-single .lp-stats-label { padding-left: 32px; border-left: 1px solid var(--rule); font-family: var(--font-serif);
+  font-size: clamp(20px, 2vw, 26px); line-height: 1.25; color: var(--ink); max-width: 260px; }
+@media (max-width: 480px) {
+  .lp-stats-single .lp-stats-item { gap: 16px; }
+  .lp-stats-single .lp-stats-num { font-size: 52px; }
+  .lp-stats-single .lp-stats-label { padding-left: 16px; font-size: 18px; max-width: 150px; }
+}
 /* Closing form sections (middle and bottom of funnel). Anchored sections clear the sticky header. */
 .lp-form-section .lp-form-card { max-width: 720px; margin: 0 auto; }
 #start, #book-section, #checker, #how { scroll-margin-top: 90px; }

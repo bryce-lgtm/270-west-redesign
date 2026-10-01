@@ -1905,3 +1905,19 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
 /* Small text the reviewers flagged: service-card bullets and the lead-magnet meta/footer */
 .service-card-bullet { font-size: 16px; }
 .lm-meta, .lm-foot { font-size: 16px; }
+/* Single stat on the home photo banner (client total only, Oct 2026): a large figure with its
+   label beside it, divided by a hairline, sitting on the image's lower left. */
+.banner-stats-bar.banner-stat-single { display: flex; align-items: flex-end; }
+.banner-stat-single .banner-stat-hero { display: flex; align-items: center; gap: 28px; }
+.banner-stat-single .banner-stat-num { font-size: clamp(56px, 7vw, 104px); }
+.banner-stat-single .banner-stat-label { margin: 0; padding-left: 28px; border-left: 1px solid rgba(255,255,255,0.4);
+  font-family: var(--font-serif); font-size: clamp(20px, 2vw, 28px); line-height: 1.2; max-width: 260px; color: #fff;
+  text-shadow: 0 2px 14px rgba(8,30,32,0.5); }
+@media (max-width: 900px) {
+  .banner-stat-single .banner-stat-hero { gap: 18px; }
+  .banner-stat-single .banner-stat-num { font-size: 52px; }
+  .banner-stat-single .banner-stat-label { padding-left: 18px; font-size: 18px; max-width: 170px; }
+}
+/* Prototype only: stand-in copy for switched-off sections (pages.py HIDDEN_FEATURES). The generator
+   drops one version or the other, so these attributes never reach WordPress. */
+[data-feature-off] { display: none !important; }

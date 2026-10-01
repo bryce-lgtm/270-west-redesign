@@ -29,6 +29,14 @@ LANDING_PAGES = [
     ('lp-what-to-expect.html', 'what-to-expect'),
 ]
 
+# Site sections switched off for now. Prototype elements marked data-feature="<name>" are left out of
+# the generated pages while <name> is listed here, and elements marked data-feature-off="<name>" (the
+# stand-in copy) are only included while it is. The importer passes the list to WordPress
+# (option w270_hidden_features), which hides the matching menu items, rail boxes and archives.
+#   library: Guides and News, held back until 270 West has reviewed them (Oct 2026).
+#            Remove it from this set and redeploy to bring both sections back.
+HIDDEN_FEATURES = {'library'}
+
 TITLE_SUFFIX = ' — 270 West Consulting'
 
 

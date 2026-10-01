@@ -119,6 +119,7 @@ add_shortcode( 'w270_related', function () {
 // published resources of that sub-type (never the current post), plus a link to the archive.
 add_shortcode( 'w270_rail_links', function ( $atts ) {
 	$a     = shortcode_atts( [ 'type' => 'stories', 'title' => '', 'limit' => 4 ], $atts );
+	if ( 'guides' === $a['type'] && w270_feature_hidden( 'library' ) ) { return ''; } // Guides switched off for now
 	$types = 'guides' === $a['type'] ? [ 'guides', 'checklists', 'explainers' ] : [ 'stories' ];
 	$posts = get_posts( [
 		'post_type'      => 'resource',

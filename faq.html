@@ -31,8 +31,8 @@
       <a href="resources.html" class="nav-dropdown-parent" aria-haspopup="true">Resources <svg class="nav-dropdown-chevron" viewBox="0 0 10 6" width="9" height="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></a>
       <div class="nav-dropdown-menu">
         <a href="stories.html">Stories</a>
-        <a href="guides.html">Guides</a>
-        <a href="news.html">News</a>
+        <a href="guides.html" data-feature="library">Guides</a>
+        <a href="news.html" data-feature="library">News</a>
         <a href="faq.html">FAQ</a>
       </div>
     </div>
@@ -51,8 +51,8 @@
   <a href="about.html">About us</a>
   <a href="resources.html">Resources</a>
   <a href="stories.html" class="mobile-subnav">Stories</a>
-  <a href="guides.html" class="mobile-subnav">Guides</a>
-  <a href="news.html" class="mobile-subnav">News</a>
+  <a href="guides.html" class="mobile-subnav" data-feature="library">Guides</a>
+  <a href="news.html" class="mobile-subnav" data-feature="library">News</a>
   <a href="faq.html" class="mobile-subnav">FAQ</a>
   <a href="contact.html">Contact us</a>
   <a href="consult.html" class="mobile-nav-cta">Book a free call →</a>
@@ -119,9 +119,13 @@
   <div class="faq-group">
     <h2 class="faq-group-h">VAC programs</h2>
     <div>
-      <details class="faq-item" open>
+      <details data-feature="library" class="faq-item" open>
         <summary>What VAC programs can I apply for?<span class="faq-icon"></span></summary>
         <p>There are several main programs: Disability Benefits, Income Replacement Benefit, Career Transition Services, and Caregiver Recognition. See our <a href="resources.html" style="color:var(--accent)">Resources page</a> for guides on each.</p>
+      </details>
+      <details data-feature-off="library" class="faq-item" open>
+        <summary>What VAC programs can I apply for?<span class="faq-icon"></span></summary>
+        <p>There are several main programs: Disability Benefits, Income Replacement Benefit, Career Transition Services, and Caregiver Recognition.</p>
       </details>
       <details class="faq-item" open>
         <summary>What if my VAC claim was already denied?<span class="faq-icon"></span></summary>
