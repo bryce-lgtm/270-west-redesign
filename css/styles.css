@@ -8,7 +8,7 @@
 
 :root {
   /* ── Phase II palette ── */
-  --teal: #4E757B;    /* mid teal — secondary marks, nav CTA */
+  --teal: #4E757B;    /* mid teal — secondary marks */
   --blue: #A0B5C1;    /* pale blue — labels and rules on dark */
   --tan:  #ACA698;    /* warm taupe — the trust strip */
   --sand: #DEE0DD;    /* light warm grey — reversed logo, tints */
@@ -1063,10 +1063,10 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .site-header nav a:not(.nav-cta):hover { color: #fff; }
 .site-header nav a.active { color: #fff; }
 .site-header .nav-cta {
-  background: var(--teal); color: #fff; padding: 11px 18px;
+  background: var(--accent); color: #fff; padding: 11px 18px;
   font-family: var(--font-sans); font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em;
 }
-.site-header .nav-cta:hover { background: var(--accent); }
+.site-header .nav-cta:hover { background: var(--accent-deep); }
 
 /* Dropdown, reversed onto the dark bar */
 .nav-dropdown-menu { background: var(--ink); border: 1px solid rgba(160,181,193,0.28); }
@@ -1215,7 +1215,9 @@ details:not([open]) .faq-icon::after { content: '+'; }
 /* ── RED ON DEEP TEAL ──
    The deck's red compass doesn't hold on the teal ground (the client
    flagged this on the nav). Anywhere the old system put the accent
-   directly on --ink, use the light warm grey or the pale blue instead. */
+   directly on --ink, use the light warm grey or the pale blue instead.
+   That covers red marks and text; a filled red button with white text
+   (the nav CTA) holds, and matches the red CTAs on the rest of the site. */
 .footer-pillar-accent { color: var(--sand); }
 .quiz-result-label { color: var(--blue); }
 .quiz-progress-fill { background: var(--blue); }
