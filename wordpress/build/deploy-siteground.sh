@@ -2,8 +2,10 @@
 # Deploys the 270west theme (with importer) to a SiteGround site through its Git repo, then runs the
 # importer over SSH so pages, media, menus and Elementor settings exist on the server.
 #
-#   wordpress/build/deploy-siteground.sh            # push + import
+#   wordpress/build/deploy-siteground.sh            # push + seed-once import (never overwrites wp-admin edits)
 #   W270_SG_SKIP_IMPORT=1 wordpress/build/deploy-siteground.sh   # push only
+#   W270_SG_FORCE_IMPORT=1 wordpress/build/deploy-siteground.sh  # push + import --force: OVERWRITES pages, menus,
+#                                                                #   kit and settings edited in wp-admin. Back up first.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 SG_USER="${W270_SG_USER:-u3253-6bupzx4ihm7m}"
@@ -46,10 +48,17 @@ fi
 
 # 4. On the server: make sure Elementor + Hello exist, activate the theme, import content.
 [ "${W270_SG_SKIP_IMPORT:-}" = "1" ] && { echo "push done (import skipped)"; exit 0; }
+IMPORT_FLAGS="--all"
+if [ "${W270_SG_FORCE_IMPORT:-}" = "1" ]; then
+  IMPORT_FLAGS="--all --force"
+  echo "WARNING: --force import will overwrite pages, menus, kit and settings edited in wp-admin on $SG_SITE_HOST."
+  echo "         Take a backup in Site Tools (Security > Backups) first. Continuing in 10s, Ctrl-C to abort."
+  sleep 10
+fi
 $SSH "cd '$SG_PATH' && \
   wp plugin is-installed elementor || wp plugin install elementor && wp plugin activate elementor && \
   wp theme is-installed hello-elementor || wp theme install hello-elementor && \
   W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/activate-theme.php && \
-  W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/import.php --all && \
+  W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/import.php $IMPORT_FLAGS && \
   W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/render-check.php"
 echo "SITEGROUND DEPLOY OK — https://$SG_SITE_HOST/"

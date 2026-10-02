@@ -3,6 +3,11 @@
  * 270 West importer. Usage:
  *   "$PHP" -c "$INI" wordpress/build/import.php --all
  *   "$PHP" -c "$INI" wordpress/build/import.php --pages --only=home
+ *   "$PHP" -c "$INI" wordpress/build/import.php --all --force
+ *
+ * Seed-once by default: a page, menu, the Elementor kit or the site settings are written when they
+ * do not exist yet (or, for pages, when they are still byte-for-byte what a previous import wrote).
+ * Anything edited in wp-admin since is left alone and reported. --force overwrites regardless.
  */
 if ( PHP_SAPI !== 'cli' ) { http_response_code( 403 ); exit; } // never runnable over HTTP
 $site = getenv( 'W270_SITE' ) ?: '/Users/Bryce/Local Sites/270-west/app/public';
@@ -12,6 +17,26 @@ require $site . '/wp-load.php';
 wp_set_current_user( 1 );
 
 const W270_OUT = __DIR__ . '/out';
+/** Post meta holding the fingerprint of what the importer last wrote to a page. */
+const W270_PAGE_STAMP = '_w270_import_stamp';
+
+/** True when --force was passed: overwrite content that wp-admin may have edited. */
+function w270_force() {
+	return ! empty( $GLOBALS['w270_force'] );
+}
+
+/** Fingerprint of a page's editable content, so a re-run can tell "untouched since import" from "edited". */
+function w270_page_stamp( $title, $excerpt, $elementor_json ) {
+	return md5( $title . "\0" . $excerpt . "\0" . $elementor_json );
+}
+
+/** True when the page exists and was changed in wp-admin since the importer last wrote it (or predates stamping). */
+function w270_page_edited( $page ) {
+	$stamp = get_post_meta( $page->ID, W270_PAGE_STAMP, true );
+	if ( ! $stamp ) { return true; } // never stamped: imported before stamping existed, or made by hand — do not guess
+	$current = get_post_meta( $page->ID, '_elementor_data', true );
+	return $stamp !== w270_page_stamp( $page->post_title, $page->post_excerpt, is_string( $current ) ? $current : '' );
+}
 // Source photos: the repo's img/ when running from the repo, else the theme's synced copy (server deploys).
 define( 'W270_IMG', is_dir( __DIR__ . '/../../img' ) ? __DIR__ . '/../../img' : __DIR__ . '/../assets/img' );
 
@@ -92,9 +117,15 @@ function w270_menu_item_args( $def, $parent_id ) {
 }
 
 function w270_import_menus() {
-	$locations = [];
+	$locations = (array) get_theme_mod( 'nav_menu_locations', [] );
 	foreach ( w270_menu_defs() as $name => $menu ) {
 		$existing = wp_get_nav_menu_object( $name );
+		if ( $existing && ! w270_force() ) {
+			// Menus belong to wp-admin once they exist: rebuilding would drop every item added there.
+			if ( empty( $locations[ $menu['location'] ] ) ) { $locations[ $menu['location'] ] = $existing->term_id; }
+			echo "menu {$name}: already present, left as-is (--force rebuilds)\n";
+			continue;
+		}
 		$menu_id  = $existing ? $existing->term_id : wp_create_nav_menu( $name );
 		foreach ( wp_get_nav_menu_items( $menu_id ) ?: [] as $old ) { wp_delete_post( $old->ID, true ); }
 		foreach ( $menu['items'] as $def ) {
@@ -108,6 +139,10 @@ function w270_import_menus() {
 }
 
 function w270_import_settings() {
+	if ( get_option( 'w270_settings_seeded' ) && ! w270_force() ) {
+		echo "settings: already seeded, left as-is (--force rewrites)\n";
+		return;
+	}
 	update_option( 'blogname', '270 West Consulting' );
 	update_option( 'blogdescription', 'VAC Claims Support for Canadian Veterans' );
 	update_option( 'permalink_structure', '/%postname%/' );
@@ -118,6 +153,7 @@ function w270_import_settings() {
 		update_option( 'show_on_front', 'page' );
 		update_option( 'page_on_front', $home->ID );
 	}
+	update_option( 'w270_settings_seeded', 1, false );
 	flush_rewrite_rules();
 	echo "settings: ok\n";
 }
@@ -183,6 +219,10 @@ function w270_import_pages( $only = null ) {
 				$parent_id = $parent->ID;
 			}
 			$existing = w270_page_by_slug( $slug );
+			if ( $existing && ! w270_force() && w270_page_edited( $existing ) ) {
+				echo "page {$slug}: #{$existing->ID} edited in wp-admin since import, left as-is (--force overwrites)\n";
+				continue;
+			}
 			$post = [
 				'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $def['title'], 'post_name' => $slug,
 				'post_parent' => $parent_id, 'post_excerpt' => $def['excerpt'], 'post_content' => '',
@@ -190,10 +230,14 @@ function w270_import_pages( $only = null ) {
 			$pid = $existing ? wp_update_post( $post + [ 'ID' => $existing->ID ], true ) : wp_insert_post( $post, true );
 			if ( is_wp_error( $pid ) ) { throw new RuntimeException( $pid->get_error_message() ); }
 			$elements = w270_resolve( $def['elements'], $assets );
+			$json     = wp_json_encode( $elements, JSON_UNESCAPED_UNICODE );
 			update_post_meta( $pid, '_elementor_edit_mode', 'builder' );
 			update_post_meta( $pid, '_elementor_template_type', 'wp-page' );
 			update_post_meta( $pid, '_elementor_version', ELEMENTOR_VERSION );
-			update_post_meta( $pid, '_elementor_data', wp_slash( wp_json_encode( $elements, JSON_UNESCAPED_UNICODE ) ) );
+			update_post_meta( $pid, '_elementor_data', wp_slash( $json ) );
+			// Stamp the exact content written, so the next run can tell an untouched page from an edited one.
+			$saved = get_post( $pid );
+			update_post_meta( $pid, W270_PAGE_STAMP, w270_page_stamp( $saved->post_title, $saved->post_excerpt, $json ) );
 			update_post_meta( $pid, '_elementor_page_settings', $def['page_settings'] );
 			if ( ! empty( $def['landing'] ) ) {
 				update_post_meta( $pid, '_w270_landing', 1 );
@@ -210,6 +254,10 @@ function w270_import_pages( $only = null ) {
 }
 
 function w270_import_kit() {
+	if ( get_option( 'w270_kit_seeded' ) && ! w270_force() ) {
+		echo "kit: already seeded, left as-is (--force rewrites)\n";
+		return;
+	}
 	$kit  = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
 	$typo = fn( $id, $title, $family, $weight, $style = 'normal' ) => [
 		'_id' => $id, 'title' => $title, 'typography_typography' => 'custom',
@@ -239,6 +287,7 @@ function w270_import_kit() {
 		'container_padding' => [ 'unit' => 'px', 'top' => '0', 'right' => '0', 'bottom' => '0', 'left' => '0', 'isLinked' => true ],
 		'space_between_widgets' => [ 'unit' => 'px', 'size' => 0, 'column' => '0', 'row' => '0', 'isLinked' => true ],
 	] );
+	update_option( 'w270_kit_seeded', 1, false );
 	echo "kit: ok\n";
 }
 
@@ -536,6 +585,8 @@ function w270_main( $argv ) {
 	$only  = null;
 	foreach ( $argv as $a ) { if ( str_starts_with( $a, '--only=' ) ) { $only = substr( $a, 7 ); } }
 	$all = isset( $flags['all'] );
+	$GLOBALS['w270_force'] = isset( $flags['force'] );
+	if ( w270_force() ) { echo "--force: overwriting pages, menus, kit and settings even if edited in wp-admin\n"; }
 	if ( $all || isset( $flags['media'] ) ) { function_exists( 'w270_import_media' ) && w270_import_media(); }
 	if ( $all || isset( $flags['forms'] ) ) { w270_import_forms(); }
 	if ( $all || isset( $flags['pages'] ) ) { function_exists( 'w270_import_pages' ) && w270_import_pages( $only ); }

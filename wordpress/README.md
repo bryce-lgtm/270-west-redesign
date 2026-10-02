@@ -37,8 +37,12 @@ means every classed element has the same box, display and typography as the prot
   `a.btn-*` → Button; `img` → Image (Media Library attachment); `svg`/`form`/`details`/`data-photo`/
   quiz & consult shells → HTML widget; element with block children → Container; a div of unclassed
   `p`/`h2`/lists → one rich Text Editor.
-- Re-running the importer updates pages in place (keyed by slug) and **overwrites edits made in
-  Elementor**. Once content editing starts in WordPress, stop re-importing those pages.
+- Re-running the importer is safe by default. Pages are keyed by slug and stamped with a fingerprint
+  of what the importer wrote; a page that still matches its stamp is updated in place, one that was
+  edited in Elementor (or predates stamping) is skipped and reported. Menus, the Elementor kit and the
+  site settings are written once and then left to wp-admin. `--force` overwrites all of them: on
+  SiteGround that is `W270_SG_FORCE_IMPORT=1 wordpress/build/deploy-siteground.sh`, locally
+  `W270_FORCE_IMPORT=1 build/build.sh`. Take a Site Tools backup before forcing.
 
 ## Resources (custom post types)
 
@@ -53,7 +57,7 @@ The theme renders them: `single-{guide,checklist,explainer}.php`, `template-reso
 Resources page) and `template-parts/resource/*`. `import.php --resources` seeds the topics and the 15
 prototype resources (`seed-resources.json`; the featured guide's body comes from `article.html` via
 `seed_article.py`), assigns the template and retires the old article page (its URL redirects).
-Re-running `--resources` overwrites the seeded posts by slug.
+Re-running `--resources` leaves existing posts untouched (matched by slug) and only adds missing ones.
 
 ## Follow-ups
 
