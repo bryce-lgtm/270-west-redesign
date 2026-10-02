@@ -137,7 +137,7 @@ function w270_ui_strings() {
 	return [
 		"quiz.intro.label" => "Step 01 · Intake",
 		"quiz.intro.h" => "Where are you in your VAC benefits process?",
-		"quiz.intro.lead" => "Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We’ll get back to you with a clear next step.",
+		"quiz.intro.lead" => "Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We will get back to you with a clear next step.",
 		"quiz.intro.start" => "Start now →",
 		"quiz.badge.time" => "2 min",
 		"quiz.badge.private" => "Confidential",

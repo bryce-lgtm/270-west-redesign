@@ -221,7 +221,7 @@ function initQuiz(containerId) {
       body = `
         <div class="quiz-step-label">${esc(t('quiz.intro.label', 'Step 01 · Intake'))}</div>
         <div class="quiz-h3">${esc(t('quiz.intro.h', 'Where are you in your VAC benefits process?'))}</div>
-        <div class="quiz-lead">${esc(t('quiz.intro.lead', 'Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We’ll get back to you with a clear next step.'))}</div>
+        <div class="quiz-lead">${esc(t('quiz.intro.lead', 'Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We will get back to you with a clear next step.'))}</div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <button class="quiz-start-btn" onclick="quizGo(1)">${esc(t('quiz.intro.start', 'Start now →'))}</button>
           <div class="quiz-badges"><span>● ${esc(t('quiz.badge.time', '2 min'))}</span><span>● ${esc(t('quiz.badge.private', 'Confidential'))}</span><span>● ${esc(t('quiz.badge.free', 'No cost'))}</span></div>
@@ -379,7 +379,7 @@ function initConsultWidget(containerId) {
       container.innerHTML = `<div class="consult-widget">
         <div class="consult-header"><span>Benefits Analysis Consult</span><span>30 min · free</span></div>
         <h3 class="consult-h3">Book a free 30-minute consult.</h3>
-        <p class="consult-lead">One-on-one with a 270 West benefits navigator. We'll review your situation, walk through which VAC programs may apply, and answer your questions. No obligation.</p>
+        <p class="consult-lead">One-on-one with a 270 West benefits navigator. We will review your situation, walk through which VAC programs may apply, and answer your questions. No obligation.</p>
         <div class="consult-advisor-row">
           <div class="consult-avatars">
             <span class="consult-avatar" style="background:var(--olive)">JM</span>
@@ -400,7 +400,7 @@ function initConsultWidget(containerId) {
         <div class="consult-header"><span>Benefits Analysis Consult</span><span>30 min · free</span></div>
         <button class="consult-back" onclick="consultBack()">← BACK</button>
         <h3 class="consult-h3">Hold your spot.</h3>
-        <p class="consult-lead"><strong>${slot.date} · ${time} AT</strong>. We'll send a calendar invite and call link.</p>
+        <p class="consult-lead"><strong>${slot.date} · ${time} AT</strong>. We will send a calendar invite and call link.</p>
         <div class="consult-fields">
           <div class="consult-field consult-field-first"><label class="consult-field-label" for="ci-name">Full name</label><input type="text" id="ci-name" value="${info.name}" oninput="consultInfo('name',this.value)" placeholder="Your name"/></div>
           <div class="consult-field"><label class="consult-field-label" for="ci-email">Email</label><input type="email" id="ci-email" value="${info.email}" oninput="consultInfo('email',this.value)" placeholder="you@example.ca"/></div>
