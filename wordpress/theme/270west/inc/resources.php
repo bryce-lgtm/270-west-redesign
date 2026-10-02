@@ -50,8 +50,15 @@ function w270_type_label( int $post_id, bool $featured = false ) {
 	return function_exists( 'w270c_type_label' ) ? w270c_type_label( $post_id, $featured ) : 'Resource';
 }
 
+/**
+ * Reading time in minutes, computed from the body at 200 words a minute (never below 1).
+ * Nothing to set in wp-admin: it follows the copy as it is edited.
+ */
 function w270_read_time( $post_id ) {
-	return max( 0, (int) w270_field( 'read_time', $post_id ) );
+	$post = get_post( $post_id );
+	if ( ! $post ) { return 0; }
+	$words = str_word_count( wp_strip_all_tags( strip_shortcodes( $post->post_content ) ) );
+	return max( 1, (int) ceil( $words / 200 ) );
 }
 
 function w270_topic( $post_id ) {
@@ -71,7 +78,9 @@ function w270_related( $post_id ) {
 
 /** Adds the prototype's article classes and h-N ids to resource content (runs after wpautop). */
 function w270_article_classes( $content ) {
-	if ( ! is_singular( w270_resource_types() ) || ! in_the_loop() ) { return $content; }
+	// The queried resource's own body, whether rendered by the PHP loop or by an Elementor Pro
+	// single template (which runs outside the loop, so in_the_loop() would be false there).
+	if ( ! is_singular( w270_resource_types() ) || get_the_ID() !== get_queried_object_id() ) { return $content; }
 	$i = 0;
 	$content = preg_replace_callback( '/<h2\b([^>]*)>/i', function ( $m ) use ( &$i ) {
 		$attrs = $m[1];
@@ -106,10 +115,71 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_style( 'w270-resources', W270_ASSETS . '/css/resources.css', [ 'w270-styles' ], filemtime( $dir . '/assets/css/resources.css' ) );
 }, 25 );
 
+// A resource reached under the wrong sub-type folder (e.g. the old /resources/explainers/x/ after it
+// moved to Guides) is the same post; send it to its real address so there is one URL per resource.
+add_action( 'template_redirect', function () {
+	if ( ! is_singular( w270_resource_types() ) || is_preview() ) { return; }
+	$want = wp_parse_url( get_permalink( get_queried_object_id() ), PHP_URL_PATH );
+	$have = trailingslashit( wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) );
+	if ( $want && $have !== $want ) { wp_safe_redirect( get_permalink( get_queried_object_id() ), 301 ); exit; }
+}, 5 );
+
 // The article used to be a page under /resources/; it is now the featured guide.
 add_action( 'template_redirect', function () {
 	if ( ! is_404() ) { return; }
-	$map  = [ '/resources/vac-benefits-programs-guide/' => '/resources/guides/vac-benefits-programs-guide/' ];
+	$map  = [ '/resources/vac-benefits-programs-guide/' => 'vac-benefits-programs-guide' ];
 	$path = trailingslashit( parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) );
-	if ( isset( $map[ $path ] ) ) { wp_redirect( home_url( $map[ $path ] ), 301 ); exit; }
+	// A resource moved to another sub-type (e.g. /resources/explainers/x/ -> /resources/guides/x/).
+	if ( ! isset( $map[ $path ] ) && preg_match( '#^/resources/[a-z-]+/([a-z0-9-]+)/$#', $path, $m ) ) {
+		$moved = get_page_by_path( $m[1], OBJECT, w270_resource_types() );
+		if ( $moved && 'publish' === $moved->post_status ) { wp_redirect( get_permalink( $moved ), 301 ); exit; }
+	}
+	if ( ! isset( $map[ $path ] ) ) { return; }
+	// Send the old URL to the guide while it is published, otherwise to the Guides archive
+	// (unapproved guides sit in draft, and a redirect into a 404 helps nobody).
+	$post = get_page_by_path( $map[ $path ], OBJECT, 'resource' );
+	$to   = ( $post && 'publish' === $post->post_status && ! w270_feature_hidden( 'library' ) ) ? get_permalink( $post ) : home_url( w270_feature_hidden( 'library' ) ? '/resources/' : '/resources/guides/' );
+	wp_redirect( $to, 301 ); exit;
 } );
+
+/* ── Switched-off sections ────────────────────────────────────────────────────
+ * wordpress/build/pages.py HIDDEN_FEATURES is the one switch; the importer copies it into the
+ * w270_hidden_features option. While "library" is hidden (Guides and News, Oct 2026), their menu
+ * items, the story rail's Guides box and their sitemap entries are left out, and their archives and
+ * posts send visitors to /resources/ with a temporary redirect, so the URLs come back unchanged when
+ * the sections are switched on again.
+ */
+function w270_feature_hidden( $feature ) {
+	return in_array( $feature, (array) get_option( 'w270_hidden_features', [] ), true );
+}
+
+/** Resource sub-types that belong to the Guides and News sections. */
+function w270_library_subtypes() {
+	return [ 'guides', 'checklists', 'explainers', 'news' ];
+}
+
+add_action( 'template_redirect', function () {
+	if ( ! w270_feature_hidden( 'library' ) || is_preview() || current_user_can( 'edit_posts' ) ) { return; }
+	$path = trailingslashit( (string) wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) );
+	$path = preg_replace( '#^/fr/#', '/', $path ); // French URLs carry a /fr/ prefix
+	$hidden_archive = (bool) preg_match( '#^/resources/(guides|checklists|explainers|news)/#', $path );
+	$hidden_post    = is_singular( w270_resource_types() ) && in_array( w270_subtype_slug( get_queried_object_id() ), w270_library_subtypes(), true );
+	if ( $hidden_archive || $hidden_post ) {
+		wp_safe_redirect( home_url( '/resources/' ), 302 );
+		exit;
+	}
+}, 4 );
+
+add_filter( 'wp_sitemaps_posts_query_args', function ( $args, $post_type ) {
+	if ( ! w270_feature_hidden( 'library' ) ) { return $args; }
+	if ( in_array( $post_type, w270_resource_types(), true ) ) {
+		$args['tax_query'] = [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => w270_library_subtypes(), 'operator' => 'NOT IN' ] ];
+	}
+	if ( 'page' === $post_type ) {
+		foreach ( [ 'resources/guides', 'resources/news' ] as $p ) {
+			$page = get_page_by_path( $p );
+			if ( $page ) { $args['post__not_in'] = array_merge( $args['post__not_in'] ?? [], [ $page->ID ] ); }
+		}
+	}
+	return $args;
+}, 20, 2 );

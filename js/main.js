@@ -54,7 +54,17 @@ function initDecor() {
 function initHeaderScroll() {
   const header = document.querySelector('.site-header');
   if (!header) return;
-  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+  // The compact header is ~24px shorter. Because the header sits in the page flow (sticky),
+  // that change shifts the content and the browser's scroll anchoring moves scrollY to
+  // compensate. With a single threshold the compensation crosses it straight back, and the
+  // header (and its logo) flickers between the two sizes. Two thresholds further apart than
+  // the size change make each state stable.
+  const COMPACT_AT = 64, EXPAND_AT = 16;
+  const onScroll = () => {
+    const y = window.scrollY;
+    if (y > COMPACT_AT) header.classList.add('is-scrolled');
+    else if (y < EXPAND_AT) header.classList.remove('is-scrolled');
+  };
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 }
@@ -166,20 +176,37 @@ function initMobileMenu() {
 }
 
 // ── VAC Status Checker ──
+// Interface wording for the widgets that draw their text with JavaScript (the status checker and the
+// video lightbox). In WordPress the theme prints the same wording, hidden, in #w270-i18n; TranslatePress
+// translates it with the rest of the page, so on /fr/ these widgets are French from the first paint.
+// The English fallbacks here are the prototype's (and must match inc/checker.php's w270_ui_strings()).
+function t(key, fallback, vars) {
+  const el = document.querySelector('#w270-i18n [data-k="' + key + '"]');
+  let s = (el && el.textContent.trim()) || fallback;
+  if (vars) Object.keys(vars).forEach(k => { s = s.split('{' + k + '}').join(vars[k]); });
+  return s;
+}
+
+// Option values are what the checker submits (English, for Creatio); the labels shown are translated.
 const QUIZ_QUESTIONS = [
   { id:'served', q:'Have you served in the Canadian Armed Forces?', options:['Regular Force','Reserve Force','RCMP','No'] },
-  { id:'rating', q:'Do you currently have a VAC disability rating?', options:['No rating','0–30%','40–70%','80%+'] },
+  { id:'rating', q:'Do you currently have a VAC disability assessment?', options:['No assessment yet','0–30%','40–70%','80%+'] },
   { id:'health', q:'Are you experiencing service-related health issues?', options:['Yes','Not sure','No'] },
   { id:'filed', q:'Have you previously filed a claim with VAC?', options:['Yes, approved','Yes, denied','No'] },
-  { id:'goal', q:'What are you looking to do?', options:['File a new claim','Increase an existing rating','Appeal a denial','Not sure yet'] }
+  { id:'goal', q:'What are you looking to do?', options:['File a new claim','Reassess a condition that has worsened','Appeal a denial','Not sure yet'] }
 ];
 
 function initQuiz(containerId) {
   const container = document.getElementById(containerId || 'quiz-widget');
   if (!container) return;
-  let step = 0, answers = {}, contact = { name:'', email:'', phone:'' };
+  // Its wording is already translated (from #w270-i18n); TranslatePress would otherwise hide each new
+  // step for a moment while it re-checks the text.
+  container.setAttribute('data-no-dynamic-translation', '');
+  let step = 0, answers = {}, contact = { name:'', email:'', phone:'', website:'', consent:false }, error = '', sending = false;
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
   const N = QUIZ_QUESTIONS.length;
   const total = N + 2;
+  const pad = n => String(n).padStart(2, '0');
 
   function progress() {
     return step === 0 ? 0 : Math.min(1, step / total);
@@ -187,73 +214,113 @@ function initQuiz(containerId) {
 
   function render() {
     const pct = Math.round(progress() * 100);
-    const stepLabel = step === 0 ? '00' : String(Math.min(step, total)).padStart(2,'0');
+    const stepLabel = step === 0 ? '00' : pad(Math.min(step, total));
     let body = '';
 
     if (step === 0) {
       body = `
-        <div class="quiz-step-label">Step 01 · Intake</div>
-        <div class="quiz-h3">See where you stand with&nbsp;VAC.</div>
-        <div class="quiz-lead">Five quick questions about your service and your history with VAC. About two minutes, confidential, no obligation. We'll come back with a clear next step.</div>
+        <div class="quiz-step-label">${esc(t('quiz.intro.label', 'Step 01 · Intake'))}</div>
+        <div class="quiz-h3">${esc(t('quiz.intro.h', 'Where are you in your VAC benefits process?'))}</div>
+        <div class="quiz-lead">${esc(t('quiz.intro.lead', 'Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We will get back to you with a clear next step.'))}</div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-          <button class="quiz-start-btn" onclick="quizGo(1)">Start now →</button>
-          <div class="quiz-badges"><span>● 2 MIN</span><span>● CONFIDENTIAL</span><span>● NO COST</span></div>
+          <button class="quiz-start-btn" onclick="quizGo(1)">${esc(t('quiz.intro.start', 'Start now →'))}</button>
+          <div class="quiz-badges"><span>● ${esc(t('quiz.badge.time', '2 min'))}</span><span>● ${esc(t('quiz.badge.private', 'Confidential'))}</span><span>● ${esc(t('quiz.badge.free', 'No cost'))}</span></div>
         </div>`;
     } else if (step >= 1 && step <= N) {
       const Q = QUIZ_QUESTIONS[step - 1];
       const twoCol = Q.options.length > 3 ? ' two-col' : '';
-      const opts = Q.options.map(opt => {
+      const opts = Q.options.map((opt, i) => {
         const sel = answers[Q.id] === opt ? ' selected' : '';
-        return `<button class="quiz-option${sel}" onclick="quizAnswer('${Q.id}','${opt.replace(/'/g,"\\'")}',${step})">${opt}<span class="quiz-option-arrow">→</span></button>`;
+        return `<button class="quiz-option${sel}" onclick="quizAnswer('${Q.id}',${i},${step})">${esc(t('quiz.' + Q.id + '.' + i, opt))}<span class="quiz-option-arrow">→</span></button>`;
       }).join('');
       body = `
-        <div class="quiz-step-label">Question ${String(step).padStart(2,'0')} of ${String(N).padStart(2,'0')}</div>
-        <div class="quiz-h3">${Q.q}</div>
+        <div class="quiz-step-label">${esc(t('quiz.question.label', 'Question {n} of {total}', { n: pad(step), total: pad(N) }))}</div>
+        <div class="quiz-h3">${esc(t('quiz.' + Q.id + '.q', Q.q))}</div>
         <div class="quiz-options${twoCol}">${opts}</div>
         <div class="quiz-nav">
-          ${step > 1 ? `<button class="quiz-back" onclick="quizGo(${step-1})">← BACK</button>` : '<span></span>'}
-          <span>${pct}% COMPLETE</span>
+          ${step > 1 ? `<button class="quiz-back" onclick="quizGo(${step-1})">${esc(t('quiz.back', '← Back'))}</button>` : '<span></span>'}
+          <span>${esc(t('quiz.progress', '{pct}% complete', { pct }))}</span>
         </div>`;
     } else if (step === N + 1) {
       body = `
-        <div class="quiz-step-label">Almost there</div>
-        <div class="quiz-h3">Where should we send your next step?</div>
-        <div class="quiz-lead">An advisor will review your answers and reach out within one business day.</div>
+        <div class="quiz-step-label">${esc(t('quiz.contact.label', 'Almost there'))}</div>
+        <div class="quiz-h3">${esc(t('quiz.contact.h', 'Where should we send your next step?'))}</div>
         <div class="quiz-fields">
-          <div class="quiz-field"><label class="quiz-field-label" for="qf-name">Full name</label><input type="text" id="qf-name" value="${contact.name}" oninput="quizContact('name',this.value)" placeholder="Your name"/></div>
-          <div class="quiz-field"><label class="quiz-field-label" for="qf-email">Email</label><input type="email" id="qf-email" value="${contact.email}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
-          <div class="quiz-field"><label class="quiz-field-label" for="qf-phone">Phone</label><input type="tel" id="qf-phone" value="${contact.phone}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-name">${esc(t('quiz.field.name', 'Full name'))}</label><input type="text" id="qf-name" autocomplete="name" required value="${esc(contact.name)}" oninput="quizContact('name',this.value)" placeholder="${esc(t('quiz.field.name.ph', 'Your name'))}"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-email">${esc(t('quiz.field.email', 'Email'))}</label><input type="email" id="qf-email" autocomplete="email" required value="${esc(contact.email)}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-phone">${esc(t('quiz.field.phone', 'Phone'))}</label><input type="tel" id="qf-phone" autocomplete="tel" value="${esc(contact.phone)}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
+          <input type="text" class="quiz-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" oninput="quizContact('website',this.value)"/>
         </div>
-        <button class="quiz-start-btn" onclick="quizGo(${N+2})">Get my results →</button>
-        <div class="quiz-privacy">🔒 Confidential. We never share your info.</div>`;
+        <label class="quiz-consent"><input type="checkbox" id="qf-consent"${contact.consent ? ' checked' : ''} onchange="quizContact('consent',this.checked)"/><span>${esc(t('quiz.consent', 'I agree to be contacted by a member of the 270 West Consulting team.'))}</span></label>
+        <div class="quiz-error" role="alert">${esc(error)}</div>
+        <button class="quiz-start-btn" onclick="quizSubmit()"${sending ? ' disabled' : ''}>${esc(sending ? t('quiz.sending', 'Sending…') : t('quiz.submit', 'Submit'))}</button>
+        <div class="quiz-privacy"><svg class="quiz-privacy-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>${esc(t('quiz.privacy', 'Confidential. We never share your info.'))}</div>`;
     } else {
-      const name = contact.name || 'you';
+      const first = (contact.name || '').trim().split(/\s+/)[0];
       body = `
-        <div class="quiz-result-label">● Result ready</div>
-        <div class="quiz-result-h">Thanks. We'll be in touch shortly.</div>
-        <div class="quiz-result-p">Based on your answers, we can see where you sit with VAC and what we may be able to help with. A 270 West advisor will reach out to ${name} within one business day for a friendly, no-obligation conversation.</div>
+        <div class="quiz-result-label">● ${esc(t('quiz.done.label', 'Answers received'))}</div>
+        <div class="quiz-result-h">${esc(first ? t('quiz.done.h.named', 'Thank you, {name}.', { name: first }) : t('quiz.done.h', 'Thank you.'))}</div>
+        <div class="quiz-result-p">${esc(t('quiz.done.p', 'A member of our team will review your answers and be in touch to discuss your options.'))}</div>
         <div class="quiz-result-btns">
-          <a href="${window.W270 ? '/book-a-consult/' : 'consult.html'}" class="btn-accent" style="font-size:14px;padding:16px 28px">Book a free conversation →</a>
-          <button class="quiz-restart" onclick="quizReset()">Restart</button>
+          <a href="${window.W270 ? (location.pathname.startsWith('/fr/') ? '/fr/book-a-consult/' : '/book-a-consult/') : 'consult.html'}" class="btn-accent" style="font-size:14px;padding:16px 28px">${esc(t('quiz.done.book', 'Book a free call →'))}</a>
+          <button class="quiz-restart" onclick="quizReset()">${esc(t('quiz.restart', 'Restart'))}</button>
         </div>`;
     }
 
     container.innerHTML = `
       <div class="quiz-widget">
-        <div class="quiz-header"><span>VAC Status Check</span><span>${stepLabel} / ${String(total).padStart(2,'0')}</span></div>
+        <div class="quiz-header"><span>${esc(t('quiz.title', 'VAC Status Check'))}</span><span>${stepLabel} / ${pad(total)}</span></div>
         <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
         ${body}
       </div>`;
   }
 
   window.quizGo = function(s) { step = s; render(); };
-  window.quizAnswer = function(id, val, s) {
-    answers[id] = val;
+  window.quizAnswer = function(id, idx, s) {
+    const Q = QUIZ_QUESTIONS.find(q => q.id === id);
+    answers[id] = Q ? Q.options[idx] : idx;   // the English value, whatever language is showing
     render();
     setTimeout(() => { step = s + 1; render(); }, 220);
   };
   window.quizContact = function(key, val) { contact[key] = val; };
-  window.quizReset = function() { step = 0; answers = {}; contact = {name:'',email:'',phone:''}; render(); };
+  window.quizReset = function() { step = 0; answers = {}; contact = {name:'',email:'',phone:'',website:'',consent:false}; error = ''; sending = false; render(); };
+  // Final step: in WordPress the answers go to the theme endpoint, which submits them to the
+  // "VAC Status Checker" Gravity Form (its Webhooks feed sends the lead to Creatio). The static
+  // prototype has no endpoint and simply shows the result.
+  const ERR = {
+    invalid: () => t('quiz.err.invalid', 'Please enter your name and a valid email address.'),
+    consent: () => t('quiz.err.consent', 'Please agree to be contacted so a benefits navigator can follow up.'),
+    busy:    () => t('quiz.err.busy', 'Too many submissions. Please try again in a few minutes.'),
+    failed:  () => t('quiz.err.failed', 'We could not send your answers. Please try again.'),
+  };
+  window.quizSubmit = async function() {
+    if (sending) return;
+    const name = (contact.name || '').trim(), email = (contact.email || '').trim();
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { error = ERR.invalid(); render(); return; }
+    if (!contact.consent) { error = ERR.consent(); render(); return; }
+    const url = window.W270 && window.W270.checker;
+    if (!url) { error = ''; step = N + 2; render(); return; }
+    let lead = {};
+    try { lead = JSON.parse(sessionStorage.getItem('w270_lead_src') || '{}'); } catch (e) { lead = {}; }
+    sending = true; error = ''; render();
+    try {
+      const res = await fetch(url, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone: contact.phone || '', website: contact.website || '', consent: true, answers, lead })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        // The endpoint answers in English; show the translated message for its error code.
+        const code = String(data.code || '').replace('w270_checker_', '');
+        error = (ERR[code] || ERR.failed)();
+      } else {
+        step = N + 2;
+      }
+    } catch (e) {
+      error = ERR.failed();
+    }
+    sending = false; render();
+  };
 
   render();
 }
@@ -312,14 +379,14 @@ function initConsultWidget(containerId) {
       container.innerHTML = `<div class="consult-widget">
         <div class="consult-header"><span>Benefits Analysis Consult</span><span>30 min · free</span></div>
         <h3 class="consult-h3">Book a free 30-minute consult.</h3>
-        <p class="consult-lead">One-on-one with a 270 West advisor. We'll review your situation, walk through which VAC programs may apply, and answer your questions. No obligation.</p>
+        <p class="consult-lead">One-on-one with a 270 West benefits navigator. We will review your situation, walk through which VAC programs may apply, and answer your questions. No obligation.</p>
         <div class="consult-advisor-row">
           <div class="consult-avatars">
             <span class="consult-avatar" style="background:var(--olive)">JM</span>
             <span class="consult-avatar" style="background:#8a95a6">SK</span>
             <span class="consult-avatar" style="background:#5a6472">AT</span>
           </div>
-          <span class="consult-advisor-label">Matched with the next available advisor</span>
+          <span class="consult-advisor-label">Matched with the next available benefits navigator</span>
         </div>
         <div class="consult-sublabel">1. Choose a day</div>
         <div class="consult-days">${dayBtns}</div>
@@ -333,7 +400,7 @@ function initConsultWidget(containerId) {
         <div class="consult-header"><span>Benefits Analysis Consult</span><span>30 min · free</span></div>
         <button class="consult-back" onclick="consultBack()">← BACK</button>
         <h3 class="consult-h3">Hold your spot.</h3>
-        <p class="consult-lead"><strong>${slot.date} · ${time} AT</strong>. We'll send a calendar invite and call link.</p>
+        <p class="consult-lead"><strong>${slot.date} · ${time} AT</strong>. We will send a calendar invite and call link.</p>
         <div class="consult-fields">
           <div class="consult-field consult-field-first"><label class="consult-field-label" for="ci-name">Full name</label><input type="text" id="ci-name" value="${info.name}" oninput="consultInfo('name',this.value)" placeholder="Your name"/></div>
           <div class="consult-field"><label class="consult-field-label" for="ci-email">Email</label><input type="email" id="ci-email" value="${info.email}" oninput="consultInfo('email',this.value)" placeholder="you@example.ca"/></div>
@@ -341,7 +408,7 @@ function initConsultWidget(containerId) {
           <div class="consult-field"><label class="consult-field-label" for="ci-topic">What would you like to focus on?</label><input type="text" id="ci-topic" value="${info.topic}" oninput="consultInfo('topic',this.value)" placeholder="First claim, appeal, reassessment..."/></div>
         </div>
         <button class="consult-confirm" onclick="consultConfirm()">Confirm booking →</button>
-        <div class="consult-privacy">🔒 Confidential. No obligation. Free of charge.</div>
+        <div class="consult-privacy"><svg class="quiz-privacy-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>Confidential. No obligation. Free of charge.</div>
       </div>`;
 
     } else {
@@ -398,28 +465,49 @@ function initVideoLightbox() {
   function build() {
     dialog = document.createElement('dialog');
     dialog.className = 'video-lightbox';
-    dialog.innerHTML = '<div class="video-lightbox-inner"><button type="button" class="video-lightbox-close">Close ✕</button><div class="video-lightbox-frame"></div></div>';
+    dialog.setAttribute('data-no-dynamic-translation', '');
+    dialog.innerHTML = '<div class="video-lightbox-inner"><button type="button" class="video-lightbox-close">' + t('video.close', 'Close') + ' ✕</button><div class="video-lightbox-frame"></div></div>';
     frame = dialog.querySelector('.video-lightbox-frame');
     dialog.querySelector('.video-lightbox-close').addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
     dialog.addEventListener('close', () => { frame.innerHTML = ''; if (opener) opener.focus(); });
     document.body.appendChild(dialog);
   }
-  cards.forEach(card => card.addEventListener('click', () => {
+  cards.forEach(card => card.addEventListener('click', e => {
+    e.preventDefault(); // in WordPress the card is an <a href="#"> container
     if (!dialog) build();
     opener = card;
-    const src = card.dataset.videoSrc;
-    const title = card.dataset.videoTitle || 'Video';
+    // The prototype keeps data-video-* on the card; the WordPress build keeps them on the play icon.
+    const data = Object.assign({}, card.querySelector('.video-card-play')?.dataset, card.dataset);
+    const src = data.videoSrc;
+    const title = data.videoTitle || 'Video';
     dialog.setAttribute('aria-label', title);
     if (src) {
       frame.innerHTML = /\.(mp4|webm)$/i.test(src)
         ? `<video src="${src}" controls autoplay playsinline></video>`
         : `<iframe src="${src}" title="${title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
     } else {
-      frame.innerHTML = `<div class="video-lightbox-pending"><strong>${title}</strong><span>Coming soon. This film is in production.</span></div>`;
+      frame.innerHTML = `<div class="video-lightbox-pending"><strong>${title}</strong><span>${t('video.pending', 'Coming soon. This film is in production.')}</span></div>`;
     }
     dialog.showModal();
   }));
+}
+
+// ── WordPress phone menu: parents toggle their sub-menu instead of navigating ──
+// Elementor Pro runs SmartMenus in its "default" collapsible mode: the first tap on Services opens
+// the sub-menu and the second tap (text or arrow) follows the link, so the sub-menu can never be
+// closed by hand. "accordion-toggle" makes every tap on the parent open/close it (and closes the
+// other open parent); the parent pages are reachable through their "All …" sub-items instead.
+function initMobileMenuToggle() {
+  let tries = 0;
+  const arm = () => {
+    const ul = document.querySelector('nav.elementor-nav-menu--dropdown .elementor-nav-menu');
+    if (!ul) return;
+    const sm = window.jQuery && window.jQuery(ul).data('smartmenus');
+    if (!sm) { if (tries++ < 40) setTimeout(arm, 250); return; }
+    sm.opts.collapsibleBehavior = 'accordion-toggle';
+  };
+  arm();
 }
 
 // ── Lead attribution: keep campaign data for the session and stamp it on every form ──
@@ -570,7 +658,33 @@ function initArchives() {
 }
 
 // ── Init all ──
+// ── Resource table of contents: the link for the section in view is .active ──
+function initToc() {
+  const links = [...document.querySelectorAll('.article-toc-links a[href^="#"]')];
+  if (!links.length) return;
+  const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+  const headings = [...byId.keys()].map(id => document.getElementById(id)).filter(Boolean);
+  if (!headings.length) return;
+  let lock = 0;
+  const setActive = (id) => links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+  // Clicking a link marks it at once; the observer takes over again once the jump has settled.
+  links.forEach(a => a.addEventListener('click', () => { setActive(a.getAttribute('href').slice(1)); lock = Date.now() + 800; }));
+  // The section whose heading was last scrolled past the header line is the current one.
+  const headerH = () => (document.querySelector('.site-header') || { offsetHeight: 90 }).offsetHeight;
+  const update = () => {
+    if (Date.now() < lock) return;
+    const line = headerH() + 24;
+    let current = headings[0];
+    for (const h of headings) { if (h.getBoundingClientRect().top <= line) current = h; else break; }
+    setActive(current.id);
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+  initToc();
   initMobileMenu();
   initHeaderScroll();
 
@@ -600,6 +714,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const w270Lead = initLeadTracking();
   initScheduler(w270Lead);
   initVideoLightbox();
+  initMobileMenuToggle();
+  // WordPress builds the FAQ as an Elementor accordion; on a page whose items all start open
+  // (the FAQ page itself) the widget can only open the first, so open the rest here.
+  document.querySelectorAll('.w-faq-open details:not([open])').forEach(d => {
+    d.open = true;
+    const summary = d.querySelector('summary');
+    if (summary) summary.setAttribute('aria-expanded', 'true');
+  });
   initStoryGrid();
   initQuiz();
   if (document.getElementById('consult-widget')) initConsultWidget('consult-widget');

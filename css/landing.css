@@ -71,7 +71,7 @@
 .lp-split { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: start; }
 .lp-form-split { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr 470px; gap: 56px; align-items: start; }
 .lp-section .journey-steps-grid, .lp-card-grid, .lp-quote-grid { max-width: 1240px; margin: 0 auto; }
-.lp-section .journey-steps-grid { list-style: none; padding: 0; grid-template-columns: repeat(3, 1fr); }
+.lp-section .journey-steps-grid { list-style: none; padding: 0; grid-template-columns: repeat(4, 1fr); }
 
 /* Cards */
 .lp-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
@@ -117,13 +117,14 @@
 
 @media (max-width: 1000px) {
   .lp-hero-inner, .lp-hero-inner-video, .lp-split, .lp-form-split { grid-template-columns: 1fr; gap: 36px; }
-  .lp-section .journey-steps-grid, .lp-card-grid, .lp-card-grid-3 { grid-template-columns: 1fr; }
+  .lp-card-grid, .lp-card-grid-3 { grid-template-columns: 1fr; }
+  .lp-section .journey-steps-grid { grid-template-columns: repeat(2, 1fr); }
   .lp-hero, .lp-section, .lp-cta, .lp-footer { padding-left: 24px; padding-right: 24px; }
   .lp-header { padding: 12px 20px; }
   .lp-proof { padding: 20px 24px; gap: 16px 28px; }
 }
 @media (max-width: 620px) {
-  .lp-header-cta { display: none; }
+  .lp-header-cta { padding: 10px 14px; font-size: 12px; white-space: nowrap; }
   .lp-form-row { grid-template-columns: 1fr; }
   .lp-form-card { padding: 24px 20px; }
   .lp-hero { padding-top: 48px; padding-bottom: 48px; }
@@ -138,6 +139,7 @@
 .lp-booking-split { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr 470px; gap: 40px; align-items: start; }
 .lp-book-card { background: var(--bg); border: 1px solid var(--rule); padding: 28px; }
 .lp-book-head { margin-bottom: 24px; }
+.lp-book-card .consult-option-p { margin: -12px 0 24px; }
 .lp-book-n { display: inline-block; font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
 .lp-book-h { font-family: var(--font-serif); font-size: 28px; font-weight: 400; line-height: 1.2; margin: 0 0 8px; }
 .lp-book-p { font-size: 16px; line-height: 1.55; color: var(--muted); margin: 0; }
@@ -157,3 +159,81 @@
 .lp-third-btn { border-color: var(--bg); color: var(--bg); flex-shrink: 0; }
 .lp-third-btn:hover { background: var(--bg); color: var(--ink); }
 @media (max-width: 700px) { .lp-third-option { flex-direction: column; align-items: flex-start; } .lp-third-btn { width: 100%; justify-content: center; } }
+
+/* ── Funnel set (Sept 29 2026): top = status checker, middle = lead form, bottom = booking + form ── */
+.lp-checker { max-width: 760px; margin: 0 auto; }
+.lp-book-solo { max-width: 920px; margin: 0 auto; }
+.lp-book-solo + .lp-third-option { max-width: 920px; margin: 32px auto 0; }
+.lp-guide-link { text-align: center; margin: 32px 0 0; }
+.lp-guide-link .esg-snapshot-link { margin-top: 0; }
+.lp-hero-copy .lp-lead + .lp-lead { margin-top: -6px; }
+.lp-section .services-2col { max-width: 1240px; margin: 0 auto; }
+.lp-section .service-card { cursor: default; }
+.lp-section .service-card:hover { transform: none; }
+.svc-preview-section .svc-preview-card:not(a) { cursor: default; }
+.lp-hero .btn-outline { color: var(--ink); border-color: var(--ink); }
+.lp-hero .btn-outline:hover { background: var(--ink); color: var(--bg); }
+.lp-hero .mono-label-olive { color: var(--teal); }
+@media (max-width: 600px) { .lp-section .journey-steps-grid { grid-template-columns: 1fr; } }
+/* Plain stats band (top-of-funnel page): sits between the light hero and the dark services section. */
+.lp-stats-band { background: var(--bg); padding: 64px 48px; border-top: 1px solid var(--rule); }
+.lp-stats-inner { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; gap: 56px; align-items: end; }
+.lp-stats-lead { display: flex; flex-wrap: wrap; gap: 32px 64px; }
+.lp-stats-item { display: flex; flex-direction: column; gap: 8px; }
+.lp-stats-num { font-family: var(--font-sans); font-weight: 500; font-size: clamp(40px, 4.4vw, 60px); line-height: 1; letter-spacing: -0.02em; color: var(--ink); }
+.lp-stats-label { font-size: 16px; line-height: 1.4; color: var(--muted); }
+.lp-stats-branch { border-left: 1px solid var(--rule); padding-left: 48px; }
+.lp-stats-branch-label { font-size: 15px; color: var(--muted); margin-bottom: 16px; }
+.lp-stats-branch-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.lp-stats-branch .lp-stats-num { font-size: clamp(30px, 3vw, 40px); }
+@media (max-width: 1000px) {
+  .lp-stats-band { padding: 48px 24px; }
+  .lp-stats-inner { grid-template-columns: 1fr; gap: 32px; }
+  .lp-stats-branch { border-left: none; padding-left: 0; border-top: 1px solid var(--rule); padding-top: 28px; }
+}
+@media (max-width: 480px) { .lp-stats-branch-row { gap: 16px; } }
+/* Single stat (client total only, Oct 2026): one centred figure with its label beside it. */
+.lp-stats-inner.lp-stats-single { display: flex; justify-content: center; }
+.lp-stats-single .lp-stats-item { flex-direction: row; align-items: center; gap: 32px; }
+.lp-stats-single .lp-stats-num { font-family: var(--font-serif); font-weight: 400; font-size: clamp(56px, 6.4vw, 92px); color: var(--teal, var(--ink)); }
+.lp-stats-single .lp-stats-label { padding-left: 32px; border-left: 1px solid var(--rule); font-family: var(--font-serif);
+  font-size: clamp(20px, 2vw, 26px); line-height: 1.25; color: var(--ink); max-width: 260px; }
+@media (max-width: 480px) {
+  .lp-stats-single .lp-stats-item { gap: 16px; }
+  .lp-stats-single .lp-stats-num { font-size: 52px; }
+  .lp-stats-single .lp-stats-label { padding-left: 16px; font-size: 18px; max-width: 150px; }
+}
+/* Closing form sections (middle and bottom of funnel). Anchored sections clear the sticky header. */
+.lp-form-section .lp-form-card { max-width: 720px; margin: 0 auto; }
+#start, #book-section, #checker, #how { scroll-margin-top: 90px; }
+.lp-book-card-form .lp-form-card-plain { padding: 0; box-shadow: none; background: none; }
+/* Centred copy-only heros (middle and bottom of funnel): every line centred, left-aligned on phones. */
+.lp-hero-inner-centred, .lp-hero-inner-centred .lp-hero-copy { text-align: center; }
+.lp-hero-inner-centred .lp-h1 { margin-left: auto; margin-right: auto; text-align: center; }
+.lp-hero-inner-centred .lp-lead { text-align: center; }
+.lp-hero-inner-centred .lp-trust { justify-content: center; }
+@media (max-width: 900px) {
+  .lp-hero-inner-centred, .lp-hero-inner-centred .lp-hero-copy, .lp-hero-inner-centred .lp-h1, .lp-hero-inner-centred .lp-lead { text-align: left; }
+  .lp-hero-inner-centred .lp-h1, .lp-hero-inner-centred .lp-lead { margin-left: 0; }
+  .lp-hero-centred .mono-label, .lp-hero-inner-centred .lp-hero-btns, .lp-hero-inner-centred .lp-trust { justify-content: flex-start; }
+}
+/* Phones: the header keeps its jump-to-form button; the phone number shrinks to its icon. */
+@media (max-width: 600px) {
+  .lp-header-actions { gap: 10px; }
+  .lp-logo { flex-shrink: 0; }
+  .lp-logo img { height: 34px; width: auto; }
+  .lp-phone { font-size: 0; gap: 0; padding: 8px; }
+  .lp-phone svg { width: 20px; height: 20px; }
+  /* WordPress wraps the number in a text widget; hide it visually but keep it as the link's name. */
+  .lp-phone .w-text, .lp-phone .elementor-widget-text-editor {
+    display: block !important; position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .lp-header-cta, .lp-header-cta .elementor-button { white-space: normal; text-align: center; line-height: 1.25; }
+  .lp-header-cta { padding: 8px 12px; font-size: 11px; max-width: 160px; }
+}
+/* Phones: the booking cards hold a 320px-minimum calendar, so they get slimmer gutters and padding. */
+@media (max-width: 620px) {
+  .lp-section-form { padding-left: 16px; padding-right: 16px; }
+  .lp-book-card { padding: 20px 16px; }
+  .lp-booking-split > * { min-width: 0; }
+}

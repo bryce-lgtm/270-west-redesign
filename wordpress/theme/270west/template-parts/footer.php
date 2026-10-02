@@ -7,7 +7,7 @@ $p = fn( $slug ) => esc_url( home_url( '/' . $slug . '/' ) );
   <div class="footer-grid-5">
     <div>
       <div class="footer-lockup"><img src="<?php echo esc_url( W270_ASSETS . '/img/brand/270west-horizontal-light.svg' ); ?>" alt="270 West Consulting" width="186" height="50"/></div>
-      <div style="line-height:1.6">Helping Canadian veterans secure the benefits they’ve earned.<br>Made in Canada · BBB Accredited</div>
+      <div style="line-height:1.6">Helping Canadian veterans access the benefits they’ve earned.<br>Made in Canada · BBB Accredited</div>
     </div>
     <div>
       <div class="footer-col-label">Explore</div>
