@@ -1921,3 +1921,8 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
 /* Prototype only: stand-in copy for switched-off sections (pages.py HIDDEN_FEATURES). The generator
    drops one version or the other, so these attributes never reach WordPress. */
 [data-feature-off] { display: none !important; }
+/* With only the one stat the banner is shorter, and the stat sits centred under the compass,
+   where the crosshair's vertical line ends. */
+.banner-section .photo-band { aspect-ratio: auto !important; height: clamp(340px, 25vw, 420px); }
+.banner-stats-bar.banner-stat-single { justify-content: center; padding-left: 24px; padding-right: 24px; }
+@media (max-width: 900px) { .banner-section .photo-band { height: 360px; } }
