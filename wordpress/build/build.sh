@@ -12,7 +12,7 @@ python3 generate.py
 ./deploy-theme.sh
 ./deploy-proto.sh
 "$PHP" -c "$INI" activate-theme.php
-"$PHP" -c "$INI" import.php --all
+"$PHP" -c "$INI" import.php --all ${W270_FORCE_IMPORT:+--force}
 "$PHP" -c "$INI" render-check.php
 python3 check-coverage.py
 echo "BUILD OK"
