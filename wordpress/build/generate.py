@@ -305,6 +305,9 @@ class Converter:
             'items': repeater,
             'default_state': 'expanded' if all_open else 'all_collapsed',
             'max_items_expended': 'multiple',
+            # Elementor's own FAQ schema switch: the widget prints FAQPage JSON-LD from its items, so
+            # questions edited in the editor keep the structured data in step.
+            'faq_schema': 'yes',
             'title_tag': 'div',
             'accordion_item_title_icon': {'value': '', 'library': ''},
             'accordion_item_title_icon_active': {'value': '', 'library': ''},
