@@ -18,7 +18,7 @@
       "featured": true,
       "image": "mountain-valley.jpg",
       "order": 0,
-      "summary": "Veterans Affairs Canada offers more programs than most veterans realize. This guide walks through the main ones — what they're for, who qualifies, and how to apply — in plain language.",
+      "summary": "Veterans Affairs Canada offers more programs than most veterans realize. This guide walks through the main ones — what they are for, who qualifies, and how to apply — in plain language.",
       "related": [
         "vac-application-checklist",
         "how-vac-disability-ratings-work",
@@ -164,7 +164,7 @@
     {
       "slug": "how-vac-appeals-work",
       "type": "guides",
-      "title": "How VAC appeals work",
+      "title": "How VAC reviews and appeals work",
       "topic": "After a VAC decision",
       "order": 32,
       "summary": "Coming soon: a plain-language guide from 270 West.",
@@ -276,7 +276,7 @@
       "date": "2026-09-14",
       "news_category": "Campaign",
       "title": "In service of your story: a campaign built around veterans’ own voices",
-      "summary": "Over the coming months we’re sharing video stories from veterans across Canada. Here’s why we’re doing it, and how to take part."
+      "summary": "Over the coming months we are sharing video stories from veterans across Canada. Here is why we are doing it, and how to take part."
     },
     {
       "slug": "where-to-find-us-remembrance-season",
@@ -285,7 +285,7 @@
       "date": "2026-09-02",
       "news_category": "Community",
       "title": "Where to find us throughout Veterans’ Week and Remembrance Day",
-      "summary": "Legion events, family days and wellness gatherings we’re supporting across Nova Scotia this fall."
+      "summary": "Legion events, family days and wellness gatherings we are supporting across Nova Scotia this fall."
     },
     {
       "slug": "royal-nova-scotia-international-tattoo",
@@ -313,8 +313,8 @@
       "order": 204,
       "date": "2026-07-08",
       "news_category": "Team",
-      "title": "Meet the benefits navigators joining us in the Ottawa Valley",
-      "summary": "Two new benefits navigators have joined the team, adding capacity for veterans in Petawawa and Pembroke."
+      "title": "Meet the Benefit Navigators joining us in the Ottawa Valley",
+      "summary": "Two new Benefit Navigators have joined the team, adding capacity for veterans in Petawawa and Pembroke."
     }
   ]
 }

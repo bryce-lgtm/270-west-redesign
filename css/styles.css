@@ -347,7 +347,7 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
 .quiz-fields { display: grid; gap: 10px; margin-bottom: 20px; }
 .quiz-field { border-bottom: 1px solid #2B565B; padding: 8px 0; }
 .quiz-field-label { font-size: 10px; color: #8FA6AB; font-family: var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
-.quiz-field input { background: transparent; border: none; outline: none; color: var(--bg); font-size: 16px; font-family: inherit; width: 100%; padding: 4px 0; }
+.quiz-field input, .quiz-field select { background: transparent; border: none; outline: none; color: var(--bg); font-size: 16px; font-family: inherit; width: 100%; padding: 4px 0; }
 .quiz-result-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
 .quiz-result-h { font-size: 34px; font-weight: 500; line-height: 1.15; margin: 0 0 16px; letter-spacing: -0.02em; }
 .quiz-result-p { font-size: 16px; line-height: 1.55; color: #8FA6AB; max-width: 520px; margin: 0 0 28px; }
@@ -1928,3 +1928,26 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
 .banner-section .photo-band { aspect-ratio: auto !important; height: clamp(340px, 25vw, 420px); }
 .banner-stats-bar.banner-stat-single { justify-content: center; padding-left: 24px; padding-right: 24px; }
 @media (max-width: 900px) { .banner-section .photo-band { height: 360px; } }
+
+
+/* ── Oct 4 revision deck ── */
+/* Quiet proof bar beneath the home hero: the two proof points 270 West publishes. */
+.proof-bar { padding: 0 80px 56px; }
+.proof-bar-inner { display: flex; flex-wrap: wrap; gap: 24px 64px; padding-top: 28px; border-top: 1px solid var(--rule); }
+.proof-item { display: flex; align-items: baseline; gap: 14px; }
+.proof-num { font-family: var(--font-serif); font-size: clamp(28px, 3vw, 40px); line-height: 1; letter-spacing: -0.01em; color: var(--ink); }
+.proof-label { font-size: 15px; color: var(--muted); }
+@media (max-width: 768px) {
+  .proof-bar { padding: 0 20px 40px; }
+  .proof-bar-inner { gap: 16px 32px; padding-top: 20px; }
+}
+/* Secondary contact line under a CTA module's buttons: phone, email and in person are equally valid. */
+.cta-alt { margin: 22px 0 0; font-size: 15px; line-height: 1.5; color: inherit; opacity: 0.82; max-width: 460px; }
+.cta-alt a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+/* Home service card bullets (Reviews & Appeals). */
+.svc-preview-list { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 5px; font-size: 13.5px; line-height: 1.45; color: #B6C6CA; }
+.svc-preview-list li { padding-left: 14px; position: relative; }
+.svc-preview-list li::before { content: '·'; position: absolute; left: 0; }
+.quiz-field select { appearance: none; -webkit-appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6' fill='none' stroke='%23A0B5C1' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 2px center; background-size: 10px 6px; padding-right: 22px; }
+.quiz-field select option { color: var(--ink); }
+.nowrap { white-space: nowrap; }

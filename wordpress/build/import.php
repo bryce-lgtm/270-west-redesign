@@ -58,26 +58,26 @@ function w270_page_by_slug( $slug ) {
 
 /** Menu definition items: [title, slug, classes, children]. */
 function w270_menu_defs() {
-	$services_children = [ [ 'All services', 'services', 'nav-overview' ], [ 'VAC claims', 'claims' ], [ 'VAC appeals', 'appeals' ], [ 'VAC reassessments', 'reassessment' ], [ 'Ongoing support', 'support' ] ];
-	$resources_children = [ [ 'All resources', 'resources', 'nav-overview' ], [ 'Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ], [ 'FAQ', 'faq' ] ];
+	$services_children = [ [ 'All services', 'services', 'nav-overview' ], [ 'VAC Claims', 'claims' ], [ 'VAC Reviews &amp; Appeals', 'appeals' ], [ 'VAC Reassessments', 'reassessment' ], [ 'Ongoing Support', 'support' ] ];
+	$resources_children = [ [ 'All resources', 'resources', 'nav-overview' ], [ 'Veteran Stories', 'stories' ], [ 'Guides', 'guides' ], [ 'News', 'news' ], [ 'FAQ', 'faq' ] ];
 	// Guides and News are switched off for now (pages.py HIDDEN_FEATURES → w270_hidden_features).
 	if ( in_array( 'library', (array) get_option( 'w270_hidden_features', [] ), true ) ) {
 		$resources_children = array_values( array_filter( $resources_children, fn( $c ) => ! in_array( $c[1], [ 'guides', 'news' ], true ) ) );
 	}
 	$main = [
 		[ 'Services', 'services', '', $services_children ],
-		[ 'How It Works', 'how-it-works' ], [ 'About us', 'about' ],
-		[ 'Resources', 'resources', '', $resources_children ], [ 'Contact us', 'contact' ],
-		[ 'Book a free call', 'book-a-consult', 'nav-cta' ],
+		[ 'How It Works', 'how-it-works' ], [ 'About 270 West', 'about' ],
+		[ 'Resources', 'resources', '', $resources_children ], [ 'Contact Us', 'contact' ],
+		[ 'Book a Free Call', 'book-a-consult', 'nav-cta' ],
 	];
 	return [
 		'Primary' => [ 'location' => 'primary', 'items' => $main ],
 		'Mobile'  => [ 'location' => 'mobile', 'items' => $main ],
 		'Footer Explore' => [ 'location' => 'footer-explore', 'items' => [
-			[ 'Services', 'services' ], [ 'How It Works', 'how-it-works' ], [ 'About us', 'about' ], [ 'Resources', 'resources' ], [ 'Contact us', 'contact' ],
+			[ 'Services', 'services' ], [ 'How It Works', 'how-it-works' ], [ 'About 270 West', 'about' ], [ 'Resources', 'resources' ], [ 'Contact Us', 'contact' ],
 		] ],
 		'Footer Services' => [ 'location' => 'footer-services', 'items' => [
-			[ 'VAC appeals', 'appeals' ], [ 'VAC claims', 'claims' ], [ 'VAC reassessments', 'reassessment' ], [ 'Ongoing support', 'support' ],
+			[ 'VAC Claims', 'claims' ], [ 'VAC Reviews &amp; Appeals', 'appeals' ], [ 'VAC Reassessments', 'reassessment' ], [ 'Ongoing Support', 'support' ],
 		] ],
 	];
 }
@@ -558,7 +558,7 @@ function w270_import_resources( array $refresh = [] ) {
 	// every other piece of resource content. The hero copy is the prototype's (guides.html,
 	// stories.html, news.html): the H1 is the SEO heading, the lead is the marketing line.
 	$archives = [
-		'stories' => [ 'Stories', 'resources/stories', [ 'stories' ], 'stories', 'none', [
+		'stories' => [ 'Veteran Stories', 'resources/stories', [ 'stories' ], 'stories', 'none', [
 			'hero_h1'   => 'Canadian veteran stories about the VAC claims process',
 			'hero_lead' => 'Real veterans. Real stories.',
 			'hero_sub'  => 'Veterans share what their service meant, what the VAC process was like, and what changed once someone was in their corner. Each story is shared with their permission.',
@@ -570,8 +570,8 @@ function w270_import_resources( array $refresh = [] ) {
 		] ],
 		'news'    => [ 'News', 'resources/news', [ 'news' ], 'news', 'news_category', [
 			'hero_h1'   => '270 West news and updates for Canadian veterans',
-			'hero_lead' => "What we're working on.",
-			'hero_sub'  => "Where you'll find us, new guides as they're published, and updates from the team.",
+			'hero_lead' => "What we are working on.",
+			'hero_sub'  => "Where you will find us, new guides as they are published, and updates from the team.",
 		] ],
 	];
 	$parent = w270_page_by_slug( 'resources' );

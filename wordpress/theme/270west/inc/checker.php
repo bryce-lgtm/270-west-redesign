@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 function w270_checker_questions() {
 	return [
 		'served' => [ 30, 'Service' ],
-		'rating' => [ 31, 'VAC disability assessment' ],
+		'decision' => [ 31, 'VAC decision or assessment' ],
 		'health' => [ 32, 'Service-related health issues' ],
 		'filed'  => [ 33, 'Previous VAC claim' ],
 		'goal'   => [ 34, 'Looking to' ],
@@ -30,6 +30,11 @@ function w270_checker_consent_text() {
 		}
 	}
 	return 'I agree to be contacted by a member of the 270 West Consulting team.';
+}
+
+/** Preferred contact method: the checker form's field 21 choices (the same list as the Contact Form). */
+function w270_checker_methods() {
+	return [ 'Phone Call', 'Text/SMS', 'Email' ];
 }
 
 function w270_checker_form_id() {
@@ -67,11 +72,18 @@ function w270_checker_submit( WP_REST_Request $req ) {
 	$name  = trim( sanitize_text_field( $p['name'] ?? '' ) );
 	$email = sanitize_email( $p['email'] ?? '' );
 	$phone = sanitize_text_field( $p['phone'] ?? '' );
+	$method = sanitize_text_field( $p['method'] ?? '' );
 	if ( '' === $name || ! is_email( $email ) ) {
 		return new WP_Error( 'w270_checker_invalid', 'Please enter your name and a valid email address.', [ 'status' => 400 ] );
 	}
+	if ( ! in_array( $method, w270_checker_methods(), true ) ) {
+		return new WP_Error( 'w270_checker_method', 'Please choose how you would like us to contact you.', [ 'status' => 400 ] );
+	}
+	if ( 'Email' !== $method && '' === trim( $phone ) ) {
+		return new WP_Error( 'w270_checker_phone', 'Please add a phone number so we can reach you that way.', [ 'status' => 400 ] );
+	}
 	if ( true !== ( $p['consent'] ?? false ) ) {
-		return new WP_Error( 'w270_checker_consent', 'Please agree to be contacted so a benefits navigator can follow up.', [ 'status' => 400 ] );
+		return new WP_Error( 'w270_checker_consent', 'Please agree to be contacted so a 270 West team member can follow up.', [ 'status' => 400 ] );
 	}
 	$parts = preg_split( '/\s+/', $name, 2 );
 
@@ -81,9 +93,10 @@ function w270_checker_submit( WP_REST_Request $req ) {
 		'input_1_6' => $parts[1] ?? '',
 		'input_2'   => $email,
 		'input_5'   => $phone,
+		'input_21'  => $method, // preferred contact method: the form's own choices (Creatio UsrCommsMethod)
 	];
 	// Creatio's Commentary gets one line, the way the events team writes it:
-	// "VAC status checker. Service: Regular Force; VAC disability rating: No rating; …"
+	// "VAC status checker. Service: Regular Force; VAC decision or assessment: No; …"
 	$summary = [];
 	foreach ( w270_checker_questions() as $k => [ $field_id, $label ] ) {
 		$v = mb_substr( sanitize_text_field( $answers[ $k ] ?? '' ), 0, 80 );
@@ -137,7 +150,7 @@ function w270_ui_strings() {
 	return [
 		"quiz.intro.label" => "Step 01 · Intake",
 		"quiz.intro.h" => "Where are you in your VAC benefits process?",
-		"quiz.intro.lead" => "Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We will get back to you with a clear next step.",
+		"quiz.intro.lead" => "Choose the answers that best describe your service and where you are in the process. It is fine if you are unsure about an answer. About two minutes. Fully confidential and no obligation. We will get back to you with a clear next step.",
 		"quiz.intro.start" => "Start now →",
 		"quiz.badge.time" => "2 min",
 		"quiz.badge.private" => "Confidential",
@@ -146,23 +159,30 @@ function w270_ui_strings() {
 		"quiz.back" => "← Back",
 		"quiz.progress" => "{pct}% complete",
 		"quiz.contact.label" => "Almost there",
-		"quiz.contact.h" => "Where should we send your next step?",
+		"quiz.contact.h" => "How should we contact you?",
 		"quiz.field.name" => "Full name",
 		"quiz.field.name.ph" => "Your name",
 		"quiz.field.email" => "Email",
 		"quiz.field.phone" => "Phone",
+		"quiz.field.method" => "Preferred contact method",
+		"quiz.field.method.ph" => "Choose one",
+		"quiz.method.0" => "Phone call",
+		"quiz.method.1" => "Text message",
+		"quiz.method.2" => "Email",
 		"quiz.sending" => "Sending…",
 		"quiz.submit" => "Submit",
 		"quiz.privacy" => "Confidential. We never share your info.",
 		"quiz.done.label" => "Answers received",
 		"quiz.done.h.named" => "Thank you, {name}.",
 		"quiz.done.h" => "Thank you.",
-		"quiz.done.p" => "A member of our team will review your answers and be in touch to discuss your options.",
-		"quiz.done.book" => "Book a free call →",
+		"quiz.done.p" => "We have received your answers. A 270 West team member will review them and contact you to discuss your options.",
+		"quiz.done.book" => "Book a Free Call →",
 		"quiz.restart" => "Restart",
 		"quiz.title" => "VAC Status Check",
 		"quiz.err.invalid" => "Please enter your name and a valid email address.",
-		"quiz.err.consent" => "Please agree to be contacted so a benefits navigator can follow up.",
+		"quiz.err.consent" => "Please agree to be contacted so a 270 West team member can follow up.",
+		"quiz.err.method" => "Please choose how you would like us to contact you.",
+		"quiz.err.phone" => "Please add a phone number so we can reach you that way.",
 		"quiz.err.busy" => "Too many submissions. Please try again in a few minutes.",
 		"quiz.err.failed" => "We could not send your answers. Please try again.",
 		"video.close" => "Close",
@@ -173,24 +193,27 @@ function w270_ui_strings() {
 		"quiz.served.1" => "Reserve Force",
 		"quiz.served.2" => "RCMP",
 		"quiz.served.3" => "No",
-		"quiz.rating.q" => "Do you currently have a VAC disability assessment?",
-		"quiz.rating.0" => "No assessment yet",
-		"quiz.rating.1" => "0–30%",
-		"quiz.rating.2" => "40–70%",
-		"quiz.rating.3" => "80%+",
+		"quiz.decision.q" => "Have you received a VAC decision or assessment for the claim or condition you are asking about?",
+		"quiz.decision.0" => "Yes",
+		"quiz.decision.1" => "No",
+		"quiz.decision.2" => "Partially",
 		"quiz.health.q" => "Are you experiencing service-related health issues?",
 		"quiz.health.0" => "Yes",
 		"quiz.health.1" => "Not sure",
 		"quiz.health.2" => "No",
 		"quiz.filed.q" => "Have you previously filed a claim with VAC?",
-		"quiz.filed.0" => "Yes, approved",
-		"quiz.filed.1" => "Yes, denied",
+		"quiz.filed.0" => "Yes – approved",
+		"quiz.filed.1" => "Yes – denied",
 		"quiz.filed.2" => "No",
+		"quiz.filed.3" => "Not sure",
 		"quiz.goal.q" => "What are you looking to do?",
-		"quiz.goal.0" => "File a new claim",
-		"quiz.goal.1" => "Reassess a condition that has worsened",
-		"quiz.goal.2" => "Appeal a denial",
-		"quiz.goal.3" => "Not sure yet",
+		"quiz.goal.0" => "Start a new claim",
+		"quiz.goal.1" => "Continue a claim already in progress",
+		"quiz.goal.2" => "Review a VAC decision",
+		"quiz.goal.3" => "Reassess a condition that has worsened",
+		"quiz.goal.4" => "Help for a friend or family member",
+		"quiz.goal.5" => "General information",
+		"quiz.goal.6" => "Not sure yet",
 		"quiz.consent" => w270_checker_consent_text(),
 	];
 }

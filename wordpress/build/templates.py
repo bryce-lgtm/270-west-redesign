@@ -228,7 +228,7 @@ def single_library():
             con('article-rail', [
                 con('article-rail-cta', [
                     text('Need help?', 'article-rail-label'),
-                    heading('Talk to a benefits navigator — free.', 'h3', 'article-rail-h'),
+                    heading('Talk to a Benefit Navigator. It is free.', 'h3', 'article-rail-h'),
                     text('Two-minute VAC status check. No pressure, no obligation.', 'article-rail-p'),
                     button('Check your VAC status →', '/vac-status-checker/', 'article-rail-btn'),
                 ]),
@@ -261,8 +261,8 @@ def single_story():
                     con('article-rail-cta', [
                         text('Sound familiar?', 'article-rail-label'),
                         heading('Start with a conversation.', 'h3', 'article-rail-h'),
-                        text('A free 30-minute call with a benefits navigator. No documents needed.', 'article-rail-p'),
-                        button('Book a free call →', '/book-a-consult/', 'article-rail-btn'),
+                        text('A free 30-minute conversation with a 270 West team member. No documents needed.', 'article-rail-p'),
+                        button('Book a Free Call →', '/book-a-consult/', 'article-rail-btn'),
                     ]),
                     sc('[w270_rail_links type="stories" title="More stories"]'),
                     sc('[w270_rail_links type="guides" title="Guides"]'),
@@ -302,8 +302,8 @@ ARCHIVES = {
         orderby='menu_order', order='ASC',
     ),
     'news': dict(
-        h1='270 West news and updates for Canadian veterans', lead="What we're working on.",
-        sub="Where you'll find us, new guides as they're published, and updates from the team.",
+        h1='270 West news and updates for Canadian veterans', lead="What we are working on.",
+        sub="Where you will find us, new guides as they are published, and updates from the team.",
         types=['news'], card='w270-card-news', section='archive archive-news',
         filter_tax='news_category', first='All updates', count='Latest updates from the team', columns=(1, 1, 1), gap=0,
         orderby='post_date', order='DESC',

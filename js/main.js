@@ -190,10 +190,10 @@ function t(key, fallback, vars) {
 // Option values are what the checker submits (English, for Creatio); the labels shown are translated.
 const QUIZ_QUESTIONS = [
   { id:'served', q:'Have you served in the Canadian Armed Forces?', options:['Regular Force','Reserve Force','RCMP','No'] },
-  { id:'rating', q:'Do you currently have a VAC disability assessment?', options:['No assessment yet','0–30%','40–70%','80%+'] },
+  { id:'decision', q:'Have you received a VAC decision or assessment for the claim or condition you are asking about?', options:['Yes','No','Partially'] },
   { id:'health', q:'Are you experiencing service-related health issues?', options:['Yes','Not sure','No'] },
-  { id:'filed', q:'Have you previously filed a claim with VAC?', options:['Yes, approved','Yes, denied','No'] },
-  { id:'goal', q:'What are you looking to do?', options:['File a new claim','Reassess a condition that has worsened','Appeal a denial','Not sure yet'] }
+  { id:'filed', q:'Have you previously filed a claim with VAC?', options:['Yes – approved','Yes – denied','No','Not sure'] },
+  { id:'goal', q:'What are you looking to do?', options:['Start a new claim','Continue a claim already in progress','Review a VAC decision','Reassess a condition that has worsened','Help for a friend or family member','General information','Not sure yet'] }
 ];
 
 function initQuiz(containerId) {
@@ -202,7 +202,9 @@ function initQuiz(containerId) {
   // Its wording is already translated (from #w270-i18n); TranslatePress would otherwise hide each new
   // step for a moment while it re-checks the text.
   container.setAttribute('data-no-dynamic-translation', '');
-  let step = 0, answers = {}, contact = { name:'', email:'', phone:'', website:'', consent:false }, error = '', sending = false;
+  let step = 0, answers = {}, contact = { name:'', email:'', phone:'', method:'', website:'', consent:false }, error = '', sending = false;
+  // Values are the Gravity Form's choices (English, for Creatio's contact-method column); labels are translated.
+  const METHODS = [['Phone Call', t('quiz.method.0', 'Phone call')], ['Text/SMS', t('quiz.method.1', 'Text message')], ['Email', t('quiz.method.2', 'Email')]];
   const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
   const N = QUIZ_QUESTIONS.length;
   const total = N + 2;
@@ -221,7 +223,7 @@ function initQuiz(containerId) {
       body = `
         <div class="quiz-step-label">${esc(t('quiz.intro.label', 'Step 01 · Intake'))}</div>
         <div class="quiz-h3">${esc(t('quiz.intro.h', 'Where are you in your VAC benefits process?'))}</div>
-        <div class="quiz-lead">${esc(t('quiz.intro.lead', 'Choose the answers that best describe your service and where you are in the process. It’s fine if you’re unsure about an answer. About two minutes. Fully confidential and no obligation. We will get back to you with a clear next step.'))}</div>
+        <div class="quiz-lead">${esc(t('quiz.intro.lead', 'Choose the answers that best describe your service and where you are in the process. It is fine if you are unsure about an answer. About two minutes. Fully confidential and no obligation. We will get back to you with a clear next step.'))}</div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <button class="quiz-start-btn" onclick="quizGo(1)">${esc(t('quiz.intro.start', 'Start now →'))}</button>
           <div class="quiz-badges"><span>● ${esc(t('quiz.badge.time', '2 min'))}</span><span>● ${esc(t('quiz.badge.private', 'Confidential'))}</span><span>● ${esc(t('quiz.badge.free', 'No cost'))}</span></div>
@@ -244,11 +246,12 @@ function initQuiz(containerId) {
     } else if (step === N + 1) {
       body = `
         <div class="quiz-step-label">${esc(t('quiz.contact.label', 'Almost there'))}</div>
-        <div class="quiz-h3">${esc(t('quiz.contact.h', 'Where should we send your next step?'))}</div>
+        <div class="quiz-h3">${esc(t('quiz.contact.h', 'How should we contact you?'))}</div>
         <div class="quiz-fields">
           <div class="quiz-field"><label class="quiz-field-label" for="qf-name">${esc(t('quiz.field.name', 'Full name'))}</label><input type="text" id="qf-name" autocomplete="name" required value="${esc(contact.name)}" oninput="quizContact('name',this.value)" placeholder="${esc(t('quiz.field.name.ph', 'Your name'))}"/></div>
           <div class="quiz-field"><label class="quiz-field-label" for="qf-email">${esc(t('quiz.field.email', 'Email'))}</label><input type="email" id="qf-email" autocomplete="email" required value="${esc(contact.email)}" oninput="quizContact('email',this.value)" placeholder="you@example.ca"/></div>
           <div class="quiz-field"><label class="quiz-field-label" for="qf-phone">${esc(t('quiz.field.phone', 'Phone'))}</label><input type="tel" id="qf-phone" autocomplete="tel" value="${esc(contact.phone)}" oninput="quizContact('phone',this.value)" placeholder="(902) 555-0142"/></div>
+          <div class="quiz-field"><label class="quiz-field-label" for="qf-method">${esc(t('quiz.field.method', 'Preferred contact method'))}</label><select id="qf-method" onchange="quizContact('method',this.value)"><option value=""${contact.method ? '' : ' selected'}>${esc(t('quiz.field.method.ph', 'Choose one'))}</option>${METHODS.map(([v, l]) => `<option value="${esc(v)}"${contact.method === v ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
           <input type="text" class="quiz-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" oninput="quizContact('website',this.value)"/>
         </div>
         <label class="quiz-consent"><input type="checkbox" id="qf-consent"${contact.consent ? ' checked' : ''} onchange="quizContact('consent',this.checked)"/><span>${esc(t('quiz.consent', 'I agree to be contacted by a member of the 270 West Consulting team.'))}</span></label>
@@ -260,9 +263,9 @@ function initQuiz(containerId) {
       body = `
         <div class="quiz-result-label">● ${esc(t('quiz.done.label', 'Answers received'))}</div>
         <div class="quiz-result-h">${esc(first ? t('quiz.done.h.named', 'Thank you, {name}.', { name: first }) : t('quiz.done.h', 'Thank you.'))}</div>
-        <div class="quiz-result-p">${esc(t('quiz.done.p', 'A member of our team will review your answers and be in touch to discuss your options.'))}</div>
+        <div class="quiz-result-p">${esc(t('quiz.done.p', 'We have received your answers. A 270 West team member will review them and contact you to discuss your options.'))}</div>
         <div class="quiz-result-btns">
-          <a href="${window.W270 ? (location.pathname.startsWith('/fr/') ? '/fr/book-a-consult/' : '/book-a-consult/') : 'consult.html'}" class="btn-accent" style="font-size:14px;padding:16px 28px">${esc(t('quiz.done.book', 'Book a free call →'))}</a>
+          <a href="${window.W270 ? (location.pathname.startsWith('/fr/') ? '/fr/book-a-consult/' : '/book-a-consult/') : 'consult.html'}" class="btn-accent" style="font-size:14px;padding:16px 28px">${esc(t('quiz.done.book', 'Book a Free Call →'))}</a>
           <button class="quiz-restart" onclick="quizReset()">${esc(t('quiz.restart', 'Restart'))}</button>
         </div>`;
     }
@@ -283,13 +286,15 @@ function initQuiz(containerId) {
     setTimeout(() => { step = s + 1; render(); }, 220);
   };
   window.quizContact = function(key, val) { contact[key] = val; };
-  window.quizReset = function() { step = 0; answers = {}; contact = {name:'',email:'',phone:'',website:'',consent:false}; error = ''; sending = false; render(); };
+  window.quizReset = function() { step = 0; answers = {}; contact = {name:'',email:'',phone:'',method:'',website:'',consent:false}; error = ''; sending = false; render(); };
   // Final step: in WordPress the answers go to the theme endpoint, which submits them to the
   // "VAC Status Checker" Gravity Form (its Webhooks feed sends the lead to Creatio). The static
   // prototype has no endpoint and simply shows the result.
   const ERR = {
     invalid: () => t('quiz.err.invalid', 'Please enter your name and a valid email address.'),
-    consent: () => t('quiz.err.consent', 'Please agree to be contacted so a benefits navigator can follow up.'),
+    consent: () => t('quiz.err.consent', 'Please agree to be contacted so a 270 West team member can follow up.'),
+    method:  () => t('quiz.err.method', 'Please choose how you would like us to contact you.'),
+    phone:   () => t('quiz.err.phone', 'Please add a phone number so we can reach you that way.'),
     busy:    () => t('quiz.err.busy', 'Too many submissions. Please try again in a few minutes.'),
     failed:  () => t('quiz.err.failed', 'We could not send your answers. Please try again.'),
   };
@@ -297,6 +302,8 @@ function initQuiz(containerId) {
     if (sending) return;
     const name = (contact.name || '').trim(), email = (contact.email || '').trim();
     if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { error = ERR.invalid(); render(); return; }
+    if (!contact.method) { error = ERR.method(); render(); return; }
+    if (contact.method !== 'Email' && !(contact.phone || '').trim()) { error = ERR.phone(); render(); return; }
     if (!contact.consent) { error = ERR.consent(); render(); return; }
     const url = window.W270 && window.W270.checker;
     if (!url) { error = ''; step = N + 2; render(); return; }
@@ -306,7 +313,7 @@ function initQuiz(containerId) {
     try {
       const res = await fetch(url, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, phone: contact.phone || '', website: contact.website || '', consent: true, answers, lead })
+        body: JSON.stringify({ name, email, phone: contact.phone || '', method: contact.method || '', website: contact.website || '', consent: true, answers, lead })
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) {
@@ -378,15 +385,15 @@ function initConsultWidget(containerId) {
 
       container.innerHTML = `<div class="consult-widget">
         <div class="consult-header"><span>Benefits Analysis Consult</span><span>30 min · free</span></div>
-        <h3 class="consult-h3">Book a free 30-minute consult.</h3>
-        <p class="consult-lead">One-on-one with a 270 West benefits navigator. We will review your situation, walk through which VAC programs may apply, and answer your questions. No obligation.</p>
+        <h3 class="consult-h3">Book a free 30-minute conversation.</h3>
+        <p class="consult-lead">One-on-one with a 270 West team member. We will talk through your situation, explain the VAC programs or routes that may be relevant and answer your questions. No obligation.</p>
         <div class="consult-advisor-row">
           <div class="consult-avatars">
             <span class="consult-avatar" style="background:var(--olive)">JM</span>
             <span class="consult-avatar" style="background:#8a95a6">SK</span>
             <span class="consult-avatar" style="background:#5a6472">AT</span>
           </div>
-          <span class="consult-advisor-label">Matched with the next available benefits navigator</span>
+          <span class="consult-advisor-label">Matched with the next available 270 West team member</span>
         </div>
         <div class="consult-sublabel">1. Choose a day</div>
         <div class="consult-days">${dayBtns}</div>
@@ -415,8 +422,8 @@ function initConsultWidget(containerId) {
       container.innerHTML = `<div class="consult-widget">
         <div class="consult-header"><span>Benefits Analysis Consult</span><span>30 min · free</span></div>
         <div class="consult-confirmed-label">● Booking confirmed</div>
-        <h3 class="consult-h3">Thanks, ${info.name || 'veteran'}. You're on the calendar.</h3>
-        <p class="consult-lead">We've sent a calendar invite to <strong>${info.email || 'your email'}</strong> with a call link for <strong>${slot.date} at ${time} AT</strong>. Talk soon.</p>
+        <h3 class="consult-h3">Thanks, ${info.name || 'veteran'}. You are on the calendar.</h3>
+        <p class="consult-lead">We have sent a calendar invite to <strong>${info.email || 'your email'}</strong> with a call link for <strong>${slot.date} at ${time} AT</strong>. Talk soon.</p>
         <button class="consult-restart" onclick="consultRestart()">Book another time</button>
       </div>`;
     }
