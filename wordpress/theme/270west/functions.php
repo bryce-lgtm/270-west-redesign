@@ -137,6 +137,12 @@ add_filter( 'wpseo_title', function ( $title ) {
 	}
 	return $title;
 } );
+// Stories and guides are written by the company, not a WordPress user: their Article schema names the
+// Organization as author instead of whichever account seeded the post.
+add_filter( 'wpseo_schema_article', function ( $data ) {
+	$data['author'] = [ '@id' => trailingslashit( home_url() ) . '#organization' ];
+	return $data;
+} );
 
 /* ── Advertising landing pages ────────────────────────────────────────────────
  * The importer marks them with _w270_landing. They carry their own lp-header and

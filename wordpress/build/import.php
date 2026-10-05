@@ -181,7 +181,8 @@ function w270_import_yoast() {
 		'title-home-wpseo'            => '%%title%%',
 		'title-page'                  => '%%title%%',
 		'title-post'                  => '%%title%%',
-		'title-resource'              => '%%title%%',
+		'separator'                   => 'sc-mdash',
+		'title-resource'              => '%%title%% %%sep%% %%sitename%%', // stories and guides do not name the company themselves
 		'schema-page-type-resource'   => 'WebPage',
 		'schema-article-type-resource' => 'Article',
 		'noindex-tax-resource_type'   => true,
