@@ -165,6 +165,41 @@ function w270_import_settings() {
 	echo "settings: ok\n";
 }
 
+/**
+ * Yoast SEO (installed Oct 2026 for Organization, Article and breadcrumb schema). Titles are plain
+ * %%title%% so the page titles the build writes stand (functions.php restates the resources'
+ * seo_title for Yoast); resources are Articles; the taxonomy archives, which duplicate the template
+ * pages, stay out of the index, as do the landing pages and the Calendly confirmation page.
+ * Idempotent, and a no-op until the deploy script has installed the plugin.
+ */
+function w270_import_yoast() {
+	if ( ! defined( 'WPSEO_VERSION' ) ) { echo "yoast: not active — skipped\n"; return; }
+	$set = [
+		'company_or_person'           => 'company',
+		'company_name'                => '270 West Consulting',
+		'company_alternate_name'      => '270 West',
+		'title-home-wpseo'            => '%%title%%',
+		'title-page'                  => '%%title%%',
+		'title-post'                  => '%%title%%',
+		'title-resource'              => '%%title%%',
+		'schema-page-type-resource'   => 'WebPage',
+		'schema-article-type-resource' => 'Article',
+		'noindex-tax-resource_type'   => true,
+		'noindex-tax-resource_topic'  => true,
+		'noindex-tax-news_category'   => true,
+	];
+	$logo = w270_media_id( '270west-horizontal-dark.png' );
+	if ( $logo ) {
+		$set['company_logo_id'] = $logo;
+		$set['company_logo']    = wp_get_attachment_url( $logo );
+	}
+	update_option( 'wpseo_titles', array_merge( (array) get_option( 'wpseo_titles', [] ), $set ) );
+	$noindex = get_posts( [ 'post_type' => 'page', 'numberposts' => -1, 'fields' => 'ids', 'meta_key' => '_w270_landing' ] );
+	if ( $p = w270_page_by_slug( 'call-request-received' ) ) { $noindex[] = $p->ID; }
+	foreach ( $noindex as $pid ) { update_post_meta( $pid, '_yoast_wpseo_meta-robots-noindex', '1' ); }
+	echo "yoast: configured (logo #{$logo}, " . count( $noindex ) . " pages noindex)\n";
+}
+
 function w270_media_id( $name ) {
 	$ids = get_posts( [ 'post_type' => 'attachment', 'post_status' => 'inherit', 'meta_key' => '_270w_source', 'meta_value' => $name, 'fields' => 'ids', 'numberposts' => 1 ] );
 	return $ids ? (int) $ids[0] : 0;
@@ -174,8 +209,9 @@ function w270_import_media() {
 	require_once ABSPATH . 'wp-admin/includes/image.php';
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 	require_once ABSPATH . 'wp-admin/includes/media.php';
-	// Top-level photos plus the community logos in img/events/ (matched by file name, like the rest).
-	foreach ( array_merge( glob( W270_IMG . '/*.{jpg,jpeg,png}', GLOB_BRACE ), glob( W270_IMG . '/events/*.{jpg,jpeg,png}', GLOB_BRACE ) ) as $file ) {
+	// Top-level photos, the community logos in img/events/ and the raster brand logo in img/brand/ (for
+	// Yoast's Organization schema), matched by file name like the rest.
+	foreach ( array_merge( glob( W270_IMG . '/*.{jpg,jpeg,png}', GLOB_BRACE ), glob( W270_IMG . '/events/*.{jpg,jpeg,png}', GLOB_BRACE ), glob( W270_IMG . '/brand/*.png' ) ) as $file ) {
 		$name = basename( $file );
 		if ( w270_media_id( $name ) ) { echo "media {$name}: exists\n"; continue; }
 		$tmp = wp_tempnam( $name );
@@ -786,6 +822,7 @@ function w270_main( $argv ) {
 	if ( $all || isset( $flags['kit'] ) ) { function_exists( 'w270_import_kit' ) && w270_import_kit(); }
 	if ( $all || isset( $flags['settings'] ) ) { w270_import_settings(); }
 	if ( $all || isset( $flags['settings'] ) ) { w270_import_translatepress(); }
+	if ( $all || isset( $flags['settings'] ) ) { w270_import_yoast(); }
 	if ( class_exists( '\Elementor\Plugin' ) ) { \Elementor\Plugin::$instance->files_manager->clear_cache(); }
 	if ( ! empty( $GLOBALS['w270_failed'] ) ) { fwrite( STDERR, "IMPORT FAILED\n" ); exit( 1 ); }
 }

@@ -127,6 +127,17 @@ add_action( 'template_redirect', function () {
 	}
 } );
 
+/* ── Yoast SEO coexistence ────────────────────────────────────────────────────
+ * Yoast (installed Oct 2026 for Organization, Article and breadcrumb schema) owns <title>. Its
+ * templates are plain %%title%% (set by the importer), so the page titles the build writes stand;
+ * the two exceptions the document_title filter above handles are restated for Yoast here. */
+add_filter( 'wpseo_title', function ( $title ) {
+	if ( is_singular( w270_resource_types() ) && ( $seo = trim( (string) w270_field( 'seo_title', get_queried_object_id() ) ) ) ) {
+		return $seo;
+	}
+	return $title;
+} );
+
 /* ── Advertising landing pages ────────────────────────────────────────────────
  * The importer marks them with _w270_landing. They carry their own lp-header and
  * lp-footer inside the Elementor content, so the site chrome is switched off; they
