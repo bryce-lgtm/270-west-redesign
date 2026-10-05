@@ -50,6 +50,17 @@ function w270_checker_methods() {
 	return $methods;
 }
 
+/**
+ * The form's phone field validates the standard North American layout, (###) ###-####. A ten-digit
+ * number typed any other way (902-555-0100, 902.555.0100, +1 902 555 0100) is laid out that way;
+ * anything else is passed through for the team to read.
+ */
+function w270_checker_phone( $phone ) {
+	$digits = preg_replace( '/\D+/', '', (string) $phone );
+	if ( 11 === strlen( $digits ) && '1' === $digits[0] ) { $digits = substr( $digits, 1 ); }
+	return 10 === strlen( $digits ) ? sprintf( '(%s) %s-%s', substr( $digits, 0, 3 ), substr( $digits, 3, 3 ), substr( $digits, 6 ) ) : $phone;
+}
+
 function w270_checker_form_id() {
 	$ids = get_option( 'w270_form_ids', [] );
 	return (int) ( $ids['checker'] ?? 0 );
@@ -106,7 +117,7 @@ function w270_checker_submit( WP_REST_Request $req ) {
 		'input_1_3' => $parts[0],
 		'input_1_6' => $parts[1] ?? '',
 		'input_2'   => $email,
-		'input_5'   => $phone,
+		'input_5'   => w270_checker_phone( $phone ),
 		'input_21'  => $methods[ $method ], // preferred contact method, as the form's select stores it (Creatio UsrCommsMethod)
 	];
 	// Creatio's Commentary gets one line, the way the events team writes it:
@@ -123,7 +134,8 @@ function w270_checker_submit( WP_REST_Request $req ) {
 	$values['input_18_2'] = w270_checker_consent_text();
 	// Creatio's "claims submitted before" column is a yes/no: map the checker's answer onto it.
 	$filed = (string) ( $answers['filed'] ?? '' );
-	$values['input_15'] = str_starts_with( $filed, 'Yes' ) ? 'True' : ( 'No' === $filed ? 'False' : '' );
+	// The select rejects a value outside its choices, an empty string included, so "Not sure" sends nothing.
+	if ( str_starts_with( $filed, 'Yes' ) ) { $values['input_15'] = 'True'; } elseif ( 'No' === $filed ) { $values['input_15'] = 'False'; }
 
 	// Campaign attribution kept in sessionStorage by main.js (same fields the other forms carry).
 	$lead = (array) ( $p['lead'] ?? [] );
