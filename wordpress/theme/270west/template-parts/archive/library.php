@@ -7,7 +7,7 @@ $terms  = 'topic' === $filter ? get_terms( [ 'taxonomy' => 'resource_topic', 'hi
 <section class="archive archive-library">
 	<?php if ( $terms ) : ?>
 		<div class="archive-toolbar">
-			<div class="archive-count"><?php echo count( $posts ); ?> resources</div>
+			<div class="archive-count"><?php echo count( $posts ); ?> <?php echo 1 === count( $posts ) ? 'resource' : 'resources'; ?></div>
 			<div class="archive-filters" role="group" aria-label="Filter resources by topic">
 				<button type="button" class="filter-chip" data-filter="all" aria-pressed="true">All</button>
 				<?php foreach ( $terms as $t ) : ?>

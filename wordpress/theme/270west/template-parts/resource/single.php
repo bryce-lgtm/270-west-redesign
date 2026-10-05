@@ -2,8 +2,8 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 $content  = apply_filters( 'the_content', get_the_content() );
 $show_toc = w270_field( 'show_toc' );
-$show_toc = null === $show_toc ? true : (bool) $show_toc;
-$toc      = ( 'guides' === w270_subtype_slug() && $show_toc ) ? w270_toc( $content ) : [];
+$show_toc = null === $show_toc || '' === $show_toc ? true : (bool) $show_toc;
+$toc      = $show_toc ? w270_toc( $content ) : []; // every type; empty when the body has under two headings
 ?>
 <main id="content" <?php post_class( 'site-main' ); ?>>
 	<?php get_template_part( 'template-parts/resource/hero' ); ?>

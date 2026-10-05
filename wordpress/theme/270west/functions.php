@@ -9,6 +9,9 @@ define( 'W270_ASSETS', get_stylesheet_directory_uri() . '/assets' );
 
 require_once get_stylesheet_directory() . '/inc/class-w270-nav-walker.php';
 require_once get_stylesheet_directory() . '/inc/resources.php';
+require_once get_stylesheet_directory() . '/inc/shortcodes.php';
+require_once get_stylesheet_directory() . '/inc/checker.php';
+require_once get_stylesheet_directory() . '/inc/calendly.php';
 
 // Hello's reset/theme CSS would fight the prototype stylesheet; the prototype assumes UA defaults.
 add_filter( 'hello_elementor_enqueue_style', '__return_false' );
@@ -40,7 +43,13 @@ add_action( 'wp_enqueue_scripts', function () {
 		wp_enqueue_style( 'w270-generated', W270_ASSETS . '/css/generated.css', [ 'w270-bridge' ], filemtime( $dir . '/assets/css/generated.css' ) );
 	}
 	wp_enqueue_script( 'w270-main', W270_ASSETS . '/js/main.js', [], filemtime( $dir . '/assets/js/main.js' ), true );
-	wp_add_inline_script( 'w270-main', 'window.W270 = ' . wp_json_encode( [ 'assets' => W270_ASSETS, 'gfFields' => w270_gf_attribution_map() ] ) . ';', 'before' );
+	$w270 = [ 'assets' => W270_ASSETS, 'gfFields' => w270_gf_attribution_map() ];
+	// The status checker posts to the theme endpoint only once its Gravity Form exists.
+	if ( function_exists( 'w270_checker_form_id' ) && w270_checker_form_id() ) {
+		$w270['checker']        = esc_url_raw( rest_url( 'w270/v1/checker' ) );
+		$w270['checkerConsent'] = w270_checker_consent_text();
+	}
+	wp_add_inline_script( 'w270-main', 'window.W270 = ' . wp_json_encode( $w270 ) . ';', 'before' );
 }, 20 );
 
 // Preconnect for Google Fonts + favicon, as in the prototype <head>.
@@ -49,6 +58,14 @@ add_action( 'wp_head', function () {
 	echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
 	echo '<link rel="icon" href="' . esc_url( W270_ASSETS . '/img/brand/favicon.svg' ) . '" type="image/svg+xml">' . "\n";
 }, 1 );
+
+// TranslatePress: the footer links are the only language switcher (no floater, no flags), so its
+// switcher assets aren't needed — except inside its translation editor.
+add_action( 'wp_enqueue_scripts', function () {
+	if ( isset( $_GET['trp-edit-translation'] ) ) { return; }
+	wp_dequeue_style( 'trp-language-switcher-v2' );
+	wp_dequeue_script( 'trp-language-switcher-js-v2' );
+}, 100 );
 
 // Hello's header/footer experiment styles its own dynamic header; ours is the prototype markup.
 add_action( 'wp_enqueue_scripts', function () {
@@ -66,7 +83,7 @@ add_filter( 'style_loader_tag', function ( $tag, $handle, $href ) {
 	}
 	// Gravity Forms' orbital theme is layered for the same reason: the prototype form styling in
 	// elementor-bridge.css is unlayered, so it wins without a specificity war or !important.
-	foreach ( [ 'elementor' => '/^(elementor-frontend|elementor-icons|widget-|base-|e-|swiper)/', 'gforms' => '/^(gform_basic|gform_theme|gravity_forms_theme)/' ] as $layer => $re ) {
+	foreach ( [ 'elementor' => '/^(elementor-frontend|elementor-icons|elementor-pro|widget-|base-|e-|swiper|font-awesome)/', 'gforms' => '/^(gform_basic|gform_theme|gravity_forms_theme)/' ] as $layer => $re ) {
 		if ( preg_match( $re, $handle ) ) {
 			return '<style id="' . esc_attr( $handle ) . '-css">@import url("' . esc_url( $href ) . '") layer(' . $layer . ');</style>' . "\n";
 		}
@@ -78,6 +95,15 @@ add_filter( 'style_loader_tag', function ( $tag, $handle, $href ) {
 // company ("About 270 West Consulting — …") must not get the site name appended again.
 add_filter( 'document_title_separator', fn() => '—' );
 add_filter( 'document_title_parts', function ( $parts ) {
+	// The front page's <title> is its own page title, generated from the prototype's <title>
+	// (e.g. "VAC benefits consultants | 270 West Consulting"), not WordPress's "Site — Tagline".
+	if ( is_front_page() && ( $front = (int) get_option( 'page_on_front' ) ) && ( $t = get_the_title( $front ) ) ) {
+		return [ 'title' => $t ];
+	}
+	// Resources can carry a full SEO title from the copy deck ("VAC disability ratings: How they work | 270 West").
+	if ( is_singular( w270_resource_types() ) && ( $seo = trim( (string) w270_field( 'seo_title', get_queried_object_id() ) ) ) ) {
+		return [ 'title' => $seo ];
+	}
 	if ( is_singular() && ! empty( $parts['title'] ) && ! empty( $parts['site'] ) && false !== stripos( $parts['title'], $parts['site'] ) ) {
 		unset( $parts['site'] );
 	}
@@ -124,7 +150,8 @@ add_action( 'wp_enqueue_scripts', function () {
 }, 21 );
 
 add_filter( 'wp_robots', function ( $robots ) {
-	if ( w270_is_landing() ) {
+	// Landing pages, and the page Calendly redirects to after a booking request.
+	if ( w270_is_landing() || is_page( 'call-request-received' ) ) {
 		$robots['noindex'] = true;
 		$robots['follow']  = true;
 		unset( $robots['max-image-preview'], $robots['max-snippet'], $robots['max-video-preview'] );
@@ -137,6 +164,8 @@ add_filter( 'wp_sitemaps_posts_query_args', function ( $args, $post_type ) {
 	$args['meta_query'] = array_merge( $args['meta_query'] ?? [], [
 		[ 'key' => '_w270_landing', 'compare' => 'NOT EXISTS' ],
 	] );
+	$received = get_page_by_path( 'call-request-received' );
+	if ( $received ) { $args['post__not_in'] = array_merge( $args['post__not_in'] ?? [], [ $received->ID ] ); }
 	return $args;
 }, 10, 2 );
 

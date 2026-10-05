@@ -14,7 +14,8 @@ BASE = os.environ.get('W270_URL', 'http://270-west.local')
 QUOTES = {'’': "'", '‘': "'", '“': '"', '”': '"', '—': '-', '–': '-', '…': '...', '\xa0': ' '}
 # (prototype file, live path, scope). 'main' = whole <main>; 'article' = <article class="article-body"> only,
 # compared as a bag of words (the callout moves to the end of the article in WordPress).
-EXTRA_CHECKS = [('article.html', '/resources/guides/vac-benefits-programs-guide/', 'article')]
+# Only approved guides are published; compare the one that is (its body lives in build/content).
+EXTRA_CHECKS = [('wordpress/build/content/how-vac-disability-ratings-work.html', '/resources/guides/how-vac-disability-ratings-work/', 'article')]
 
 # The archives are template-driven now, so their card lists are dynamic. Assert they render
 # a plausible number of entries rather than matching the prototype word for word.
@@ -69,9 +70,8 @@ def wp_words(path):
 
 def article_words(html_text):
     m = re.search(r'<article class="article-body"[\s\S]*?</article>', html_text)
-    if not m:
-        raise RuntimeError('no <article class="article-body">')
-    return norm(m.group(0))
+    # A build/content file is the bare article body, with no <article> wrapper.
+    return norm(m.group(0) if m else html_text)
 
 
 def fetch(path):
@@ -101,7 +101,7 @@ def check_extra(src, path, scope):
 def check_archives():
     ok = True
     for path, marker, minimum in ARCHIVE_MINIMUMS:
-        n = fetch(path).count(f'class="{marker}"')
+        n = len(re.findall(r'class="[^"]*\\b' + re.escape(marker) + r'\\b[^"]*"', fetch(path)))
         good = n >= minimum
         ok = ok and good
         print(f'{"OK  " if good else "DIFF"} {path:45s} {n:5d} {marker} (expected >= {minimum})')
