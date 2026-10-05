@@ -210,3 +210,7 @@ class StoryCardTests(unittest.TestCase):
     def test_hero_quote_card_keeps_its_classes_and_priority(self):
         c = first('<a href="story.html" class="hero-quote page-hero-quote" data-story="todd-story"><img src="img/t.jpg" alt="" fetchpriority="high" style="object-position:center 30%"/></a>')
         self.assertEqual(c['settings']['shortcode'], '[w270_story_card slug="todd-story" variant="hero" class="hero-quote page-hero-quote" pos="center 30%" priority="1"]')
+
+    def test_hero_story_card_carries_its_own_quote(self):
+        c = first('<a href="story.html" class="hero-quote" data-story="todd-story"><img src="img/t.jpg" alt=""/><blockquote class="hero-quote-q">I still had full control.</blockquote></a>')
+        self.assertEqual(c['settings']['shortcode'], '[w270_story_card slug="todd-story" variant="hero" class="hero-quote" quote="I still had full control."]')
