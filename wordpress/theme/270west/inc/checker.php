@@ -129,9 +129,9 @@ function w270_checker_submit( WP_REST_Request $req ) {
 		$summary[] = $label . ': ' . ( '' === $v ? 'not answered' : $v );
 	}
 	$values['input_20'] = 'VAC status checker. ' . implode( '; ', $summary ) . '.';
-	// Consent (same field as the Contact Form): the box, and the wording the visitor agreed to.
+	// Consent (same field as the Contact Form): the box only. Gravity Forms records the wording the
+	// visitor agreed to itself; posting it as the field's second input fails its choice validation.
 	$values['input_18_1'] = '1';
-	$values['input_18_2'] = w270_checker_consent_text();
 	// Creatio's "claims submitted before" column is a yes/no: map the checker's answer onto it.
 	$filed = (string) ( $answers['filed'] ?? '' );
 	// The select rejects a value outside its choices, an empty string included, so "Not sure" sends nothing.
