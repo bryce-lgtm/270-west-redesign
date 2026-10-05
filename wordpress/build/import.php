@@ -359,6 +359,9 @@ function w270_import_forms( array $refresh = [] ) {
 				$r = GFAPI::update_form( $form );
 				echo is_wp_error( $r ) ? "form {$key}: ERROR " . $r->get_error_message() . "\n" : "form {$key}: #{$ids[$key]} refreshed from the repo\n";
 				if ( is_wp_error( $r ) ) { $GLOBALS['w270_failed'] = true; }
+				// The export carries no is_active, and update_form() reads that as inactive: an inactive
+				// form answers every submission with "form not found" (the checker was dark this way).
+				GFAPI::update_form_property( $ids[ $key ], 'is_active', '1' );
 				continue;
 			}
 			echo "form {$key}: #{$ids[$key]} already present, left as-is\n";
@@ -372,6 +375,7 @@ function w270_import_forms( array $refresh = [] ) {
 			continue;
 		}
 		$ids[ $key ] = (int) $id;
+		GFAPI::update_form_property( $id, 'is_active', '1' );
 		echo "form {$key}: #{$id} created ({$title})\n";
 	}
 	update_option( 'w270_form_ids', $ids );
