@@ -1779,6 +1779,9 @@ strong, b { font-weight: 500; }
 .sec-p { font-size: 19px; line-height: 1.6; color: var(--muted); margin: 0 auto; max-width: 640px; }
 .dark-section .sec-p { color: #d6d1c8; }
 .section-body-narrow { max-width: 880px; margin: 0 auto; }
+/* How It Works steps share the narrow column with the panels below, so the rows sit centred under the heading. */
+.hiw-steps { max-width: 880px; margin: 0 auto; }
+.hiw-steps .hiw-step-p { max-width: none; }
 .journey-head { display: block; text-align: center; max-width: 860px; margin: 0 auto 48px; }
 .journey-intro { margin: 16px auto 0; max-width: 620px; }
 .lead-magnets-grid { grid-template-columns: 1fr; }
