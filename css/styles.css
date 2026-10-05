@@ -1954,3 +1954,8 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
 .quiz-field select { appearance: none; -webkit-appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6' fill='none' stroke='%23A0B5C1' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 2px center; background-size: 10px 6px; padding-right: 22px; }
 .quiz-field select option { color: var(--ink); }
 .nowrap { white-space: nowrap; }
+/* A section that is only a heading block (the "experience" ledes restored Oct 5): no trailing margin
+   meant for a body that is not there, and a lighter bottom padding so the next section sits close. */
+.section-head:last-child { margin-bottom: 0; }
+.sec-p + .sec-p { margin-top: 14px; }
+.section-lede { padding-bottom: 40px; }
