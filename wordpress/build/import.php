@@ -497,7 +497,7 @@ function w270_import_resources( array $refresh = [] ) {
 				update_post_meta( $existing->ID, 'seo_h1', $r['seo_h1'] ?? '' );
 				update_post_meta( $existing->ID, 'seo_title', $r['seo_title'] ?? '' );
 				// Stories: the card and page fields come from the seed too (quote, name, rank, number).
-				foreach ( [ 'pull_quote', 'veteran_name', 'veteran_role', 'duration', 'story_number' ] as $k ) {
+				foreach ( [ 'pull_quote', 'veteran_name', 'veteran_role', 'duration', 'story_number', 'video_url' ] as $k ) {
 					if ( isset( $r[ $k ] ) ) { update_post_meta( $existing->ID, $k, $r[ $k ] ); }
 				}
 				if ( isset( $r['order'] ) ) { wp_update_post( [ 'ID' => $existing->ID, 'menu_order' => (int) $r['order'] ] ); }
@@ -529,7 +529,7 @@ function w270_import_resources( array $refresh = [] ) {
 			wp_set_object_terms( $pid, $subtype, 'resource_type', false );
 			if ( ! empty( $r['topic'] ) ) { wp_set_object_terms( $pid, [ $topics[ $r['topic'] ] ], 'resource_topic' ); }
 			if ( ! empty( $r['news_category'] ) ) { wp_set_object_terms( $pid, $r['news_category'], 'news_category', false ); }
-			foreach ( [ 'pull_quote', 'veteran_name', 'veteran_role', 'duration', 'story_number', 'external_link' ] as $k ) {
+			foreach ( [ 'pull_quote', 'veteran_name', 'veteran_role', 'duration', 'story_number', 'video_url', 'external_link' ] as $k ) {
 				if ( isset( $r[ $k ] ) ) { update_post_meta( $pid, $k, $r[ $k ] ); }
 			}
 			if ( ! empty( $r['image'] ) && ( $mid = w270_media_id( $r['image'] ) ) ) { set_post_thumbnail( $pid, $mid ); }
