@@ -561,7 +561,7 @@ function w270_import_resources( array $refresh = [] ) {
 		'stories' => [ 'Veteran Stories', 'resources/stories', [ 'stories' ], 'stories', 'none', [
 			'hero_h1'   => 'Canadian veteran stories about the VAC claims process',
 			'hero_lead' => 'Real veterans. Real stories.',
-			'hero_sub'  => 'Veterans share what their service meant, what the VAC process was like, and what changed once someone was in their corner. Each story is shared with their permission.',
+			'hero_sub'  => 'Veterans share what their service meant, what brought them to the VAC process and what it was like to navigate the steps involved – from organizing appointments and information to understanding decisions and accessing help afterward. Each story is shared with permission.',
 		] ],
 		'guides'  => [ 'Guides', 'resources/guides', [ 'guides', 'checklists', 'explainers' ], 'library', 'topic', [
 			'hero_h1'   => 'VAC guides and checklists for Canadian veterans',
