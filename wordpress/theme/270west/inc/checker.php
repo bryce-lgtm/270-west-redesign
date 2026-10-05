@@ -32,9 +32,22 @@ function w270_checker_consent_text() {
 	return 'I agree to be contacted by a member of the 270 West Consulting team.';
 }
 
-/** Preferred contact method: the checker form's field 21 choices (the same list as the Contact Form). */
+/**
+ * Preferred contact method: the checker form's field 21 choices (the same list as the Contact Form),
+ * as label => stored value. The labels are what the widget submits; the values are Creatio's codes
+ * for the contact-method column, which is what the form's select field accepts and the feed sends.
+ */
 function w270_checker_methods() {
-	return [ 'Phone Call', 'Text/SMS', 'Email' ];
+	$methods = [ 'Phone Call' => 'Phone Call', 'Text/SMS' => 'Text/SMS', 'Email' => 'Email' ];
+	$id = w270_checker_form_id();
+	if ( $id && class_exists( 'GFAPI' ) ) {
+		foreach ( ( GFAPI::get_form( $id )['fields'] ?? [] ) as $field ) {
+			if ( 21 === (int) $field->id ) {
+				foreach ( (array) $field->choices as $c ) { $methods[ (string) $c['text'] ] = (string) ( $c['value'] ?? $c['text'] ); }
+			}
+		}
+	}
+	return $methods;
 }
 
 function w270_checker_form_id() {
@@ -76,7 +89,8 @@ function w270_checker_submit( WP_REST_Request $req ) {
 	if ( '' === $name || ! is_email( $email ) ) {
 		return new WP_Error( 'w270_checker_invalid', 'Please enter your name and a valid email address.', [ 'status' => 400 ] );
 	}
-	if ( ! in_array( $method, w270_checker_methods(), true ) ) {
+	$methods = w270_checker_methods();
+	if ( ! isset( $methods[ $method ] ) ) {
 		return new WP_Error( 'w270_checker_method', 'Please choose how you would like us to contact you.', [ 'status' => 400 ] );
 	}
 	if ( 'Email' !== $method && '' === trim( $phone ) ) {
@@ -93,7 +107,7 @@ function w270_checker_submit( WP_REST_Request $req ) {
 		'input_1_6' => $parts[1] ?? '',
 		'input_2'   => $email,
 		'input_5'   => $phone,
-		'input_21'  => $method, // preferred contact method: the form's own choices (Creatio UsrCommsMethod)
+		'input_21'  => $methods[ $method ], // preferred contact method, as the form's select stores it (Creatio UsrCommsMethod)
 	];
 	// Creatio's Commentary gets one line, the way the events team writes it:
 	// "VAC status checker. Service: Regular Force; VAC decision or assessment: No; …"
