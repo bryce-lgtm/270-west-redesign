@@ -54,7 +54,7 @@ function w270c_register() {
 		'has_archive'   => false,
 		// Permalinks are built by inc/permalinks.php; WP must not invent its own rules.
 		'rewrite'       => false,
-		'supports'      => [ 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'page-attributes' ],
+		'supports'      => [ 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'page-attributes', 'author' ], // author: Yoast only emits Article schema for post types with one
 		'menu_icon'     => 'dashicons-book',
 		'menu_position' => 21,
 	] );

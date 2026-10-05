@@ -266,6 +266,13 @@ class Converter:
             attrs.append('pos="%s"' % pos.group(1).strip())
         if img is not None and img.attrs.get('fetchpriority') == 'high':
             attrs.append('priority="1"')
+        # A page's hero card may quote a different line than the story's pull quote (the service pages
+        # each pick the line that fits the page), so the hero's own blockquote travels with it.
+        if variant == 'hero':
+            bq = next((n for n in node.iter() if not n.is_text and n.tag == 'blockquote'), None)
+            quote = ' '.join(html.unescape(self.doc.inner_html(bq)).split()) if bq is not None else ''
+            if quote:
+                attrs.append('quote="%s"' % quote.replace('"', '”').replace('[', '(').replace(']', ')'))
         return self.widget('shortcode', {'shortcode': '[w270_story_card %s]' % ' '.join(attrs), '_css_classes': 'w-html'})
 
     def accordion(self, items):
@@ -298,6 +305,9 @@ class Converter:
             'items': repeater,
             'default_state': 'expanded' if all_open else 'all_collapsed',
             'max_items_expended': 'multiple',
+            # Elementor's own FAQ schema switch: the widget prints FAQPage JSON-LD from its items, so
+            # questions edited in the editor keep the structured data in step.
+            'faq_schema': 'yes',
             'title_tag': 'div',
             'accordion_item_title_icon': {'value': '', 'library': ''},
             'accordion_item_title_icon_active': {'value': '', 'library': ''},

@@ -194,20 +194,21 @@ add_shortcode( 'w270_story_play', function ( $atts ) {
 } );
 
 /**
- * [w270_story_card slug="robyn-story" variant="tcard|hero" class="…" pos="center 30%"]
+ * [w270_story_card slug="robyn-story" variant="tcard|hero" class="…" pos="center 30%" quote="…"]
+ * quote: a page-specific line to show instead of the story's pull quote (the service pages' hero cards).
  * A testimonial card rendered from the story post, so the quote, name, rank and photo are edited once
  * (on the story) and every card links to its story page. The generator emits this for the prototype's
  * cards marked data-story. Renders nothing if the story is missing or unpublished.
  */
 add_shortcode( 'w270_story_card', function ( $atts ) {
-	$a    = shortcode_atts( [ 'slug' => '', 'variant' => 'tcard', 'class' => '', 'pos' => 'center 30%', 'priority' => '' ], (array) $atts );
+	$a    = shortcode_atts( [ 'slug' => '', 'variant' => 'tcard', 'class' => '', 'pos' => 'center 30%', 'priority' => '', 'quote' => '' ], (array) $atts );
 	$post = $a['slug'] ? get_page_by_path( $a['slug'], OBJECT, 'resource' ) : null;
 	if ( ! $post || 'publish' !== $post->post_status ) {
 		if ( $a['slug'] ) { error_log( "w270: story card for missing or unpublished story '{$a['slug']}'" ); }
 		return '';
 	}
 	$id    = $post->ID;
-	$quote = (string) w270_field( 'pull_quote', $id );
+	$quote = '' !== trim( (string) $a['quote'] ) ? trim( (string) $a['quote'] ) : (string) w270_field( 'pull_quote', $id );
 	$name  = (string) w270_field( 'veteran_name', $id );
 	$role  = (string) ( w270_field( 'veteran_role', $id ) ?: 'Canadian Armed Forces Veteran' );
 	$first = w270_story_first_name( $id );
