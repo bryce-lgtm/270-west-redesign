@@ -156,6 +156,13 @@ function w270_checker_submit( WP_REST_Request $req ) {
 		}
 	}
 
+	// Gravity Forms records the current request as the entry's source URL, which here would be the
+	// REST endpoint; the Creatio feed sends that URL as the landing page (BpmHref). Record the page
+	// the visitor actually landed on instead (main.js keeps it with the campaign values).
+	$landing = (string) ( $lead['landing_page'] ?? '' );
+	if ( $landing && str_starts_with( $landing, '/' ) && ! str_starts_with( $landing, '//' ) ) {
+		$_SERVER['REQUEST_URI'] = mb_substr( wp_sanitize_redirect( $landing ), 0, 400 );
+	}
 	$result = GFAPI::submit_form( $form_id, $values );
 	if ( is_wp_error( $result ) ) {
 		error_log( 'w270 checker: submit_form failed: ' . $result->get_error_message() );
