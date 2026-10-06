@@ -60,12 +60,30 @@ if ( ! defined( 'W270_CREATIO_UTM_COLUMNS' ) ) {
 }
 
 /**
- * "Preferred Method of Communication" on the lead is column Column124 (client, 2026-10-06). Left
- * empty: sending the form's method Id under Column124Id made Creatio reject the whole lead with a
- * foreign-key error, so that column points at a different lookup than the one the form stores.
- * Set this once the lookup behind Column124 and its Ids are known.
+ * "Preferred Method of Communication" on the lead is column Column124, a lookup of its own
+ * (client, 2026-10-06). The forms store the Ids of a different lookup (UsrCommsMethod), which
+ * Creatio rejected with a foreign-key error, so the choice is translated by its label.
  */
-if ( ! defined( 'W270_CREATIO_COMMS_COLUMN' ) ) { define( 'W270_CREATIO_COMMS_COLUMN', '' ); }
+if ( ! defined( 'W270_CREATIO_COMMS_COLUMN' ) ) { define( 'W270_CREATIO_COMMS_COLUMN', 'Column124' ); }
+function w270_creatio_comms_methods() {
+	return [
+		'phone' => 'f36e55ef-7ee6-44ad-a71d-715950b17e22', // Phone Call
+		'text'  => 'f834df4c-f6e9-4857-bd40-e50a8b661f76', // Text Message
+		'email' => 'ba639459-c066-4616-836f-26491728e957', // Email
+	];
+}
+/** The label of the preferred-method choice the entry holds (the select stores Creatio Ids). */
+function w270_creatio_entry_method_label( $entry, $form ) {
+	foreach ( (array) $form['fields'] as $field ) {
+		if ( 'select' !== $field->type || ! is_array( $field->choices ) ) { continue; }
+		if ( ! preg_match( '/contact|communication|reach/i', (string) $field->label ) ) { continue; }
+		$v = (string) rgar( $entry, (string) $field->id );
+		foreach ( $field->choices as $c ) {
+			if ( '' !== $v && (string) ( $c['value'] ?? '' ) === $v ) { return (string) $c['text']; }
+		}
+	}
+	return '';
+}
 
 /** Classify utm_source (+ medium) into a Lead source key. */
 function w270_creatio_source_key( $source, $medium ) {
@@ -136,11 +154,9 @@ add_filter( 'gform_webhooks_request_data', function ( $data, $feed, $entry, $for
 		if ( $column && isset( $utm[ $param ] ) && '' !== $utm[ $param ] ) { $data[ $column ] = $utm[ $param ]; }
 	}
 
-	// The feed already sends the preferred-method lookup Id as UsrCommsMethod; repeat it under the
-	// lead's real column code (lookups take the Id suffix, so both spellings go out).
-	if ( ! empty( $data['UsrCommsMethod'] ) && W270_CREATIO_COMMS_COLUMN ) {
-		$data[ W270_CREATIO_COMMS_COLUMN . 'Id' ] = $data['UsrCommsMethod'];
-		$data[ W270_CREATIO_COMMS_COLUMN ]        = $data['UsrCommsMethod'];
-	}
+	// Preferred method: translate the chosen label onto the lead's own lookup.
+	$label = strtolower( w270_creatio_entry_method_label( $entry, $form ) );
+	$key   = preg_match( '/text|sms/', $label ) ? 'text' : ( preg_match( '/phone|call/', $label ) ? 'phone' : ( str_contains( $label, 'email' ) ? 'email' : '' ) );
+	if ( $key && W270_CREATIO_COMMS_COLUMN ) { $data[ W270_CREATIO_COMMS_COLUMN . 'Id' ] = w270_creatio_comms_methods()[ $key ]; }
 	return $data;
 }, 10, 4 );
