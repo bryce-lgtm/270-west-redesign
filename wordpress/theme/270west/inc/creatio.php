@@ -120,8 +120,17 @@ add_filter( 'gform_webhooks_request_data', function ( $data, $feed, $entry, $for
 	if ( $sk && ! empty( $sources[ $sk ] ) )   { $data['LeadSourceId'] = $sources[ $sk ]; }
 	if ( $ck && ! empty( $channels[ $ck ] ) )  { $data['LeadMediumId'] = $channels[ $ck ]; }
 
+	// Creatio's own source tracking reads the utm marks out of BpmHref (a lead whose BpmHref has
+	// none is filed under "Web: direct traffic", whatever LeadMediumId says), so the landing URL
+	// always carries the campaign parameters the entry holds.
 	$page = (string) rgar( $entry, 'source_url' );
-	if ( $page && empty( $data['BpmHref'] ) ) { $data['BpmHref'] = $page; }
+	if ( $page && empty( $data['BpmHref'] ) ) {
+		$missing = [];
+		foreach ( $utm as $k => $v ) {
+			if ( '' !== $v && ! preg_match( '/[?&]' . preg_quote( $k, '/' ) . '=/', $page ) ) { $missing[ $k ] = $v; }
+		}
+		$data['BpmHref'] = $missing ? add_query_arg( array_map( 'rawurlencode', $missing ), $page ) : $page;
+	}
 
 	foreach ( (array) W270_CREATIO_UTM_COLUMNS as $param => $column ) {
 		if ( $column && isset( $utm[ $param ] ) && '' !== $utm[ $param ] ) { $data[ $column ] = $utm[ $param ]; }
