@@ -216,7 +216,7 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
    gap, so the second one drops to 72px on top; a colour change (dark, tinted, the founder band) keeps
    the full 96px on both sides; the first section after a page hero sits closer to it. */
 .section-flush { padding-bottom: 0; }
-.section-pad + .section-pad { padding-top: 72px; }
+.section-pad + .section-pad { padding-top: 40px; }
 .dark-section + .section-pad, .section-tint + .section-pad, .about-founder + .section-pad,
 .section-pad + .dark-section, .section-pad + .section-tint { padding-top: 96px; }
 .page-hero + .section-pad { padding-top: 64px; }
@@ -1975,7 +1975,7 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
    meant for a body that is not there, and a lighter bottom padding so the next section sits close. */
 .section-head:last-child { margin-bottom: 0; }
 .sec-p + .sec-p { margin-top: 14px; }
-.section-lede { padding-bottom: 32px; }
+.section-lede { padding-bottom: 40px; }
 /* Urgent-support notice (Oct 2026): low-key, beside the forms and under the checker; one line in the footer. */
 .urgent-note { margin-top: 28px; padding: 16px 20px; background: var(--bg2); border-left: 2px solid var(--olive); font-size: 14px; line-height: 1.55; color: var(--muted); max-width: 640px; }
 .urgent-note strong { color: var(--ink); font-weight: 600; }
