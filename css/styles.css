@@ -211,7 +211,16 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
 .btn-ink:active { transform: translateY(0); }
 
 /* ── SECTION PADDING ── */
-.section-pad { padding: 120px 80px; }
+.section-pad { padding: 96px 80px; }
+/* One vertical rhythm (Oct 2026): sections carry 96px; two sections on the same background share a
+   gap, so the second one drops to 72px on top; a colour change (dark, tinted, the founder band) keeps
+   the full 96px on both sides; the first section after a page hero sits closer to it. */
+.section-flush { padding-bottom: 0; }
+.section-pad + .section-pad { padding-top: 72px; }
+.dark-section + .section-pad, .section-tint + .section-pad, .about-founder + .section-pad,
+.section-pad + .dark-section, .section-pad + .section-tint { padding-top: 96px; }
+.page-hero + .section-pad { padding-top: 64px; }
+.page-hero + .status-page-layout { padding-top: 64px; }
 .section-pad-sm { padding: 80px 80px; }
 
 /* ── MONO LABEL ── */
@@ -631,7 +640,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .about-why-p.italic { color: var(--muted); font-style: italic; }
 
 /* ── ABOUT — FOUNDER VOICE ── */
-.about-founder { padding: 100px 80px; background: var(--bg2); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.about-founder { padding: 96px 80px; background: var(--bg2); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .about-founder-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px; align-items: start; }
 /* Long-form story: headline and standfirst stay in view beside the body as it scrolls. */
 .about-founder-intro { position: sticky; top: 110px; }
@@ -789,7 +798,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .hero-badge-value { font-size: 13px; font-weight: 600; letter-spacing: -0.005em; color: var(--ink); }
 
 /* ── LEAD MAGNET CARDS ── */
-.lead-magnets { padding: 20px 80px 80px; }
+.lead-magnets { padding: 20px 80px 48px; }
 .lead-magnets-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 
 /* ── JOURNEY SECTION ── */
@@ -1963,7 +1972,7 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
    meant for a body that is not there, and a lighter bottom padding so the next section sits close. */
 .section-head:last-child { margin-bottom: 0; }
 .sec-p + .sec-p { margin-top: 14px; }
-.section-lede { padding-bottom: 40px; }
+.section-lede { padding-bottom: 32px; }
 /* Urgent-support notice (Oct 2026): low-key, beside the forms and under the checker; one line in the footer. */
 .urgent-note { margin-top: 28px; padding: 16px 20px; background: var(--bg2); border-left: 2px solid var(--olive); font-size: 14px; line-height: 1.55; color: var(--muted); max-width: 640px; }
 .urgent-note strong { color: var(--ink); font-weight: 600; }
