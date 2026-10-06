@@ -831,6 +831,8 @@ details:not([open]) .faq-icon::after { content: '+'; }
 /* ── CONSULT PAGE ── */
 .consult-intro { padding: 56px 80px 0; }
 .consult-intro-body { max-width: 760px; }
+.consult-intro-after { padding-top: 0; padding-bottom: 96px; }
+.consult-scheduler-fallback { display: inline-block; margin-top: 8px; }
 
 
 /* ── ADDITIONAL MOBILE NEW ── */
@@ -848,6 +850,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
   .status-page-layout { grid-template-columns: 1fr; padding: 40px 20px; }
   .status-page-sticky { position: static; }
   .consult-intro { padding: 40px 20px 0; }
+  .consult-intro-after { padding: 0 20px 64px; }
 
 }
 
@@ -1545,7 +1548,7 @@ strong, b { font-weight: 500; }
 .site-header .logo { display: block; line-height: 0; }
 .site-header .logo-full { display: block; height: 44px; width: auto; }
 .site-header.is-scrolled .logo-full { height: 38px; }
-.footer-lockup { margin-bottom: 22px; }
+.footer-lockup { margin-bottom: 24px; }
 .footer-grid-5 > div:first-child > div:not(.footer-lockup) { max-width: 300px; line-height: 1.7; }
 .footer-lockup img { width: 186px; height: auto; display: block; }
 
@@ -1989,7 +1992,7 @@ h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .
 .urgent-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 /* BBB accreditation seal (client-supplied, Oct 2026): the visual proof point under the footer lockup. */
 /* In WordPress the class sits on the Elementor image widget, so the rule covers the wrapper and the image. */
-.footer-bbb { display: block; width: 132px; max-width: 132px; height: auto; margin-top: 28px; }
+.footer-bbb { display: block; width: 132px; max-width: 132px; height: auto; margin-top: 32px; }
 .footer-bbb img { display: block; width: 132px; height: auto; border-radius: 6px; }
 .footer-urgent { display: block; margin-top: 14px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
 .footer-urgent a { color: inherit; }

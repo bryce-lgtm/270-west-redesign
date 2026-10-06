@@ -591,6 +591,18 @@ function initScheduler(lead) {
     document.head.appendChild(css);
     const js = document.createElement('script');
     js.src = 'https://assets.calendly.com/assets/external/widget.js'; js.async = true;
+    // Blocked or slow embed: offer the calendar as a plain link so it is always reachable.
+    const fallback = () => {
+      if (host.querySelector('iframe') || host.querySelector('.consult-scheduler-fallback')) return;
+      const a = document.createElement('a');
+      a.className = 'btn btn-primary consult-scheduler-fallback';
+      a.href = u.toString(); a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = 'Open the calendar to choose a time \u2192';
+      div.style.height = 'auto';
+      host.appendChild(a);
+    };
+    js.onerror = fallback;
+    setTimeout(fallback, 8000);
     document.body.appendChild(js);
   } else {
     const frame = document.createElement('iframe');
