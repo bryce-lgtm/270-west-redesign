@@ -18,6 +18,9 @@ function w270_checker_questions() {
 		'health' => [ 32, 'Service-related health issues' ],
 		'filed'  => [ 33, 'Previous VAC claim' ],
 		'goal'   => [ 34, 'Looking to' ],
+		// The shorter path for someone who has not served (Q1 "No").
+		'for'    => [ 35, 'Support for' ],
+		'need'   => [ 36, 'Would like help with' ],
 	];
 }
 
@@ -101,7 +104,7 @@ function w270_checker_submit( WP_REST_Request $req ) {
 	foreach ( w270_checker_questions() as $k => [ $field_id, $label ] ) {
 		$v = mb_substr( sanitize_text_field( $answers[ $k ] ?? '' ), 0, 80 );
 		$values[ "input_{$field_id}" ] = $v;
-		$summary[] = $label . ': ' . ( '' === $v ? 'not answered' : $v );
+		if ( '' !== $v ) { $summary[] = $label . ': ' . $v; }   // only the questions on the path taken
 	}
 	$values['input_20'] = 'VAC status checker. ' . implode( '; ', $summary ) . '.';
 	// Consent (same field as the Contact Form): the box, and the wording the visitor agreed to.
@@ -148,13 +151,10 @@ function w270_checker_submit( WP_REST_Request $req ) {
  */
 function w270_ui_strings() {
 	return [
-		"quiz.intro.label" => "Step 01 · Intake",
-		"quiz.intro.h" => "Where are you in your VAC benefits process?",
-		"quiz.intro.lead" => "Choose the answers that best describe your service and where you are in the process. It is fine if you are unsure about an answer. About two minutes. Fully confidential and no obligation. We will get back to you with a clear next step.",
+		"quiz.intro.label" => "About two minutes · Confidential · No cost",
+		"quiz.intro.h" => "Where could you use support with VAC benefits?",
+		"quiz.intro.lead" => "Answer a few short questions about your service, VAC history and what you would like help with. It is fine if you are unsure about an answer. A 270 West team member will review your answers and contact you to discuss possible next steps.",
 		"quiz.intro.start" => "Start now →",
-		"quiz.badge.time" => "2 min",
-		"quiz.badge.private" => "Confidential",
-		"quiz.badge.free" => "No cost",
 		"quiz.question.label" => "Question {n} of {total}",
 		"quiz.back" => "← Back",
 		"quiz.progress" => "{pct}% complete",
@@ -176,6 +176,7 @@ function w270_ui_strings() {
 		"quiz.done.h.named" => "Thank you, {name}.",
 		"quiz.done.h" => "Thank you.",
 		"quiz.done.p" => "We have received your answers. A 270 West team member will review them and contact you to discuss your options.",
+		"quiz.done.urgent" => "This service is not monitored for emergencies. If you need immediate assistance, call 911. For 24/7 mental health support, call the VAC Assistance Service at 1-800-268-7708.",
 		"quiz.done.book" => "Book a Free Call →",
 		"quiz.restart" => "Restart",
 		"quiz.title" => "VAC Status Check",
@@ -188,7 +189,7 @@ function w270_ui_strings() {
 		"video.close" => "Close",
 		"video.pending" => "Coming soon. This film is in production.",
 		"hide_gdpr_banner" => "1",
-		"quiz.served.q" => "Have you served in the Canadian Armed Forces?",
+		"quiz.served.q" => "Have you served in the Canadian Armed Forces or RCMP?",
 		"quiz.served.0" => "Regular Force",
 		"quiz.served.1" => "Reserve Force",
 		"quiz.served.2" => "RCMP",
@@ -214,6 +215,18 @@ function w270_ui_strings() {
 		"quiz.goal.4" => "Help for a friend or family member",
 		"quiz.goal.5" => "General information",
 		"quiz.goal.6" => "Not sure yet",
+		"quiz.for.q" => "Who are you looking for information or support for?",
+		"quiz.for.0" => "Spouse, partner or survivor",
+		"quiz.for.1" => "Family member or caregiver",
+		"quiz.for.2" => "Friend",
+		"quiz.for.3" => "General information",
+		"quiz.for.4" => "Not sure",
+		"quiz.need.q" => "What would you like help with?",
+		"quiz.need.0" => "Understanding VAC benefits",
+		"quiz.need.1" => "Helping with an existing VAC matter",
+		"quiz.need.2" => "Caregiver or family support",
+		"quiz.need.3" => "Finding other veteran resources",
+		"quiz.need.4" => "General information or not sure",
 		"quiz.consent" => w270_checker_consent_text(),
 	];
 }

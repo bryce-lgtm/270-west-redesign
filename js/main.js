@@ -189,12 +189,20 @@ function t(key, fallback, vars) {
 
 // Option values are what the checker submits (English, for Creatio); the labels shown are translated.
 const QUIZ_QUESTIONS = [
-  { id:'served', q:'Have you served in the Canadian Armed Forces?', options:['Regular Force','Reserve Force','RCMP','No'] },
+  { id:'served', q:'Have you served in the Canadian Armed Forces or RCMP?', options:['Regular Force','Reserve Force','RCMP','No'] },
   { id:'decision', q:'Have you received a VAC decision or assessment for the claim or condition you are asking about?', options:['Yes','No','Partially'] },
   { id:'health', q:'Are you experiencing service-related health issues?', options:['Yes','Not sure','No'] },
   { id:'filed', q:'Have you previously filed a claim with VAC?', options:['Yes – approved','Yes – denied','No','Not sure'] },
   { id:'goal', q:'What are you looking to do?', options:['Start a new claim','Continue a claim already in progress','Review a VAC decision','Reassess a condition that has worsened','Help for a friend or family member','General information','Not sure yet'] }
 ];
+// Someone who has not served (Q1 "No") takes a shorter path: who the support is for, and what kind.
+const QUIZ_FAMILY = [
+  { id:'for', q:'Who are you looking for information or support for?', options:['Spouse, partner or survivor','Family member or caregiver','Friend','General information','Not sure'] },
+  { id:'need', q:'What would you like help with?', options:['Understanding VAC benefits','Helping with an existing VAC matter','Caregiver or family support','Finding other veteran resources','General information or not sure'] }
+];
+function quizPath(answers) {
+  return answers.served === 'No' ? [QUIZ_QUESTIONS[0]].concat(QUIZ_FAMILY) : QUIZ_QUESTIONS;
+}
 
 function initQuiz(containerId) {
   const container = document.getElementById(containerId || 'quiz-widget');
@@ -206,30 +214,31 @@ function initQuiz(containerId) {
   // Values are the Gravity Form's choices (English, for Creatio's contact-method column); labels are translated.
   const METHODS = [['Phone Call', t('quiz.method.0', 'Phone call')], ['Text/SMS', t('quiz.method.1', 'Text message')], ['Email', t('quiz.method.2', 'Email')]];
   const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-  const N = QUIZ_QUESTIONS.length;
-  const total = N + 2;
+  // The path (and so the step count) depends on the first answer.
+  const path = () => quizPath(answers);
+  const count = () => path().length;
   const pad = n => String(n).padStart(2, '0');
 
   function progress() {
-    return step === 0 ? 0 : Math.min(1, step / total);
+    return step === 0 ? 0 : Math.min(1, step / (count() + 2));
   }
 
   function render() {
     const pct = Math.round(progress() * 100);
+    const N = count(), total = N + 2;
     const stepLabel = step === 0 ? '00' : pad(Math.min(step, total));
     let body = '';
 
     if (step === 0) {
       body = `
-        <div class="quiz-step-label">${esc(t('quiz.intro.label', 'Step 01 · Intake'))}</div>
-        <div class="quiz-h3">${esc(t('quiz.intro.h', 'Where are you in your VAC benefits process?'))}</div>
-        <div class="quiz-lead">${esc(t('quiz.intro.lead', 'Choose the answers that best describe your service and where you are in the process. It is fine if you are unsure about an answer. About two minutes. Fully confidential and no obligation. We will get back to you with a clear next step.'))}</div>
+        <div class="quiz-step-label">${esc(t('quiz.intro.label', 'About two minutes · Confidential · No cost'))}</div>
+        <div class="quiz-h3">${esc(t('quiz.intro.h', 'Where could you use support with VAC benefits?'))}</div>
+        <div class="quiz-lead">${esc(t('quiz.intro.lead', 'Answer a few short questions about your service, VAC history and what you would like help with. It is fine if you are unsure about an answer. A 270 West team member will review your answers and contact you to discuss possible next steps.'))}</div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <button class="quiz-start-btn" onclick="quizGo(1)">${esc(t('quiz.intro.start', 'Start now →'))}</button>
-          <div class="quiz-badges"><span>● ${esc(t('quiz.badge.time', '2 min'))}</span><span>● ${esc(t('quiz.badge.private', 'Confidential'))}</span><span>● ${esc(t('quiz.badge.free', 'No cost'))}</span></div>
         </div>`;
     } else if (step >= 1 && step <= N) {
-      const Q = QUIZ_QUESTIONS[step - 1];
+      const Q = path()[step - 1];
       const twoCol = Q.options.length > 3 ? ' two-col' : '';
       const opts = Q.options.map((opt, i) => {
         const sel = answers[Q.id] === opt ? ' selected' : '';
@@ -264,6 +273,7 @@ function initQuiz(containerId) {
         <div class="quiz-result-label">● ${esc(t('quiz.done.label', 'Answers received'))}</div>
         <div class="quiz-result-h">${esc(first ? t('quiz.done.h.named', 'Thank you, {name}.', { name: first }) : t('quiz.done.h', 'Thank you.'))}</div>
         <div class="quiz-result-p">${esc(t('quiz.done.p', 'We have received your answers. A 270 West team member will review them and contact you to discuss your options.'))}</div>
+        <div class="quiz-result-p quiz-result-urgent">${esc(t('quiz.done.urgent', 'This service is not monitored for emergencies. If you need immediate assistance, call 911. For 24/7 mental health support, call the VAC Assistance Service at 1-800-268-7708.'))}</div>
         <div class="quiz-result-btns">
           <a href="${window.W270 ? (location.pathname.startsWith('/fr/') ? '/fr/book-a-consult/' : '/book-a-consult/') : 'consult.html'}" class="btn-accent" style="font-size:14px;padding:16px 28px">${esc(t('quiz.done.book', 'Book a Free Call →'))}</a>
           <button class="quiz-restart" onclick="quizReset()">${esc(t('quiz.restart', 'Restart'))}</button>
@@ -280,8 +290,9 @@ function initQuiz(containerId) {
 
   window.quizGo = function(s) { step = s; render(); };
   window.quizAnswer = function(id, idx, s) {
-    const Q = QUIZ_QUESTIONS.find(q => q.id === id);
+    const Q = QUIZ_QUESTIONS.concat(QUIZ_FAMILY).find(q => q.id === id);
     answers[id] = Q ? Q.options[idx] : idx;   // the English value, whatever language is showing
+    if (id === 'served') { Object.keys(answers).forEach(k => { if (k !== 'served') delete answers[k]; }); }   // a changed Q1 changes the path
     render();
     setTimeout(() => { step = s + 1; render(); }, 220);
   };
@@ -306,7 +317,7 @@ function initQuiz(containerId) {
     if (contact.method !== 'Email' && !(contact.phone || '').trim()) { error = ERR.phone(); render(); return; }
     if (!contact.consent) { error = ERR.consent(); render(); return; }
     const url = window.W270 && window.W270.checker;
-    if (!url) { error = ''; step = N + 2; render(); return; }
+    if (!url) { error = ''; step = count() + 2; render(); return; }
     let lead = {};
     try { lead = JSON.parse(sessionStorage.getItem('w270_lead_src') || '{}'); } catch (e) { lead = {}; }
     sending = true; error = ''; render();
@@ -321,7 +332,7 @@ function initQuiz(containerId) {
         const code = String(data.code || '').replace('w270_checker_', '');
         error = (ERR[code] || ERR.failed)();
       } else {
-        step = N + 2;
+        step = count() + 2;
       }
     } catch (e) {
       error = ERR.failed();
