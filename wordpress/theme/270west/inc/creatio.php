@@ -59,8 +59,13 @@ if ( ! defined( 'W270_CREATIO_UTM_COLUMNS' ) ) {
 	] );
 }
 
-/** "Preferred Method of Communication" on the lead is column Column124 (client, 2026-10-06). */
-if ( ! defined( 'W270_CREATIO_COMMS_COLUMN' ) ) { define( 'W270_CREATIO_COMMS_COLUMN', 'Column124' ); }
+/**
+ * "Preferred Method of Communication" on the lead is column Column124 (client, 2026-10-06). Left
+ * empty: sending the form's method Id under Column124Id made Creatio reject the whole lead with a
+ * foreign-key error, so that column points at a different lookup than the one the form stores.
+ * Set this once the lookup behind Column124 and its Ids are known.
+ */
+if ( ! defined( 'W270_CREATIO_COMMS_COLUMN' ) ) { define( 'W270_CREATIO_COMMS_COLUMN', '' ); }
 
 /** Classify utm_source (+ medium) into a Lead source key. */
 function w270_creatio_source_key( $source, $medium ) {
