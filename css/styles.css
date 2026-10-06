@@ -1968,6 +1968,8 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
 .urgent-note { margin-top: 28px; padding: 16px 20px; background: var(--bg2); border-left: 2px solid var(--olive); font-size: 14px; line-height: 1.55; color: var(--muted); max-width: 640px; }
 .urgent-note strong { color: var(--ink); font-weight: 600; }
 .urgent-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+/* BBB accreditation seal (client-supplied, Oct 2026): the visual proof point under the footer lockup. */
+.footer-bbb { display: block; width: 132px; height: auto; margin-top: 16px; border-radius: 6px; }
 .footer-urgent { display: block; margin-top: 14px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
 .footer-urgent a { color: inherit; }
 .quiz-result-urgent { font-size: 13px; opacity: 0.8; margin-top: 10px; }

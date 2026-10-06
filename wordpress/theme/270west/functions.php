@@ -167,8 +167,9 @@ add_action( 'wp_enqueue_scripts', function () {
 }, 21 );
 
 add_filter( 'wp_robots', function ( $robots ) {
-	// Landing pages, and the page Calendly redirects to after a booking request.
-	if ( w270_is_landing() || is_page( 'call-request-received' ) ) {
+	// Landing pages, the page Calendly redirects to after a booking request, and the story form
+	// (reached only from the Resources page's invitation).
+	if ( w270_is_landing() || is_page( [ 'call-request-received', 'share-your-story' ] ) ) {
 		$robots['noindex'] = true;
 		$robots['follow']  = true;
 		unset( $robots['max-image-preview'], $robots['max-snippet'], $robots['max-video-preview'] );
@@ -181,8 +182,9 @@ add_filter( 'wp_sitemaps_posts_query_args', function ( $args, $post_type ) {
 	$args['meta_query'] = array_merge( $args['meta_query'] ?? [], [
 		[ 'key' => '_w270_landing', 'compare' => 'NOT EXISTS' ],
 	] );
-	$received = get_page_by_path( 'call-request-received' );
-	if ( $received ) { $args['post__not_in'] = array_merge( $args['post__not_in'] ?? [], [ $received->ID ] ); }
+	foreach ( [ 'call-request-received', 'share-your-story' ] as $slug ) {
+		if ( $p = get_page_by_path( $slug ) ) { $args['post__not_in'] = array_merge( $args['post__not_in'] ?? [], [ $p->ID ] ); }
+	}
 	return $args;
 }, 10, 2 );
 

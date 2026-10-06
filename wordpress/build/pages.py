@@ -18,6 +18,8 @@ PAGES = [
     ('accessibility.html', 'accessibility', None),
     # Where Calendly redirects after a booking request. noindex (functions.php), not in any menu.
     ('call-request-received.html', 'call-request-received', None),
+    # Reached only from the Resources page's story invitation. noindex, not in any menu.
+    ('share-your-story.html', 'share-your-story', None),
 ]
 
 # Advertising landing pages. They carry their own header and footer instead of the site nav,
