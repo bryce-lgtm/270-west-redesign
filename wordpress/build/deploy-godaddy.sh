@@ -56,7 +56,7 @@ $SSH "cd '$GD_PATH' && \
   W270_SITE='$GD_PATH' W270_HOST='$GD_SITE_HOST' php wp-content/themes/270west/build/import.php --all $REFRESH && \
   W270_SITE='$GD_PATH' W270_HOST='$GD_SITE_HOST' php wp-content/themes/270west/build/render-check.php && \
   wp cache flush >/dev/null && echo 'object cache flushed' && \
-  wp eval 'do_action("wp_update_nav_menu", 0);' >/dev/null 2>&1 && echo 'page cache ban requested (GoDaddy gateway)'"
+  { wp eval 'do_action("wp_update_nav_menu", 0);' >/dev/null 2>&1 || true; } && echo 'page cache ban requested (GoDaddy gateway)'"
 # The gateway (page) cache has no WP-CLI command; the system plugin bans it on the nav-menu hook.
 # (switch_theme would also ban it, but Elementor hooks that action with a 3-argument callback and fatals.)
 echo "GODADDY STAGING DEPLOY OK — https://$GD_SITE_HOST/"
