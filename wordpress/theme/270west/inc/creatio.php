@@ -141,13 +141,18 @@ add_filter( 'gform_webhooks_request_data', function ( $data, $feed, $entry, $for
 	// Creatio's own source tracking reads the utm marks out of BpmHref (a lead whose BpmHref has
 	// none is filed under "Web: direct traffic", whatever LeadMediumId says), so the landing URL
 	// always carries the campaign parameters the entry holds.
+	// Creatio also picks the Source from the utm_source in that URL, and only under the spellings its
+	// Lead sources lookup knows ("adwords" filed under Google AdWords; "google", "googleads" and
+	// "Google" all fell to Other source, 2026-10-06). The URL gets the spelling Creatio recognises;
+	// UtmSourceStr above keeps the value the ad really sent.
 	$page = (string) rgar( $entry, 'source_url' );
 	if ( $page && empty( $data['BpmHref'] ) ) {
-		$missing = [];
-		foreach ( $utm as $k => $v ) {
-			if ( '' !== $v && ! preg_match( '/[?&]' . preg_quote( $k, '/' ) . '=/', $page ) ) { $missing[ $k ] = $v; }
-		}
-		$data['BpmHref'] = $missing ? add_query_arg( array_map( 'rawurlencode', $missing ), $page ) : $page;
+		$creatio_source = [ 'google-ads' => 'adwords', 'facebook' => 'facebook', 'linkedin' => 'linkedin', 'twitter' => 'twitter', 'mailchimp' => 'mailchimp' ];
+		$for_url = $utm;
+		if ( $sk && isset( $creatio_source[ $sk ] ) ) { $for_url['utm_source'] = $creatio_source[ $sk ]; }
+		$page = remove_query_arg( array_keys( $for_url ), $page );
+		$with = array_filter( $for_url, fn( $v ) => '' !== $v );
+		$data['BpmHref'] = $with ? add_query_arg( array_map( 'rawurlencode', $with ), $page ) : $page;
 	}
 
 	foreach ( (array) W270_CREATIO_UTM_COLUMNS as $param => $column ) {
