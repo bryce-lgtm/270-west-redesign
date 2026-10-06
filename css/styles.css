@@ -1992,7 +1992,8 @@ h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .
 .urgent-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 /* BBB accreditation seal (client-supplied, Oct 2026): the visual proof point under the footer lockup. */
 /* In WordPress the class sits on the Elementor image widget, so the rule covers the wrapper and the image. */
-.footer-bbb { display: block; width: 132px; max-width: 132px; height: auto; margin-top: 32px; }
+/* Elementor renders the seal's wrapper as display:contents, so the spacing has to live on the image itself. */
+.footer-bbb, .footer-bbb img { display: block; width: 132px; max-width: 132px; height: auto; margin-top: 32px; }
 .footer-bbb img { display: block; width: 132px; height: auto; border-radius: 6px; }
 .footer-urgent { display: block; margin-top: 14px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
 .footer-urgent a { color: inherit; }
