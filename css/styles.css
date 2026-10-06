@@ -221,6 +221,9 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
 .section-pad + .dark-section, .section-pad + .section-tint { padding-top: 96px; }
 .page-hero + .section-pad { padding-top: 64px; }
 .page-hero + .status-page-layout { padding-top: 64px; }
+/* Colour bands (dark, tinted) read as separate blocks, so they carry a little less on each side. */
+.dark-section.section-pad, .section-tint.section-pad { padding-top: 80px; padding-bottom: 80px; }
+.section-pad + .dark-section.section-pad, .section-pad + .section-tint.section-pad { padding-top: 80px; }
 .section-pad-sm { padding: 80px 80px; }
 
 /* ── MONO LABEL ── */
@@ -640,7 +643,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .about-why-p.italic { color: var(--muted); font-style: italic; }
 
 /* ── ABOUT — FOUNDER VOICE ── */
-.about-founder { padding: 96px 80px; background: var(--bg2); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.about-founder { padding: 80px 80px; background: var(--bg2); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .about-founder-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px; align-items: start; }
 /* Long-form story: headline and standfirst stay in view beside the body as it scrolls. */
 .about-founder-intro { position: sticky; top: 110px; }
@@ -923,7 +926,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 }
 
 /* SERVICES PREVIEW (dark) */
-.svc-preview-section { padding: 110px 80px; }
+.svc-preview-section { padding: 96px 80px; }
 .svc-preview-inner { position: relative; }
 .svc-preview-head { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: end; margin-bottom: 48px; }
 .svc-preview-intro { font-size: 18px; line-height: 1.6; color: #B6C6CA; max-width: 360px; margin: 0; }
@@ -951,7 +954,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .tcard-handle { color: rgba(255,255,255,0.6); }
 
 /* CTA (dark) */
-.cta-section { padding: 110px 80px; }
+.cta-section { padding: 96px 80px; }
 
 /* COMMUNITY & ESG SNAPSHOT (homepage) */
 .esg-logos { margin-top: 48px; padding-top: 36px; border-top: 1px solid var(--rule); }
