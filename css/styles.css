@@ -1969,7 +1969,9 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
 .urgent-note strong { color: var(--ink); font-weight: 600; }
 .urgent-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 /* BBB accreditation seal (client-supplied, Oct 2026): the visual proof point under the footer lockup. */
-.footer-bbb { display: block; width: 132px; height: auto; margin-top: 16px; border-radius: 6px; }
+/* In WordPress the class sits on the Elementor image widget, so the rule covers the wrapper and the image. */
+.footer-bbb { display: block; width: 132px; max-width: 132px; height: auto; margin-top: 16px; }
+.footer-bbb img { display: block; width: 132px; height: auto; border-radius: 6px; }
 .footer-urgent { display: block; margin-top: 14px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
 .footer-urgent a { color: inherit; }
 .quiz-result-urgent { font-size: 13px; opacity: 0.8; margin-top: 10px; }
