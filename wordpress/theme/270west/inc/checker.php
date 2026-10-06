@@ -35,9 +35,33 @@ function w270_checker_consent_text() {
 	return 'I agree to be contacted by a member of the 270 West Consulting team.';
 }
 
-/** Preferred contact method: the checker form's field 21 choices (the same list as the Contact Form). */
+/**
+ * Preferred contact method: the checker form's field 21 choices (the same list as the Contact Form),
+ * as label => stored value. The labels are what the widget submits; the values are Creatio's codes
+ * for the contact-method column, which is what the form's select field accepts and the feed sends.
+ */
 function w270_checker_methods() {
-	return [ 'Phone Call', 'Text/SMS', 'Email' ];
+	$methods = [ 'Phone Call' => 'Phone Call', 'Text/SMS' => 'Text/SMS', 'Email' => 'Email' ];
+	$id = w270_checker_form_id();
+	if ( $id && class_exists( 'GFAPI' ) ) {
+		foreach ( ( GFAPI::get_form( $id )['fields'] ?? [] ) as $field ) {
+			if ( 21 === (int) $field->id ) {
+				foreach ( (array) $field->choices as $c ) { $methods[ (string) $c['text'] ] = (string) ( $c['value'] ?? $c['text'] ); }
+			}
+		}
+	}
+	return $methods;
+}
+
+/**
+ * The form's phone field validates the standard North American layout, (###) ###-####. A ten-digit
+ * number typed any other way (902-555-0100, 902.555.0100, +1 902 555 0100) is laid out that way;
+ * anything else is passed through for the team to read.
+ */
+function w270_checker_phone( $phone ) {
+	$digits = preg_replace( '/\D+/', '', (string) $phone );
+	if ( 11 === strlen( $digits ) && '1' === $digits[0] ) { $digits = substr( $digits, 1 ); }
+	return 10 === strlen( $digits ) ? sprintf( '(%s) %s-%s', substr( $digits, 0, 3 ), substr( $digits, 3, 3 ), substr( $digits, 6 ) ) : $phone;
 }
 
 function w270_checker_form_id() {
@@ -79,7 +103,8 @@ function w270_checker_submit( WP_REST_Request $req ) {
 	if ( '' === $name || ! is_email( $email ) ) {
 		return new WP_Error( 'w270_checker_invalid', 'Please enter your name and a valid email address.', [ 'status' => 400 ] );
 	}
-	if ( ! in_array( $method, w270_checker_methods(), true ) ) {
+	$methods = w270_checker_methods();
+	if ( ! isset( $methods[ $method ] ) ) {
 		return new WP_Error( 'w270_checker_method', 'Please choose how you would like us to contact you.', [ 'status' => 400 ] );
 	}
 	if ( 'Email' !== $method && '' === trim( $phone ) ) {
@@ -95,8 +120,8 @@ function w270_checker_submit( WP_REST_Request $req ) {
 		'input_1_3' => $parts[0],
 		'input_1_6' => $parts[1] ?? '',
 		'input_2'   => $email,
-		'input_5'   => $phone,
-		'input_21'  => $method, // preferred contact method: the form's own choices (Creatio UsrCommsMethod)
+		'input_5'   => w270_checker_phone( $phone ),
+		'input_21'  => $methods[ $method ], // preferred contact method, as the form's select stores it (Creatio UsrCommsMethod)
 	];
 	// Creatio's Commentary gets one line, the way the events team writes it:
 	// "VAC status checker. Service: Regular Force; VAC decision or assessment: No; …"
@@ -107,12 +132,13 @@ function w270_checker_submit( WP_REST_Request $req ) {
 		if ( '' !== $v ) { $summary[] = $label . ': ' . $v; }   // only the questions on the path taken
 	}
 	$values['input_20'] = 'VAC status checker. ' . implode( '; ', $summary ) . '.';
-	// Consent (same field as the Contact Form): the box, and the wording the visitor agreed to.
+	// Consent (same field as the Contact Form): the box only. Gravity Forms records the wording the
+	// visitor agreed to itself; posting it as the field's second input fails its choice validation.
 	$values['input_18_1'] = '1';
-	$values['input_18_2'] = w270_checker_consent_text();
 	// Creatio's "claims submitted before" column is a yes/no: map the checker's answer onto it.
 	$filed = (string) ( $answers['filed'] ?? '' );
-	$values['input_15'] = str_starts_with( $filed, 'Yes' ) ? 'True' : ( 'No' === $filed ? 'False' : '' );
+	// The select rejects a value outside its choices, an empty string included, so "Not sure" sends nothing.
+	if ( str_starts_with( $filed, 'Yes' ) ) { $values['input_15'] = 'True'; } elseif ( 'No' === $filed ) { $values['input_15'] = 'False'; }
 
 	// Campaign attribution kept in sessionStorage by main.js (same fields the other forms carry).
 	$lead = (array) ( $p['lead'] ?? [] );

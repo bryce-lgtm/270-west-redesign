@@ -2720,10 +2720,10 @@
      "duplicatable": true,
      "noURLs": false,
      "repeatable": true,
-     "type": "select",
+     "type": "hidden",
      "id": 15,
      "formId": 0,
-     "label": "Have You Submitted Claims Before?",
+     "label": "Checker: claims submitted before (True/False)",
      "adminLabel": "",
      "isRequired": false,
      "size": "large",
@@ -2731,20 +2731,6 @@
      "visibility": "visible",
      "validateState": true,
      "inputs": null,
-     "choices": [
-      {
-       "text": "Yes",
-       "value": "True",
-       "isSelected": false,
-       "price": ""
-      },
-      {
-       "text": "No",
-       "value": "False",
-       "isSelected": false,
-       "price": ""
-      }
-     ],
      "description": "",
      "allowsPrepopulate": false,
      "inputMask": false,
@@ -2780,7 +2766,8 @@
      "fields": "",
      "displayOnly": "",
      "enableChoiceValue": true,
-     "nestingPath": null
+     "nestingPath": null,
+     "inputType": "hidden"
     },
     {
      "is_payment": false,
