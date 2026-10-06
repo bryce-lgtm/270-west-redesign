@@ -547,6 +547,15 @@ function initLeadTracking() {
   if (!data.referrer && document.referrer && !document.referrer.includes(location.host)) { data.referrer = document.referrer; fresh = true; }
   if (fresh) { try { sessionStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {} }
   document.querySelectorAll('[data-lead-field]').forEach(el => { el.value = data[el.dataset.leadField] || ''; });
+  // Direct scheduler links (landing-page CTAs) carry the campaign values too, as the embed does;
+  // Calendly hands them back in the booking webhook, so the lead keeps its attribution.
+  document.querySelectorAll('a[href*="calendly.com/"]').forEach(a => {
+    try {
+      const u = new URL(a.href);
+      Object.entries(data).forEach(([k, v]) => { if (v && /^utm_|^gclid$|^msclkid$/.test(k)) u.searchParams.set(k, v); });
+      a.href = u.toString();
+    } catch (e) {}
+  });
   fillGravityFormFields(data);
   return data;
 }
