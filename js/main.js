@@ -552,14 +552,18 @@ function initLeadTracking() {
 }
 
 // WordPress renders the team's Gravity Forms, whose hidden fields are named input_<form>_<id>.
-// The theme publishes the id -> parameter map; GF populates them from the query string on the
-// landing page itself, and this covers every later page, where the values live in sessionStorage.
+// The theme publishes the id -> parameter map. The browser's own session values win: a full-page
+// cache (GoDaddy keys pages by path alone) can serve HTML whose server-filled hidden fields carry
+// another visitor's campaign, so a value rendered into the page is only kept when this session has
+// no attribution of its own.
 function fillGravityFormFields(data) {
   const map = (window.W270 && window.W270.gfFields) || null;
   if (!map) return;
+  const own = Object.keys(data).some(k => /^utm_|^gclid$|^msclkid$/.test(k) && data[k]);
   const fill = () => Object.keys(map).forEach(id => {
     const el = document.getElementById(id);
-    if (el && !el.value) el.value = data[map[id]] || '';
+    if (!el) return;
+    if (own || !el.value) el.value = data[map[id]] || '';
   });
   fill();
   // AJAX submissions and validation errors re-render the form, clearing the values.
