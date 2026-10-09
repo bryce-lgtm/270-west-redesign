@@ -1030,6 +1030,9 @@ details:not([open]) .faq-icon::after { content: '+'; }
   letter-spacing: 0;
   line-height: 1.1;
 }
+/* Article headings run to two or three lines at 36px; Crimson Text's ascenders and descenders
+   collide at 1.1, so they keep the looser 1.2 from their own rule. */
+.article-h2, .article-h3 { line-height: 1.2; }
 /* At display sizes Crimson Text's book weight is the right colour on the page. */
 .display-xl, .display-lg, .hero-h1, .page-hero-h1, .cta-h2, .quiz-h2,
 .consult-section-h2, .footer-tagline, .about-why-h {
