@@ -36,7 +36,7 @@ $duration = w270_field( 'duration' );
 	<section class="story-single">
 		<?php if ( $video ) : ?>
 			<div class="story-single-video">
-				<iframe src="<?php echo esc_url( $video, [ 'https' ] ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>"
+				<iframe src="<?php echo esc_url( add_query_arg( [ 'enablejsapi' => 1, 'rel' => 0, 'origin' => home_url() ], $video ), [ 'https' ] ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>"
 					loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
 					allowfullscreen></iframe>
 			</div>

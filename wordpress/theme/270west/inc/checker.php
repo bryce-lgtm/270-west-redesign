@@ -222,6 +222,7 @@ function w270_ui_strings() {
 		"video.close" => "Close",
 		"video.pending" => "Coming soon. This film is in production.",
 		"hide_gdpr_banner" => "1",
+		"enablejsapi" => "1",
 		"quiz.served.q" => "Have you served in the Canadian Armed Forces or RCMP?",
 		"quiz.served.0" => "Regular Force",
 		"quiz.served.1" => "Reserve Force",
