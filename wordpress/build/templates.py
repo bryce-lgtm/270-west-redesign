@@ -191,7 +191,8 @@ def loop_grid(card, types=(), columns=(3, 2, 1), gap=20, per_page=60, orderby='m
 def hub_loop(name, classes=''):
     """The Resources hub's live blocks (see data-loop in resources.html)."""
     if name == 'stories':
-        return loop_grid('w270-card-story', types=['stories'], columns=(2, 2, 1), gap=24, per_page=2, classes='w-loop-stories')
+        # Every published story, so the hub matches the six veterans the homepage links to (Oct 9).
+        return loop_grid('w270-card-story', types=['stories'], columns=(2, 2, 1), gap=24, per_page=60, classes='w-loop-stories')
     if name == 'guides':
         # Featured guide on the left, the next two on the right: two grids inside the
         # prototype's three-column .resources-featured (see elementor-bridge.css).
