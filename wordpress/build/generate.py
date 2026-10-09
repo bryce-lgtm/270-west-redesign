@@ -214,7 +214,7 @@ class Converter:
         Form instead. The importer turns the marker into the shortcode once it knows the form id.
         The reassurance line that sat beside the prototype's submit button is kept as a sibling,
         because it is our copy rather than something the client maintains in the form builder."""
-        key = 'lead' if 'lp-form' in node.classes else ('callback' if 'consult-request' in node.classes else 'contact')
+        key = 'lead' if 'lp-form' in node.classes else ('callback' if 'consult-request' in node.classes else ('story' if 'story-form' in node.classes else 'contact'))
         self.forms.append(key)
         form = self.widget('shortcode', {
             'shortcode': f'__W270_FORM__:{key}',

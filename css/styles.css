@@ -211,7 +211,19 @@ a.photo-scene:hover img, .photo-scene-hover:hover img { transform: scale(1.04); 
 .btn-ink:active { transform: translateY(0); }
 
 /* ── SECTION PADDING ── */
-.section-pad { padding: 120px 80px; }
+.section-pad { padding: 96px 80px; }
+/* One vertical rhythm (Oct 2026): sections carry 96px; two sections on the same background share a
+   gap, so the second one drops to 72px on top; a colour change (dark, tinted, the founder band) keeps
+   the full 96px on both sides; the first section after a page hero sits closer to it. */
+.section-flush { padding-bottom: 0; }
+.section-pad + .section-pad { padding-top: 40px; }
+.dark-section + .section-pad, .section-tint + .section-pad, .about-founder + .section-pad,
+.section-pad + .dark-section, .section-pad + .section-tint { padding-top: 96px; }
+.page-hero + .section-pad { padding-top: 64px; }
+.page-hero + .status-page-layout { padding-top: 64px; }
+/* Colour bands (dark, tinted) read as separate blocks, so they carry a little less on each side. */
+.dark-section.section-pad, .section-tint.section-pad { padding-top: 80px; padding-bottom: 80px; }
+.section-pad + .dark-section.section-pad, .section-pad + .section-tint.section-pad { padding-top: 80px; }
 .section-pad-sm { padding: 80px 80px; }
 
 /* ── MONO LABEL ── */
@@ -631,7 +643,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .about-why-p.italic { color: var(--muted); font-style: italic; }
 
 /* ── ABOUT — FOUNDER VOICE ── */
-.about-founder { padding: 100px 80px; background: var(--bg2); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.about-founder { padding: 80px 80px; background: var(--bg2); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .about-founder-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px; align-items: start; }
 /* Long-form story: headline and standfirst stay in view beside the body as it scrolls. */
 .about-founder-intro { position: sticky; top: 110px; }
@@ -775,7 +787,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 /* ── FOOTER 5-COL GRID ── */
 .footer-grid-5 {
   position: relative;
-  display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; gap: 32px;
+  display: grid; grid-template-columns: 1.7fr 0.9fr 1fr 1.3fr 0.9fr; gap: 40px;
   font-size: 13px; color: #B6C6CA;
 }
 
@@ -789,7 +801,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .hero-badge-value { font-size: 13px; font-weight: 600; letter-spacing: -0.005em; color: var(--ink); }
 
 /* ── LEAD MAGNET CARDS ── */
-.lead-magnets { padding: 20px 80px 80px; }
+.lead-magnets { padding: 20px 80px 48px; }
 .lead-magnets-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 
 /* ── JOURNEY SECTION ── */
@@ -819,6 +831,8 @@ details:not([open]) .faq-icon::after { content: '+'; }
 /* ── CONSULT PAGE ── */
 .consult-intro { padding: 56px 80px 0; }
 .consult-intro-body { max-width: 760px; }
+.consult-intro-after { padding-top: 0; padding-bottom: 96px; }
+.consult-scheduler-fallback { display: inline-block; margin-top: 8px; }
 
 
 /* ── ADDITIONAL MOBILE NEW ── */
@@ -836,6 +850,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
   .status-page-layout { grid-template-columns: 1fr; padding: 40px 20px; }
   .status-page-sticky { position: static; }
   .consult-intro { padding: 40px 20px 0; }
+  .consult-intro-after { padding: 0 20px 64px; }
 
 }
 
@@ -914,7 +929,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 }
 
 /* SERVICES PREVIEW (dark) */
-.svc-preview-section { padding: 110px 80px; }
+.svc-preview-section { padding: 96px 80px; }
 .svc-preview-inner { position: relative; }
 .svc-preview-head { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: end; margin-bottom: 48px; }
 .svc-preview-intro { font-size: 18px; line-height: 1.6; color: #B6C6CA; max-width: 360px; margin: 0; }
@@ -942,7 +957,7 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .tcard-handle { color: rgba(255,255,255,0.6); }
 
 /* CTA (dark) */
-.cta-section { padding: 110px 80px; }
+.cta-section { padding: 96px 80px; }
 
 /* COMMUNITY & ESG SNAPSHOT (homepage) */
 .esg-logos { margin-top: 48px; padding-top: 36px; border-top: 1px solid var(--rule); }
@@ -1015,6 +1030,9 @@ details:not([open]) .faq-icon::after { content: '+'; }
   letter-spacing: 0;
   line-height: 1.1;
 }
+/* Article headings run to two or three lines at 36px; Crimson Text's ascenders and descenders
+   collide at 1.1, so they keep the looser 1.2 from their own rule. */
+.article-h2, .article-h3 { line-height: 1.2; }
 /* At display sizes Crimson Text's book weight is the right colour on the page. */
 .display-xl, .display-lg, .hero-h1, .page-hero-h1, .cta-h2, .quiz-h2,
 .consult-section-h2, .footer-tagline, .about-why-h {
@@ -1533,7 +1551,8 @@ strong, b { font-weight: 500; }
 .site-header .logo { display: block; line-height: 0; }
 .site-header .logo-full { display: block; height: 44px; width: auto; }
 .site-header.is-scrolled .logo-full { height: 38px; }
-.footer-lockup { margin-bottom: 16px; }
+.footer-lockup { margin-bottom: 24px; }
+.footer-grid-5 > div:first-child > div:not(.footer-lockup) { max-width: 300px; line-height: 1.7; }
 .footer-lockup img { width: 186px; height: auto; display: block; }
 
 /* Brand symbol as a tintable background mark: colour comes from the parent's `color`. */
@@ -1959,8 +1978,26 @@ a.hero-quote img { transition: transform 1.2s var(--ease); }
 .quiz-field select { appearance: none; -webkit-appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6' fill='none' stroke='%23A0B5C1' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 2px center; background-size: 10px 6px; padding-right: 22px; }
 .quiz-field select option { color: var(--ink); }
 .nowrap { white-space: nowrap; }
+/* Headings balance their lines so a last line is never one or two words; running text avoids orphans. */
+h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .lm-h, .svc-preview-h, .service-card-h,
+.svc-detail-sit-h, .svc-approach-h, .hiw-step-h, .hiw-fees-h, .commitment-h, .pillar-h, .value-h, .svc-outcome-h, .faq-group-h,
+.about-founder-h, .about-founder-sub, .legal-h2, .article-h2, .story-h1, .quiz-h3, .consult-h3, .consult-option-h, .sponsor-h { text-wrap: balance; }
+.sec-p, .journey-intro, .page-hero-sub, .cta-p, .lm-p, .svc-preview-p, .service-card-p, .svc-detail-sit-p, .svc-approach-p, .hiw-step-p,
+.hiw-fees-p, .commitment-p, .pillar-p, .value-p, .svc-outcome-p, .about-founder-p, .faq-item p, .legal-p, .article-p, .urgent-note { text-wrap: pretty; }
 /* A section that is only a heading block (the "experience" ledes restored Oct 5): no trailing margin
    meant for a body that is not there, and a lighter bottom padding so the next section sits close. */
 .section-head:last-child { margin-bottom: 0; }
 .sec-p + .sec-p { margin-top: 14px; }
 .section-lede { padding-bottom: 40px; }
+/* Urgent-support notice (Oct 2026): low-key, beside the forms and under the checker; one line in the footer. */
+.urgent-note { margin-top: 28px; padding: 16px 20px; background: var(--bg2); border-left: 2px solid var(--olive); font-size: 14px; line-height: 1.55; color: var(--muted); max-width: 640px; }
+.urgent-note strong { color: var(--ink); font-weight: 600; }
+.urgent-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+/* BBB accreditation seal (client-supplied, Oct 2026): the visual proof point under the footer lockup. */
+/* In WordPress the class sits on the Elementor image widget, so the rule covers the wrapper and the image. */
+/* Elementor renders the seal's wrapper as display:contents, so the spacing has to live on the image itself. */
+.footer-bbb, .footer-bbb img { display: block; width: 132px; max-width: 132px; height: auto; margin-top: 32px; }
+.footer-bbb img { display: block; width: 132px; height: auto; border-radius: 6px; }
+.footer-urgent { display: block; margin-top: 14px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
+.footer-urgent a { color: inherit; }
+.quiz-result-urgent { font-size: 13px; opacity: 0.8; margin-top: 10px; }

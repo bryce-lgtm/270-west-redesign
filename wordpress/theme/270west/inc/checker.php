@@ -18,6 +18,9 @@ function w270_checker_questions() {
 		'health' => [ 32, 'Service-related health issues' ],
 		'filed'  => [ 33, 'Previous VAC claim' ],
 		'goal'   => [ 34, 'Looking to' ],
+		// The shorter path for someone who has not served (Q1 "No").
+		'for'    => [ 35, 'Support for' ],
+		'need'   => [ 36, 'Would like help with' ],
 	];
 }
 
@@ -32,9 +35,33 @@ function w270_checker_consent_text() {
 	return 'I agree to be contacted by a member of the 270 West Consulting team.';
 }
 
-/** Preferred contact method: the checker form's field 21 choices (the same list as the Contact Form). */
+/**
+ * Preferred contact method: the checker form's field 21 choices (the same list as the Contact Form),
+ * as label => stored value. The labels are what the widget submits; the values are Creatio's codes
+ * for the contact-method column, which is what the form's select field accepts and the feed sends.
+ */
 function w270_checker_methods() {
-	return [ 'Phone Call', 'Text/SMS', 'Email' ];
+	$methods = [ 'Phone Call' => 'Phone Call', 'Text/SMS' => 'Text/SMS', 'Email' => 'Email' ];
+	$id = w270_checker_form_id();
+	if ( $id && class_exists( 'GFAPI' ) ) {
+		foreach ( ( GFAPI::get_form( $id )['fields'] ?? [] ) as $field ) {
+			if ( 21 === (int) $field->id ) {
+				foreach ( (array) $field->choices as $c ) { $methods[ (string) $c['text'] ] = (string) ( $c['value'] ?? $c['text'] ); }
+			}
+		}
+	}
+	return $methods;
+}
+
+/**
+ * The form's phone field validates the standard North American layout, (###) ###-####. A ten-digit
+ * number typed any other way (902-555-0100, 902.555.0100, +1 902 555 0100) is laid out that way;
+ * anything else is passed through for the team to read.
+ */
+function w270_checker_phone( $phone ) {
+	$digits = preg_replace( '/\D+/', '', (string) $phone );
+	if ( 11 === strlen( $digits ) && '1' === $digits[0] ) { $digits = substr( $digits, 1 ); }
+	return 10 === strlen( $digits ) ? sprintf( '(%s) %s-%s', substr( $digits, 0, 3 ), substr( $digits, 3, 3 ), substr( $digits, 6 ) ) : $phone;
 }
 
 function w270_checker_form_id() {
@@ -76,7 +103,8 @@ function w270_checker_submit( WP_REST_Request $req ) {
 	if ( '' === $name || ! is_email( $email ) ) {
 		return new WP_Error( 'w270_checker_invalid', 'Please enter your name and a valid email address.', [ 'status' => 400 ] );
 	}
-	if ( ! in_array( $method, w270_checker_methods(), true ) ) {
+	$methods = w270_checker_methods();
+	if ( ! isset( $methods[ $method ] ) ) {
 		return new WP_Error( 'w270_checker_method', 'Please choose how you would like us to contact you.', [ 'status' => 400 ] );
 	}
 	if ( 'Email' !== $method && '' === trim( $phone ) ) {
@@ -92,8 +120,8 @@ function w270_checker_submit( WP_REST_Request $req ) {
 		'input_1_3' => $parts[0],
 		'input_1_6' => $parts[1] ?? '',
 		'input_2'   => $email,
-		'input_5'   => $phone,
-		'input_21'  => $method, // preferred contact method: the form's own choices (Creatio UsrCommsMethod)
+		'input_5'   => w270_checker_phone( $phone ),
+		'input_21'  => $methods[ $method ], // preferred contact method, as the form's select stores it (Creatio UsrCommsMethod)
 	];
 	// Creatio's Commentary gets one line, the way the events team writes it:
 	// "VAC status checker. Service: Regular Force; VAC decision or assessment: No; …"
@@ -101,15 +129,16 @@ function w270_checker_submit( WP_REST_Request $req ) {
 	foreach ( w270_checker_questions() as $k => [ $field_id, $label ] ) {
 		$v = mb_substr( sanitize_text_field( $answers[ $k ] ?? '' ), 0, 80 );
 		$values[ "input_{$field_id}" ] = $v;
-		$summary[] = $label . ': ' . ( '' === $v ? 'not answered' : $v );
+		if ( '' !== $v ) { $summary[] = $label . ': ' . $v; }   // only the questions on the path taken
 	}
 	$values['input_20'] = 'VAC status checker. ' . implode( '; ', $summary ) . '.';
-	// Consent (same field as the Contact Form): the box, and the wording the visitor agreed to.
+	// Consent (same field as the Contact Form): the box only. Gravity Forms records the wording the
+	// visitor agreed to itself; posting it as the field's second input fails its choice validation.
 	$values['input_18_1'] = '1';
-	$values['input_18_2'] = w270_checker_consent_text();
 	// Creatio's "claims submitted before" column is a yes/no: map the checker's answer onto it.
 	$filed = (string) ( $answers['filed'] ?? '' );
-	$values['input_15'] = str_starts_with( $filed, 'Yes' ) ? 'True' : ( 'No' === $filed ? 'False' : '' );
+	// The select rejects a value outside its choices, an empty string included, so "Not sure" sends nothing.
+	if ( str_starts_with( $filed, 'Yes' ) ) { $values['input_15'] = 'True'; } elseif ( 'No' === $filed ) { $values['input_15'] = 'False'; }
 
 	// Campaign attribution kept in sessionStorage by main.js (same fields the other forms carry).
 	$lead = (array) ( $p['lead'] ?? [] );
@@ -127,6 +156,13 @@ function w270_checker_submit( WP_REST_Request $req ) {
 		}
 	}
 
+	// Gravity Forms records the current request as the entry's source URL, which here would be the
+	// REST endpoint; the Creatio feed sends that URL as the landing page (BpmHref). Record the page
+	// the visitor actually landed on instead (main.js keeps it with the campaign values).
+	$landing = (string) ( $lead['landing_page'] ?? '' );
+	if ( $landing && str_starts_with( $landing, '/' ) && ! str_starts_with( $landing, '//' ) ) {
+		$_SERVER['REQUEST_URI'] = mb_substr( wp_sanitize_redirect( $landing ), 0, 400 );
+	}
 	$result = GFAPI::submit_form( $form_id, $values );
 	if ( is_wp_error( $result ) ) {
 		error_log( 'w270 checker: submit_form failed: ' . $result->get_error_message() );
@@ -148,13 +184,10 @@ function w270_checker_submit( WP_REST_Request $req ) {
  */
 function w270_ui_strings() {
 	return [
-		"quiz.intro.label" => "Step 01 · Intake",
-		"quiz.intro.h" => "Where are you in your VAC benefits process?",
-		"quiz.intro.lead" => "Choose the answers that best describe your service and where you are in the process. It is fine if you are unsure about an answer. About two minutes. Fully confidential and no obligation. We will get back to you with a clear next step.",
+		"quiz.intro.label" => "About two minutes · Confidential · No cost",
+		"quiz.intro.h" => "Where could you use support with VAC benefits?",
+		"quiz.intro.lead" => "Answer a few short questions about your service, VAC history and what you would like help with. It is fine if you are unsure about an answer. A 270 West team member will review your answers and contact you to discuss possible next steps.",
 		"quiz.intro.start" => "Start now →",
-		"quiz.badge.time" => "2 min",
-		"quiz.badge.private" => "Confidential",
-		"quiz.badge.free" => "No cost",
 		"quiz.question.label" => "Question {n} of {total}",
 		"quiz.back" => "← Back",
 		"quiz.progress" => "{pct}% complete",
@@ -176,6 +209,7 @@ function w270_ui_strings() {
 		"quiz.done.h.named" => "Thank you, {name}.",
 		"quiz.done.h" => "Thank you.",
 		"quiz.done.p" => "We have received your answers. A 270 West team member will review them and contact you to discuss your options.",
+		"quiz.done.urgent" => "This service is not monitored for emergencies. If you need immediate assistance, call 911. For 24/7 mental health support, call the VAC Assistance Service at 1-800-268-7708.",
 		"quiz.done.book" => "Book a Free Call →",
 		"quiz.restart" => "Restart",
 		"quiz.title" => "VAC Status Check",
@@ -188,7 +222,7 @@ function w270_ui_strings() {
 		"video.close" => "Close",
 		"video.pending" => "Coming soon. This film is in production.",
 		"hide_gdpr_banner" => "1",
-		"quiz.served.q" => "Have you served in the Canadian Armed Forces?",
+		"quiz.served.q" => "Have you served in the Canadian Armed Forces or RCMP?",
 		"quiz.served.0" => "Regular Force",
 		"quiz.served.1" => "Reserve Force",
 		"quiz.served.2" => "RCMP",
@@ -214,6 +248,18 @@ function w270_ui_strings() {
 		"quiz.goal.4" => "Help for a friend or family member",
 		"quiz.goal.5" => "General information",
 		"quiz.goal.6" => "Not sure yet",
+		"quiz.for.q" => "Who are you looking for information or support for?",
+		"quiz.for.0" => "Spouse, partner or survivor",
+		"quiz.for.1" => "Family member or caregiver",
+		"quiz.for.2" => "Friend",
+		"quiz.for.3" => "General information",
+		"quiz.for.4" => "Not sure",
+		"quiz.need.q" => "What would you like help with?",
+		"quiz.need.0" => "Understanding VAC benefits",
+		"quiz.need.1" => "Helping with an existing VAC matter",
+		"quiz.need.2" => "Caregiver or family support",
+		"quiz.need.3" => "Finding other veteran resources",
+		"quiz.need.4" => "General information or not sure",
 		"quiz.consent" => w270_checker_consent_text(),
 	];
 }

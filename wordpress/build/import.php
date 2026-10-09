@@ -28,7 +28,7 @@ function w270_page_paths() {
 		'stories' => '/resources/stories/', 'guides' => '/resources/guides/', 'news' => '/resources/news/',
 		'contact' => '/contact/', 'faq' => '/faq/', 'vac-status-checker' => '/vac-status-checker/', 'book-a-consult' => '/book-a-consult/',
 		'privacy' => '/privacy/', 'terms' => '/terms/', 'accessibility' => '/accessibility/',
-		'call-request-received' => '/call-request-received/',
+		'call-request-received' => '/call-request-received/', 'share-your-story' => '/share-your-story/',
 		// Advertising landing pages: noindex, no site chrome, never linked from a menu.
 		'vac-claim-help' => '/vac-claim-help/', 'vac-benefits-simplified' => '/vac-benefits-simplified/',
 		'what-to-expect' => '/what-to-expect/',
@@ -196,7 +196,7 @@ function w270_import_yoast() {
 	}
 	update_option( 'wpseo_titles', array_merge( (array) get_option( 'wpseo_titles', [] ), $set ) );
 	$noindex = get_posts( [ 'post_type' => 'page', 'numberposts' => -1, 'fields' => 'ids', 'meta_key' => '_w270_landing' ] );
-	if ( $p = w270_page_by_slug( 'call-request-received' ) ) { $noindex[] = $p->ID; }
+	foreach ( [ 'call-request-received', 'share-your-story' ] as $slug ) { if ( $p = w270_page_by_slug( $slug ) ) { $noindex[] = $p->ID; } }
 	foreach ( $noindex as $pid ) { update_post_meta( $pid, '_yoast_wpseo_meta-robots-noindex', '1' ); }
 	echo "yoast: configured (logo #{$logo}, " . count( $noindex ) . " pages noindex)\n";
 }
@@ -359,6 +359,9 @@ function w270_import_forms( array $refresh = [] ) {
 				$r = GFAPI::update_form( $form );
 				echo is_wp_error( $r ) ? "form {$key}: ERROR " . $r->get_error_message() . "\n" : "form {$key}: #{$ids[$key]} refreshed from the repo\n";
 				if ( is_wp_error( $r ) ) { $GLOBALS['w270_failed'] = true; }
+				// The export carries no is_active, and update_form() reads that as inactive: an inactive
+				// form answers every submission with "form not found" (the checker was dark this way).
+				GFAPI::update_form_property( $ids[ $key ], 'is_active', '1' );
 				continue;
 			}
 			echo "form {$key}: #{$ids[$key]} already present, left as-is\n";
@@ -372,6 +375,7 @@ function w270_import_forms( array $refresh = [] ) {
 			continue;
 		}
 		$ids[ $key ] = (int) $id;
+		GFAPI::update_form_property( $id, 'is_active', '1' );
 		echo "form {$key}: #{$id} created ({$title})\n";
 	}
 	update_option( 'w270_form_ids', $ids );

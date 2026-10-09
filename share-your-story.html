@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Accessibility Statement | 270 West Consulting</title>
+<title>Share your story | 270 West Consulting</title>
+<meta name="description" content="Worked with 270 West and would like to share your experience? Tell us a little about your story and a team member will be in touch."/>
+<meta name="robots" content="noindex, follow"/>
 <link rel="icon" href="img/brand/favicon.svg" type="image/svg+xml"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -11,6 +13,7 @@
 <link rel="stylesheet" href="css/styles.css?v=v30"/>
 </head>
 <body>
+
 <header class="site-header">
   <a href="index.html" class="logo" aria-label="270 West Consulting home"><img src="img/brand/270west-horizontal-light.svg" alt="" class="logo-full" width="168" height="45"/></a>
   <nav>
@@ -56,43 +59,83 @@
   <a href="consult.html" class="mobile-nav-cta">Book a Free Call →</a>
 </nav>
 
+<!-- PAGE HERO -->
 <section class="page-hero">
-  <h1 class="page-hero-h1">270 West Consulting accessibility statement</h1>
-  <p class="page-hero-lead">Built for everyone.</p>
-  <p class="page-hero-sub">We're committed to making this site usable for veterans and family members of all abilities. Here's our current accessibility status and how to reach us if you encounter a barrier.</p>
+  <h1 class="page-hero-h1">Share your story with 270 West</h1>
+  <p class="page-hero-lead">Have a story of your own?</p>
+  <p class="page-hero-sub">If you have worked with us and would like to share your experience, we would be glad to hear from you. You decide what to share and how much. Tell us a little below and a 270 West team member will be in touch.</p>
 </section>
 
-<div class="legal-layout">
-  <aside class="legal-toc">
-    <div class="legal-toc-label">On this page</div>
-    <div class="legal-toc-links">
-      <a href="#sec-0">Our commitment</a>
-      <a href="#sec-1">Current status</a>
-      <a href="#sec-2">Known limitations</a>
-      <a href="#sec-3">Need help or found a barrier?</a>
+<!-- STORY FORM -->
+<section class="section-pad">
+  <div class="contact-grid">
+    <div>
+      <div class="mono-label">Tell us a little</div>
+      <h2 style="font-family:var(--font-serif);font-size:36px;font-weight:400;line-height:1.1;letter-spacing:-0.02em;margin:0 0 32px">Your experience, in your words</h2>
+      <!-- In WordPress this is the "Share Your Story" Gravity Form (story-form → form key "story"). -->
+      <form action="#" method="post" class="contact-form story-form">
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="ss-name">Full name</label>
+          <input class="contact-form-control" id="ss-name" type="text" name="name" autocomplete="name" placeholder="Your name" required/>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="ss-email">Email</label>
+          <input class="contact-form-control" id="ss-email" type="email" name="email" autocomplete="email" placeholder="you@example.ca" required/>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="ss-phone">Phone (optional)</label>
+          <input class="contact-form-control" id="ss-phone" type="tel" name="phone" autocomplete="tel" placeholder="(902) 555-0142"/>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="ss-connection">Your connection to 270 West</label>
+          <select class="contact-form-control" id="ss-connection" name="connection">
+            <option value="client">I worked with 270 West</option>
+            <option value="family">A family member worked with 270 West</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="contact-form-field">
+          <label class="contact-form-label" for="ss-story">A little about your story (optional)</label>
+          <textarea class="contact-form-control" id="ss-story" name="message" rows="5" placeholder="What brought you to 270 West, and what changed. A sentence or two is plenty."></textarea>
+        </div>
+        <div class="consult-consent">
+          <input type="checkbox" id="ss-consent" name="consent" required/>
+          <label for="ss-consent">I agree that 270 West may contact me about my story. See our <a href="privacy.html">Privacy Policy</a>.</label>
+        </div>
+        <!-- Attribution: filled by initLeadTracking(). -->
+        <input type="hidden" name="utm_source" data-lead-field="utm_source"/>
+        <input type="hidden" name="utm_medium" data-lead-field="utm_medium"/>
+        <input type="hidden" name="utm_campaign" data-lead-field="utm_campaign"/>
+        <input type="hidden" name="utm_term" data-lead-field="utm_term"/>
+        <div style="margin-top:24px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+          <button type="submit" class="btn-accent" style="border:none">Share my story →</button>
+          <div style="font-size:15px;color:var(--muted)">Confidential. Nothing is published without your permission.</div>
+        </div>
+      </form>
     </div>
-    <div class="legal-toc-date">Effective: April 2026</div>
-  </aside>
-  <article class="legal-article">
-    <div class="legal-section" id="sec-0">
-      <h2 class="legal-h2">Our commitment</h2>
-      <p class="legal-p">We're committed to providing a website that is accessible to the widest possible audience, in line with WCAG 2.1 AA where feasible.</p>
+
+    <!-- What happens next -->
+    <div class="contact-direct">
+      <div id="contact-topo" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></div>
+      <div style="position:relative">
+        <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--olive);margin-bottom:14px">What happens next</div>
+        <h3 style="font-family:var(--font-serif);font-size:28px;font-weight:400;line-height:1.15;margin:0 0 32px">A conversation first</h3>
+        <div class="contact-direct-item">
+          <div class="contact-direct-item-label">We get in touch</div>
+          <div class="contact-direct-item-secondary">A 270 West team member will contact you to talk about your story and answer any questions.</div>
+        </div>
+        <div class="contact-direct-item">
+          <div class="contact-direct-item-label">You choose what to share</div>
+          <div class="contact-direct-item-secondary">Stories are recorded with your permission. You decide what to include.</div>
+        </div>
+        <div class="contact-direct-item">
+          <div class="contact-direct-item-label">You review it before it goes live</div>
+          <div class="contact-direct-item-secondary">Nothing is published until you have read it and approved it.</div>
+        </div>
+      </div>
     </div>
-    <div class="legal-section" id="sec-1">
-      <h2 class="legal-h2">Current status</h2>
-      <p class="legal-p">We continually review and improve the site's accessibility. Recent improvements include keyboard navigation, alt text on key images, and high-contrast typography.</p>
-    </div>
-    <div class="legal-section" id="sec-2">
-      <h2 class="legal-h2">Known limitations</h2>
-      <p class="legal-p">We're aware of areas that need work, including some PDF resources without full screen-reader markup. We're addressing these as we update content.</p>
-    </div>
-    <div class="legal-section" id="sec-3">
-      <h2 class="legal-h2">Need help or found a barrier?</h2>
-      <p class="legal-p">If you encounter an accessibility barrier or need information in an alternative format, please email <a href="mailto:accessibility@270westconsulting.ca" style="color:var(--accent)">accessibility@270westconsulting.ca</a>. We aim to respond within two business days.</p>
-    </div>
-    <div class="inline-note" style="margin-top:40px">This page is a working draft. Final language should be reviewed by counsel before publishing.</div>
-  </article>
-</div>
+  </div>
+</section>
 
 <footer class="site-footer">
   <div id="footer-topo" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></div>
@@ -135,6 +178,7 @@
   </div>
   <div class="footer-bottom"><span>© 2026 270 West Consulting · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Terms</a> · <a href="accessibility.html" style="color:inherit">Accessibility</a></span><span>Veteran-founded · Canadian-owned</span></div>
 </footer>
+
 <script src="js/main.js?v=v30"></script>
 </body>
 </html>
