@@ -1613,6 +1613,13 @@ strong, b { font-weight: 500; }
 .pillar-video .video-card-body { left: 18px; right: 18px; bottom: 16px; }
 .pillar-video .video-card-label { font-size: 15px; }
 .pillar-video .video-card-meta { font-size: 13px; }
+/* The play button sits in the lower-right corner, clear of the faces the film posters are framed
+   on (centred, it landed on Leanne's nose in the hero). The label keeps the lower-left. */
+.video-card-play { left: auto; top: auto; right: 24px; bottom: 24px; transform: none; }
+.video-card:hover .video-card-play { transform: scale(1.06); }
+.video-card-body { right: 110px; }
+.pillar-video .video-card-play { right: 16px; bottom: 16px; }
+.pillar-video .video-card-body { right: 86px; }
 
 .video-lightbox { border: none; padding: 0; background: transparent; max-width: min(1100px, 92vw); width: 100%; }
 .video-lightbox::backdrop { background: rgba(8,30,32,0.86); }
