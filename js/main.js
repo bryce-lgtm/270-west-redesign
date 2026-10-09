@@ -200,6 +200,12 @@ const QUIZ_FAMILY = [
   { id:'for', q:'Who are you looking for information or support for?', options:['Spouse, partner or survivor','Family member or caregiver','Friend','General information','Not sure'] },
   { id:'need', q:'What would you like help with?', options:['Understanding VAC benefits','Helping with an existing VAC matter','Caregiver or family support','Finding other veteran resources','General information or not sure'] }
 ];
+// ── Google Tag Manager: every event the site reports goes through one dataLayer helper ──
+function track(event, data) {
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push(Object.assign({ event: event, page_path: location.pathname }, data || {}));
+}
+
 function quizPath(answers) {
   return answers.served === 'No' ? [QUIZ_QUESTIONS[0]].concat(QUIZ_FAMILY) : QUIZ_QUESTIONS;
 }
@@ -288,11 +294,15 @@ function initQuiz(containerId) {
       </div>`;
   }
 
-  window.quizGo = function(s) { step = s; render(); };
+  window.quizGo = function(s) {
+    if (step === 0 && s === 1) track('quiz_start', { quiz_name: 'vac_status_check' });
+    step = s; render();
+  };
   window.quizAnswer = function(id, idx, s) {
     const Q = QUIZ_QUESTIONS.concat(QUIZ_FAMILY).find(q => q.id === id);
     answers[id] = Q ? Q.options[idx] : idx;   // the English value, whatever language is showing
     if (id === 'served') { Object.keys(answers).forEach(k => { if (k !== 'served') delete answers[k]; }); }   // a changed Q1 changes the path
+    track('quiz_answer', { quiz_name: 'vac_status_check', quiz_step: s, quiz_question: id, quiz_answer: answers[id] });
     render();
     setTimeout(() => { step = s + 1; render(); }, 220);
   };
@@ -317,7 +327,7 @@ function initQuiz(containerId) {
     if (contact.method !== 'Email' && !(contact.phone || '').trim()) { error = ERR.phone(); render(); return; }
     if (!contact.consent) { error = ERR.consent(); render(); return; }
     const url = window.W270 && window.W270.checker;
-    if (!url) { error = ''; step = count() + 2; render(); return; }
+    if (!url) { error = ''; step = count() + 2; track('quiz_complete', { quiz_name: 'vac_status_check', quiz_path: answers.served || '' }); render(); return; }
     let lead = {};
     try { lead = JSON.parse(sessionStorage.getItem('w270_lead_src') || '{}'); } catch (e) { lead = {}; }
     sending = true; error = ''; render();
@@ -333,6 +343,7 @@ function initQuiz(containerId) {
         error = (ERR[code] || ERR.failed)();
       } else {
         step = count() + 2;
+        track('quiz_complete', { quiz_name: 'vac_status_check', quiz_path: answers.served || '' });
       }
     } catch (e) {
       error = ERR.failed();
@@ -500,15 +511,76 @@ function initVideoLightbox() {
     const src = data.videoSrc;
     const title = data.videoTitle || 'Video';
     dialog.setAttribute('aria-label', title);
+    const placement = card.classList.contains('hero-video') ? 'hero' : card.classList.contains('pillar-video') ? 'pillar' : 'card';
+    const ytId = (src && (src.match(/youtube\.com\/embed\/([\w-]{11})/) || [])[1]) || '';
+    const meta = { video_title: title, video_provider: ytId ? 'youtube' : 'file', video_id: ytId || src || '', video_placement: placement };
     if (src) {
-      frame.innerHTML = /\.(mp4|webm)$/i.test(src)
-        ? `<video src="${src}" controls autoplay playsinline></video>`
-        : `<iframe src="${src}" title="${title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+      track('video_play', meta);
+      if (/\.(mp4|webm)$/i.test(src)) {
+        frame.innerHTML = `<video src="${src}" controls autoplay playsinline></video>`;
+      } else {
+        frame.innerHTML = `<iframe src="${ytId ? ytEmbedSrc(src) : src}" title="${title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+        if (ytId) watchYouTube(frame.querySelector('iframe'), meta);
+      }
     } else {
       frame.innerHTML = `<div class="video-lightbox-pending"><strong>${title}</strong><span>${t('video.pending', 'Coming soon. This film is in production.')}</span></div>`;
     }
     dialog.showModal();
   }));
+}
+
+// ── YouTube watch events: video_start, video_progress (25/50/75) and video_complete through the
+//    IFrame API. The embed gets enablejsapi so GTM's own YouTube trigger can also see it. ──
+function ytEmbedSrc(src) {
+  try { const u = new URL(src, location.href); u.searchParams.set('enablejsapi', '1'); u.searchParams.set('origin', location.origin); return u.toString(); }
+  catch (e) { return src; }
+}
+let ytApiPromise = null;
+function ytApi() {
+  if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
+  if (!ytApiPromise) {
+    ytApiPromise = new Promise(resolve => {
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => { if (prev) prev(); resolve(window.YT); };
+      const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; s.async = true; document.head.appendChild(s);
+    });
+  }
+  return ytApiPromise;
+}
+function watchYouTube(iframe, meta) {
+  if (!iframe) return;
+  ytApi().then(YT => {
+    if (!document.contains(iframe)) return;
+    let started = false, done = false, timer = null;
+    const hit = {};
+    const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+    const player = new YT.Player(iframe, { events: { onStateChange: e => {
+      if (e.data === YT.PlayerState.PLAYING) {
+        if (!started) { started = true; track('video_start', meta); }
+        stop();
+        timer = setInterval(() => {
+          if (!document.contains(iframe)) { stop(); return; }
+          const d = player.getDuration ? player.getDuration() : 0;
+          if (!d) return;
+          const pct = Math.floor(player.getCurrentTime() / d * 100);
+          [25, 50, 75].forEach(m => { if (pct >= m && !hit[m]) { hit[m] = true; track('video_progress', Object.assign({ video_percent: m }, meta)); } });
+        }, 1000);
+      } else if (e.data === YT.PlayerState.ENDED) {
+        stop();
+        if (!done) { done = true; track('video_complete', Object.assign({ video_percent: 100 }, meta)); }
+      } else {
+        stop();
+      }
+    } } });
+  });
+}
+// Story pages render their film as a plain iframe; it reports the same watch events.
+function initStoryVideoTracking() {
+  document.querySelectorAll('.story-single-video iframe[src*="youtube.com/embed/"]').forEach(iframe => {
+    const ytId = (iframe.src.match(/embed\/([\w-]{11})/) || [])[1] || '';
+    if (!/enablejsapi=1/.test(iframe.src)) iframe.src = ytEmbedSrc(iframe.src);
+    watchYouTube(iframe, { video_title: document.title, video_provider: 'youtube', video_id: ytId, video_placement: 'story' });
+  });
 }
 
 // ── WordPress phone menu: parents toggle their sub-menu instead of navigating ──
@@ -637,8 +709,7 @@ function initLandingForms() {
       const card = form.closest('.lp-form-card');
       const done = card && card.querySelector('.lp-form-done');
       // The live site posts through Gravity Forms; this confirms the design in the prototype.
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: 'lead_submit', form_id: form.closest('[id]') ? form.closest('[id]').id : 'lead', page_type: 'landing' });
+      track('lead_submit', { form_id: form.closest('[id]') ? form.closest('[id]').id : 'lead', page_type: 'landing' });
       if (done) { form.hidden = true; done.hidden = false; done.setAttribute('tabindex', '-1'); done.focus(); }
     });
   });
@@ -757,6 +828,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const w270Lead = initLeadTracking();
   initScheduler(w270Lead);
   initVideoLightbox();
+  initStoryVideoTracking();
   initMobileMenuToggle();
   // WordPress builds the FAQ as an Elementor accordion; on a page whose items all start open
   // (the FAQ page itself) the widget can only open the first, so open the rest here.
