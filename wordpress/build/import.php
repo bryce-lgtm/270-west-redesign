@@ -7,6 +7,7 @@
  *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-templates               # re-seed every Pro template
  *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-templates=w270-single-story  # re-seed named templates only
  *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-forms=checker           # re-apply a form + feed definition
+ *   "$PHP" -c "$INI" wordpress/build/import.php --refresh-feeds=contact,booking    # re-apply only the Creatio feeds (forms untouched)
  */
 if ( PHP_SAPI !== 'cli' ) { http_response_code( 403 ); exit; } // never runnable over HTTP
 $site = getenv( 'W270_SITE' ) ?: '/Users/Bryce/Local Sites/270-west/app/public';
@@ -798,11 +799,13 @@ function w270_main( $argv ) {
 	$only  = null;
 	$refresh = [];
 	$refresh_forms = [];
+	$refresh_feeds = [];
 	$refresh_tpl = null;
 	foreach ( $argv as $a ) {
 		if ( str_starts_with( $a, '--only=' ) ) { $only = substr( $a, 7 ); }
 		if ( str_starts_with( $a, '--refresh-resources=' ) ) { $refresh = array_filter( explode( ',', substr( $a, 20 ) ) ); }
 		if ( str_starts_with( $a, '--refresh-forms=' ) ) { $refresh_forms = array_filter( explode( ',', substr( $a, 16 ) ) ); }
+		if ( str_starts_with( $a, '--refresh-feeds=' ) ) { $refresh_feeds = array_filter( explode( ',', substr( $a, 16 ) ) ); }
 		if ( str_starts_with( $a, '--refresh-templates=' ) ) { $refresh_tpl = array_values( array_filter( explode( ',', substr( $a, 20 ) ) ) ); }
 	}
 	$all = isset( $flags['all'] );
@@ -814,6 +817,9 @@ function w270_main( $argv ) {
 	}
 	if ( $all || isset( $flags['media'] ) ) { function_exists( 'w270_import_media' ) && w270_import_media(); }
 	if ( $all || isset( $flags['forms'] ) || $refresh_forms ) { w270_import_forms( $refresh_forms ); }
+	// --refresh-feeds=<key,…>: re-apply those Creatio webhook feeds from the repo (e.g. a changed Creatio
+	// event type) without re-applying the forms themselves, which wp-admin may have edited since.
+	if ( $refresh_feeds && ! $refresh_forms ) { w270_import_form_feeds( $refresh_feeds ); }
 	// Templates before pages: the Resources hub's Loop Grids name their loop-item templates.
 	// --refresh-templates re-seeds all templates (and the archive pages); --refresh-templates=a,b only those.
 	$tpl_refresh = $refresh_tpl ?? isset( $flags['refresh-templates'] );
