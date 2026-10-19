@@ -42,6 +42,8 @@ if [ "${W270_GD_REFRESH_TEMPLATES:-}" = "1" ]; then REFRESH="--refresh-templates
 elif [ -n "${W270_GD_REFRESH_TEMPLATES:-}" ]; then REFRESH="--refresh-templates=${W270_GD_REFRESH_TEMPLATES}"; fi
 [ -n "${W270_GD_REFRESH_RESOURCES:-}" ] && REFRESH="$REFRESH --refresh-resources=${W270_GD_REFRESH_RESOURCES}"
 [ -n "${W270_GD_REFRESH_FORMS:-}" ] && REFRESH="$REFRESH --refresh-forms=${W270_GD_REFRESH_FORMS}"
+# W270_GD_REFRESH_FEEDS=contact,booking re-applies only those forms' Creatio feeds (the forms stay as wp-admin has them).
+[ -n "${W270_GD_REFRESH_FEEDS:-}" ] && REFRESH="$REFRESH --refresh-feeds=${W270_GD_REFRESH_FEEDS}"
 $SSH "cd '$GD_PATH' && \
   { wp plugin is-installed elementor || wp plugin install elementor; } && wp plugin activate elementor && \
   wp plugin is-installed elementor-pro && wp plugin activate elementor-pro && \
