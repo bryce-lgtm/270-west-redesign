@@ -67,7 +67,7 @@ function w270_menu_defs() {
 	}
 	$main = [
 		[ 'Services', 'services', '', $services_children ],
-		[ 'How It Works', 'how-it-works' ], [ 'About 270 West', 'about' ],
+		[ 'How It Works', 'how-it-works' ], [ 'About us', 'about' ],
 		[ 'Resources', 'resources', '', $resources_children ], [ 'Contact Us', 'contact' ],
 		[ 'Book a Free Call', 'book-a-consult', 'nav-cta' ],
 	];
@@ -75,7 +75,7 @@ function w270_menu_defs() {
 		'Primary' => [ 'location' => 'primary', 'items' => $main ],
 		'Mobile'  => [ 'location' => 'mobile', 'items' => $main ],
 		'Footer Explore' => [ 'location' => 'footer-explore', 'items' => [
-			[ 'Services', 'services' ], [ 'How It Works', 'how-it-works' ], [ 'About 270 West', 'about' ], [ 'Resources', 'resources' ], [ 'Contact Us', 'contact' ],
+			[ 'Services', 'services' ], [ 'How It Works', 'how-it-works' ], [ 'About us', 'about' ], [ 'Resources', 'resources' ], [ 'Contact Us', 'contact' ],
 		] ],
 		'Footer Services' => [ 'location' => 'footer-services', 'items' => [
 			[ 'VAC Claims', 'claims' ], [ 'VAC Reviews &amp; Appeals', 'appeals' ], [ 'VAC Reassessments', 'reassessment' ], [ 'Ongoing Support', 'support' ],
