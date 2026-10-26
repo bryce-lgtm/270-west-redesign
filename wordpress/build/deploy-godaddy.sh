@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
-# Deploys the 270west theme (with importer) to the GoDaddy Managed WordPress STAGING site over SSH,
-# then runs the importer there. GoDaddy's CI/CD deploy user has a shell and WP-CLI but no git repo in
-# the web root, so files go up with rsync instead of a push. Same importer flags as deploy-siteground.sh:
+# Deploys the 270west theme, the importer and the content plugin to a GoDaddy Managed WordPress site
+# over SSH (staging by default; production via the W270_GD_* overrides). GoDaddy's CI/CD deploy user has
+# a shell and WP-CLI but no git repo in the web root, so files go up with rsync instead of a push.
 #
-#   wordpress/build/deploy-godaddy.sh                        # sync + import
-#   W270_GD_SKIP_IMPORT=1 wordpress/build/deploy-godaddy.sh  # sync only
+# CODE ONLY by default. Since 2026-10-26 the site's pages are edited directly in Elementor, so a plain
+# deploy never runs the importer: it syncs theme/plugin files, activates everything and flushes caches.
+# Same flags as deploy-siteground.sh:
+#
+#   wordpress/build/deploy-godaddy.sh                        # sync code only (pages, menus, kit untouched)
+#   W270_GD_IMPORT=1 wordpress/build/deploy-godaddy.sh       # FULL import: rewrites every page, menu and the
+#                                                            # Elementor kit from the repo, wiping Elementor
+#                                                            # edits. Fresh/empty sites only.
+#   W270_GD_REFRESH_FEEDS=contact,booking wordpress/build/deploy-godaddy.sh   # sync + only that targeted
+#                                                            # --refresh-* (feeds, forms, templates, resources)
 #   W270_GD_PRO_PLUGINS=/folder/with/elementor-pro,acf-pro   # also upload the licensed plugins from here
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -35,15 +43,27 @@ if [ -n "${W270_GD_PRO_PLUGINS:-}" ]; then
   done
 fi
 
-# 4. On the server: dependencies, theme activation, content import, render check, cache flush.
-[ "${W270_GD_SKIP_IMPORT:-}" = "1" ] && { echo "sync done (import skipped)"; exit 0; }
-REFRESH=""
-if [ "${W270_GD_REFRESH_TEMPLATES:-}" = "1" ]; then REFRESH="--refresh-templates"
-elif [ -n "${W270_GD_REFRESH_TEMPLATES:-}" ]; then REFRESH="--refresh-templates=${W270_GD_REFRESH_TEMPLATES}"; fi
-[ -n "${W270_GD_REFRESH_RESOURCES:-}" ] && REFRESH="$REFRESH --refresh-resources=${W270_GD_REFRESH_RESOURCES}"
-[ -n "${W270_GD_REFRESH_FORMS:-}" ] && REFRESH="$REFRESH --refresh-forms=${W270_GD_REFRESH_FORMS}"
+# 4. On the server: dependencies, theme activation, (opt-in) content import, render check, cache flush.
+# The importer only runs when asked for. W270_GD_IMPORT=1 is the full --all import (destructive: pages,
+# menus and the Elementor kit are rewritten from the repo). The W270_GD_REFRESH_* flags run the importer
+# with just that --refresh-* flag, which touches only the named seed-once items and nothing else.
+IMPORT_ARGS=""
+[ "${W270_GD_IMPORT:-}" = "1" ] && IMPORT_ARGS="--all"
+if [ "${W270_GD_REFRESH_TEMPLATES:-}" = "1" ]; then IMPORT_ARGS="$IMPORT_ARGS --refresh-templates"
+elif [ -n "${W270_GD_REFRESH_TEMPLATES:-}" ]; then IMPORT_ARGS="$IMPORT_ARGS --refresh-templates=${W270_GD_REFRESH_TEMPLATES}"; fi
+[ -n "${W270_GD_REFRESH_RESOURCES:-}" ] && IMPORT_ARGS="$IMPORT_ARGS --refresh-resources=${W270_GD_REFRESH_RESOURCES}"
+[ -n "${W270_GD_REFRESH_FORMS:-}" ] && IMPORT_ARGS="$IMPORT_ARGS --refresh-forms=${W270_GD_REFRESH_FORMS}"
 # W270_GD_REFRESH_FEEDS=contact,booking re-applies only those forms' Creatio feeds (the forms stay as wp-admin has them).
-[ -n "${W270_GD_REFRESH_FEEDS:-}" ] && REFRESH="$REFRESH --refresh-feeds=${W270_GD_REFRESH_FEEDS}"
+[ -n "${W270_GD_REFRESH_FEEDS:-}" ] && IMPORT_ARGS="$IMPORT_ARGS --refresh-feeds=${W270_GD_REFRESH_FEEDS}"
+IMPORT_ARGS="${IMPORT_ARGS# }"
+IMPORT_STEP=""
+if [ -n "$IMPORT_ARGS" ]; then
+  case " $IMPORT_ARGS " in *" --all "*) echo "WARNING: full import — every page, menu and the Elementor kit will be rewritten from the repo (Elementor edits lost)";; esac
+  echo "importer: import.php $IMPORT_ARGS"
+  IMPORT_STEP="W270_SITE='$GD_PATH' W270_HOST='$GD_SITE_HOST' php wp-content/themes/270west/build/import.php $IMPORT_ARGS && "
+else
+  echo "importer: skipped (code-only deploy; set W270_GD_IMPORT=1 or a W270_GD_REFRESH_* flag to run it)"
+fi
 $SSH "cd '$GD_PATH' && \
   { wp plugin is-installed elementor || wp plugin install elementor; } && wp plugin activate elementor && \
   wp plugin is-installed elementor-pro && wp plugin activate elementor-pro && \
@@ -55,10 +75,10 @@ $SSH "cd '$GD_PATH' && \
   { wp language core is-installed fr_CA || wp language core install fr_CA; } && \
   { wp theme is-installed hello-elementor || wp theme install hello-elementor; } && \
   W270_SITE='$GD_PATH' W270_HOST='$GD_SITE_HOST' php wp-content/themes/270west/build/activate-theme.php && \
-  W270_SITE='$GD_PATH' W270_HOST='$GD_SITE_HOST' php wp-content/themes/270west/build/import.php --all $REFRESH && \
+  ${IMPORT_STEP}\
   W270_SITE='$GD_PATH' W270_HOST='$GD_SITE_HOST' php wp-content/themes/270west/build/render-check.php && \
   wp cache flush >/dev/null && echo 'object cache flushed' && \
   { wp eval 'do_action("wp_update_nav_menu", 0);' >/dev/null 2>&1 || true; } && echo 'page cache ban requested (GoDaddy gateway)'"
 # The gateway (page) cache has no WP-CLI command; the system plugin bans it on the nav-menu hook.
 # (switch_theme would also ban it, but Elementor hooks that action with a 3-argument callback and fatals.)
-echo "GODADDY STAGING DEPLOY OK — https://$GD_SITE_HOST/"
+echo "GODADDY DEPLOY OK — https://$GD_SITE_HOST/"

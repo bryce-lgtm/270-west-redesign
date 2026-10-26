@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
-# Deploys the 270west theme (with importer) to a SiteGround site through its Git repo, then runs the
-# importer over SSH so pages, media, menus and Elementor settings exist on the server.
+# Deploys the 270west theme, the importer and the content plugin to a SiteGround site through its Git
+# repo, then activates everything over SSH.
 #
-#   wordpress/build/deploy-siteground.sh            # push + import
-#   W270_SG_SKIP_IMPORT=1 wordpress/build/deploy-siteground.sh   # push only
+# CODE ONLY by default. Since 2026-10-26 the site's pages are edited directly in Elementor, so a plain
+# deploy never runs the importer. Same flags as deploy-godaddy.sh:
+#
+#   wordpress/build/deploy-siteground.sh                     # push code only (pages, menus, kit untouched)
+#   W270_SG_IMPORT=1 wordpress/build/deploy-siteground.sh    # FULL import: rewrites every page, menu and the
+#                                                            # Elementor kit from the repo, wiping Elementor
+#                                                            # edits. Fresh/empty sites only.
+#   W270_SG_REFRESH_FEEDS=contact,booking wordpress/build/deploy-siteground.sh   # push + only that targeted
+#                                                            # --refresh-* (feeds, forms, templates, resources)
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 SG_USER="${W270_SG_USER:-u3253-6bupzx4ihm7m}"
@@ -44,19 +51,30 @@ if git -C "$CLONE" diff --cached --quiet; then echo "theme unchanged on SiteGrou
   git -C "$CLONE" push
 fi
 
-# 4. On the server: make sure Elementor + Hello exist, activate the theme, import content.
-[ "${W270_SG_SKIP_IMPORT:-}" = "1" ] && { echo "push done (import skipped)"; exit 0; }
-# W270_SG_REFRESH_TEMPLATES=1 re-seeds the Pro header/footer templates from the repo (they are
-# otherwise created once and then owned by wp-admin).
-REFRESH=""
-if [ "${W270_SG_REFRESH_TEMPLATES:-}" = "1" ]; then REFRESH="--refresh-templates"
-elif [ -n "${W270_SG_REFRESH_TEMPLATES:-}" ]; then REFRESH="--refresh-templates=${W270_SG_REFRESH_TEMPLATES}"; fi
-# W270_SG_REFRESH_RESOURCES=slug-a,slug-b re-seeds those resources' copy and fields from the repo.
-[ -n "${W270_SG_REFRESH_RESOURCES:-}" ] && REFRESH="$REFRESH --refresh-resources=${W270_SG_REFRESH_RESOURCES}"
-# W270_SG_REFRESH_FORMS=checker re-applies those Gravity Forms (and their feeds) from the repo.
-[ -n "${W270_SG_REFRESH_FORMS:-}" ] && REFRESH="$REFRESH --refresh-forms=${W270_SG_REFRESH_FORMS}"
-# W270_SG_REFRESH_FEEDS=contact,booking re-applies only those forms' Creatio feeds (the forms stay as wp-admin has them).
-[ -n "${W270_SG_REFRESH_FEEDS:-}" ] && REFRESH="$REFRESH --refresh-feeds=${W270_SG_REFRESH_FEEDS}"
+# 4. On the server: make sure Elementor + Hello exist, activate the theme, (opt-in) import content.
+# The importer only runs when asked for. W270_SG_IMPORT=1 is the full --all import (destructive: pages,
+# menus and the Elementor kit are rewritten from the repo). The W270_SG_REFRESH_* flags run the importer
+# with just that --refresh-* flag, which touches only the named seed-once items and nothing else:
+#   W270_SG_REFRESH_TEMPLATES=1|name,…  re-seeds the Pro header/footer/single templates from the repo
+#   W270_SG_REFRESH_RESOURCES=slug-a,…  re-seeds those resources' copy and fields
+#   W270_SG_REFRESH_FORMS=checker,…     re-applies those Gravity Forms (and their feeds)
+#   W270_SG_REFRESH_FEEDS=contact,…     re-applies only those forms' Creatio feeds (forms stay as wp-admin has them)
+IMPORT_ARGS=""
+[ "${W270_SG_IMPORT:-}" = "1" ] && IMPORT_ARGS="--all"
+if [ "${W270_SG_REFRESH_TEMPLATES:-}" = "1" ]; then IMPORT_ARGS="$IMPORT_ARGS --refresh-templates"
+elif [ -n "${W270_SG_REFRESH_TEMPLATES:-}" ]; then IMPORT_ARGS="$IMPORT_ARGS --refresh-templates=${W270_SG_REFRESH_TEMPLATES}"; fi
+[ -n "${W270_SG_REFRESH_RESOURCES:-}" ] && IMPORT_ARGS="$IMPORT_ARGS --refresh-resources=${W270_SG_REFRESH_RESOURCES}"
+[ -n "${W270_SG_REFRESH_FORMS:-}" ] && IMPORT_ARGS="$IMPORT_ARGS --refresh-forms=${W270_SG_REFRESH_FORMS}"
+[ -n "${W270_SG_REFRESH_FEEDS:-}" ] && IMPORT_ARGS="$IMPORT_ARGS --refresh-feeds=${W270_SG_REFRESH_FEEDS}"
+IMPORT_ARGS="${IMPORT_ARGS# }"
+IMPORT_STEP=""
+if [ -n "$IMPORT_ARGS" ]; then
+  case " $IMPORT_ARGS " in *" --all "*) echo "WARNING: full import — every page, menu and the Elementor kit will be rewritten from the repo (Elementor edits lost)";; esac
+  echo "importer: import.php $IMPORT_ARGS"
+  IMPORT_STEP="W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/import.php $IMPORT_ARGS && "
+else
+  echo "importer: skipped (code-only deploy; set W270_SG_IMPORT=1 or a W270_SG_REFRESH_* flag to run it)"
+fi
 $SSH "cd '$SG_PATH' && \
   wp plugin is-installed elementor || wp plugin install elementor && wp plugin activate elementor && \
   { wp plugin is-installed translatepress-multilingual || wp plugin install translatepress-multilingual; } && wp plugin activate translatepress-multilingual && \
@@ -65,6 +83,6 @@ $SSH "cd '$SG_PATH' && \
   { wp language core is-installed fr_CA || wp language core install fr_CA; } && \
   wp theme is-installed hello-elementor || wp theme install hello-elementor && \
   W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/activate-theme.php && \
-  W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/import.php --all $REFRESH && \
+  ${IMPORT_STEP}\
   W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/render-check.php"
 echo "SITEGROUND DEPLOY OK — https://$SG_SITE_HOST/"
