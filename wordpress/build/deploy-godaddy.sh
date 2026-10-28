@@ -8,7 +8,7 @@
 #   W270_GD_PRO_PLUGINS=/folder/with/elementor-pro,acf-pro   # also upload the licensed plugins from here
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-GD_USER="${W270_GD_USER:-git_deployer_227104b450_1292707}"
+GD_USER="${W270_GD_USER:-git_deployer_82b7f03cfd_1292707}"
 GD_HOST="${W270_GD_HOST:-1292707.us8.ssh.myftpupload.com}"
 GD_PATH="${W270_GD_PATH:-/html}"
 GD_SITE_HOST="${W270_GD_SITE_HOST:-1292707.us8.myftpupload.com}"
