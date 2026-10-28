@@ -38,5 +38,18 @@ $w270_links = array_filter( [
 		</section>
 	<?php endif; ?>
 </main>
+<script>
+// GoDaddy caches every response for a month, 404s included, and replaces WordPress's no-cache headers
+// for visitors, so a browser that saw this URL before its page was published keeps the 404. Ask the
+// server once, past the browser cache: if the page exists now, that refreshes the cached copy and a
+// reload shows it. Once per URL per session, so a real 404 never loops.
+( function () {
+	var key = 'w270-404-' + location.pathname;
+	try { if ( sessionStorage.getItem( key ) ) { return; } sessionStorage.setItem( key, '1' ); } catch ( e ) { return; }
+	fetch( location.href, { cache: 'reload', credentials: 'same-origin' } ).then( function ( r ) {
+		if ( r.ok ) { location.reload(); }
+	} ).catch( function () {} );
+} )();
+</script>
 <?php
 get_footer();

@@ -179,14 +179,6 @@ add_filter( 'wp_robots', function ( $robots ) {
 	return $robots;
 } );
 
-// GoDaddy's cache gives every response a month-long public max-age, 404s included, so a visitor who
-// reaches a URL before its page is published (a job posting, say) keeps the 404 for a month in the CDN
-// and in their browser. WordPress's no-cache headers make the gateway and Cloudflare skip the response,
-// as they already do for wp-login.php.
-add_action( 'template_redirect', function () {
-	if ( is_404() ) { nocache_headers(); }
-} );
-
 add_filter( 'wp_sitemaps_posts_query_args', function ( $args, $post_type ) {
 	if ( 'page' !== $post_type ) { return $args; }
 	$args['meta_query'] = array_merge( $args['meta_query'] ?? [], [
