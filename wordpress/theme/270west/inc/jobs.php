@@ -172,3 +172,17 @@ add_filter( 'gform_notification', function ( $notification, $form, $entry ) {
 	}
 	return $notification;
 }, 10, 3 );
+
+// GoDaddy's page cache bans itself when a posting is published or unpublished, but a closing date
+// passing changes no post, so Careers could keep listing an expired role for the cache's month.
+// Once a day, compare the open roles with yesterday's and ban the cache when the set has changed
+// (through the nav-menu hook, the same way the deploy scripts do).
+add_action( 'init', function () {
+	if ( ! wp_next_scheduled( 'w270_jobs_daily' ) ) { wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'w270_jobs_daily' ); }
+} );
+add_action( 'w270_jobs_daily', function () {
+	$open = implode( ',', w270_open_jobs() );
+	if ( get_option( 'w270_jobs_open' ) === $open ) { return; }
+	update_option( 'w270_jobs_open', $open, false );
+	do_action( 'wp_update_nav_menu', 0 );
+} );
