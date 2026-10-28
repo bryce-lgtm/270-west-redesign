@@ -30,6 +30,8 @@ function w270_page_paths() {
 		'contact' => '/contact/', 'faq' => '/faq/', 'vac-status-checker' => '/vac-status-checker/', 'book-a-consult' => '/book-a-consult/',
 		'privacy' => '/privacy/', 'terms' => '/terms/', 'accessibility' => '/accessibility/',
 		'call-request-received' => '/call-request-received/', 'share-your-story' => '/share-your-story/',
+		'vac-benefits-support-options' => '/vac-benefits-support-options/', 'why-270-west' => '/why-270-west/',
+		'careers' => '/about/careers/',
 		// Advertising landing pages: noindex, no site chrome, never linked from a menu.
 		'vac-claim-help' => '/vac-claim-help/', 'vac-benefits-simplified' => '/vac-benefits-simplified/',
 		'what-to-expect' => '/what-to-expect/',
