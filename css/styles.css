@@ -2066,3 +2066,8 @@ h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .
 .commitments-grid-3 { grid-template-columns: repeat(3, 1fr); }
 @media (max-width: 1100px) { .commitments-grid-3 { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 700px) { .commitments-grid-3 { grid-template-columns: 1fr; } }
+/* 404 page: the main sections as link cards. */
+.notfound-link { padding: 0; transition: border-color var(--dur) var(--ease); }
+.notfound-link:hover { border-color: var(--teal); }
+.notfound-link a { display: block; height: 100%; padding: 28px 24px 30px; color: inherit; text-decoration: none; }
+.notfound-link .commitment-h { margin-top: 0; }
