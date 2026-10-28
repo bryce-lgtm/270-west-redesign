@@ -2062,3 +2062,7 @@ h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .
 .job-body a { color: var(--accent); }
 .job-apply { max-width: 720px; }
 @media (max-width: 700px) { .job-card-link { padding: 22px 20px; } .job-card-h { font-size: 24px; } }
+/* Six cards in rows of three (Careers: Who thrives here). */
+.commitments-grid-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 1100px) { .commitments-grid-3 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 700px) { .commitments-grid-3 { grid-template-columns: 1fr; } }
