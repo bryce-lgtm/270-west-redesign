@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: 270 West Content
- * Description: The Resource post type, its Type/Topic/News category taxonomies and their ACF field groups.
+ * Description: The Resource and Job Posting post types, the resource Type/Topic/News category taxonomies and their ACF field groups.
  * Version: 1.0.0
  * Author: 270 West Consulting
  * Text Domain: 270west
@@ -12,6 +12,7 @@ define( 'W270C_DIR', plugin_dir_path( __FILE__ ) );
 
 require_once W270C_DIR . 'inc/permalinks.php';
 require_once W270C_DIR . 'inc/migrate.php';
+require_once W270C_DIR . 'inc/jobs.php';
 
 /** resource_type term slug => [singular label, plural label]. Slugs are plural so that
  *  permalinks stay /resources/guides/<slug>/; the names are singular because they render
@@ -129,6 +130,7 @@ add_filter( 'acf/settings/save_json', fn() => W270C_DIR . 'acf-json' );
 
 register_activation_hook( __FILE__, function () {
 	w270c_register();
+	w270c_register_jobs();
 	flush_rewrite_rules();
 } );
 register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );

@@ -42,10 +42,8 @@ LANDING_PAGES = [
 #   library: Guides and News, held back until 270 West has reviewed them (Oct 2026).
 #            Remove it from this set and redeploy to bring both sections back.
 #   careers-stories:  Careers employee profiles, until real photos and approved quotes arrive.
-#   careers-openings: Careers openings list and "View open roles", until there is a listing to link to
-#                     (a "Contact our team" button stands in).
 #   why-video:        the Why 270 West "Why experience matters" film, until the cut is final.
-HIDDEN_FEATURES = {'library', 'careers-stories', 'careers-openings', 'why-video'}
+HIDDEN_FEATURES = {'library', 'careers-stories', 'why-video'}
 
 TITLE_SUFFIX = ' — 270 West Consulting'
 

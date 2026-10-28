@@ -180,14 +180,14 @@
   <div class="section-head">
     <h2 class="sec-h2">Current opportunities</h2>
     <p class="sec-p">We are always interested in meeting people who care about veterans, communicate clearly and take pride in following through.</p>
-    <!-- Openings list and "View open roles" button: held until there is a careers listing to link to. -->
-    <p class="sec-p" data-feature="careers-openings">Explore current openings below to learn more about the role, what the work involves and how to apply.</p>
-    <div class="section-ctas" data-feature="careers-openings">
-      <a href="#" class="btn-accent">View open roles →</a>
-    </div>
-    <div class="section-ctas" data-feature-off="careers-openings">
-      <a href="contact.html" class="btn-accent">Contact our team →</a>
-    </div>
+  </div>
+  <!-- In WordPress this is [w270_job_list]: the open Job Postings as cards, or a "no open roles" note
+       with a Contact button. The card below is a prototype sample only. -->
+  <div class="job-openings" data-shortcode="[w270_job_list]">
+    <p class="sec-p job-list-intro">Explore current openings below to learn more about the role, what the work involves and how to apply.</p>
+    <ul class="job-list">
+      <li class="job-card"><a class="job-card-link" href="#"><h3 class="job-card-h">Benefit Navigator</h3><p class="job-card-meta">Full-time · Dartmouth, NS (hybrid)</p><p class="job-card-p">Sample posting: the summary from the posting's excerpt appears here.</p><span class="job-card-more">View role →</span></a></li>
+    </ul>
   </div>
 </section>
 

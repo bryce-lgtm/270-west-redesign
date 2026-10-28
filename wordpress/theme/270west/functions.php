@@ -10,6 +10,7 @@ define( 'W270_ASSETS', get_stylesheet_directory_uri() . '/assets' );
 require_once get_stylesheet_directory() . '/inc/class-w270-nav-walker.php';
 require_once get_stylesheet_directory() . '/inc/resources.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes.php';
+require_once get_stylesheet_directory() . '/inc/jobs.php';
 require_once get_stylesheet_directory() . '/inc/checker.php';
 require_once get_stylesheet_directory() . '/inc/calendly.php';
 require_once get_stylesheet_directory() . '/inc/creatio.php';
