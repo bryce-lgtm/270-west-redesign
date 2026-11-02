@@ -832,6 +832,10 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .consult-intro { padding: 56px 80px 0; }
 .consult-intro-body { max-width: 760px; }
 .consult-intro-after { padding-top: 0; padding-bottom: 96px; }
+/* The Contact page was merged into this one: What to expect sits beside the phone/email/mail card,
+   and /contact/ redirects to #contact. */
+.consult-intro[id] { scroll-margin-top: 72px; }
+.consult-contact-grid { align-items: center; }
 .consult-scheduler-fallback { display: inline-block; margin-top: 8px; }
 
 

@@ -9,7 +9,7 @@ $w270_links = array_filter( [
 	[ 'vac-benefits-support-options', 'Your options', 'Compare managing it yourself, free support and dedicated navigation.' ],
 	[ 'resources/stories', 'Veteran stories', 'Veterans describe their experience in their own words.' ],
 	[ 'faq', 'Questions and answers', 'Common questions about VAC claims and working with us.' ],
-	[ 'contact', 'Contact us', 'Reach our team by phone, email or mail.' ],
+	[ 'book-a-consult', 'Contact us', 'Book a free call, or reach our team by phone, email or mail.' ],
 ], fn( $l ) => (bool) get_page_by_path( $l[0] ) );
 ?>
 <main id="content" class="site-main">

@@ -60,7 +60,7 @@ add_shortcode( 'w270_job_list', function () {
 	$jobs = w270_open_jobs();
 	if ( ! $jobs ) {
 		return '<div class="job-empty"><p class="sec-p">There are no open roles at the moment. If you would like to work with us, we would still be glad to hear from you.</p>'
-			. '<div class="section-ctas"><a href="' . esc_url( home_url( '/contact/' ) ) . '" class="btn-accent">Contact our team →</a></div></div>';
+			. '<div class="section-ctas"><a href="' . esc_url( home_url( '/book-a-consult/#contact' ) ) . '" class="btn-accent">Contact our team →</a></div></div>';
 	}
 	$out = '<p class="sec-p job-list-intro">Explore current openings below to learn more about the role, what the work involves and how to apply.</p><ul class="job-list">';
 	foreach ( $jobs as $id ) {
