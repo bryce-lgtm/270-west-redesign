@@ -2016,7 +2016,6 @@ h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .
 /* Three support routes side by side (Understanding Your Options). */
 .options-grid { list-style: none; margin: 0 auto; padding: 0; max-width: 1240px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .option-card { background: var(--bg); border: 1px solid var(--rule); box-shadow: var(--shadow-sm); padding: 32px 28px; display: flex; flex-direction: column; }
-.option-card-dedicated { border-top: 3px solid var(--accent); }
 .option-h { font-family: var(--font-serif); font-size: 28px; font-weight: 400; line-height: 1.2; margin: 0 0 20px; text-wrap: balance; }
 .option-label { font-size: 15px; font-weight: 600; color: var(--ink); margin: 20px 0 6px; }
 .option-label:first-of-type { margin-top: 0; }
@@ -2048,6 +2047,13 @@ h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .
 .why-pair-p { font-size: 18px; line-height: 1.6; color: var(--muted); margin: 0; text-wrap: pretty; }
 .why-pair-p + .why-pair-p { margin-top: 14px; }
 @media (max-width: 900px) { .why-pair { grid-template-columns: 1fr; gap: 40px; } }
+/* A short note under the option cards (Your Options): free support is a real choice. */
+.options-note { max-width: 640px; margin: 56px auto 0; text-align: center; }
+.options-note-h { font-family: var(--font-serif); font-size: clamp(24px, 2.2vw, 28px); font-weight: 400; line-height: 1.2; margin: 0 0 12px; color: var(--ink); text-wrap: balance; }
+.options-note-p { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 0; text-wrap: pretty; }
+.options-note-p + .options-note-p { margin-top: 10px; }
+/* Lists inside a .why-pair column use the column's width, not the centred narrow measure. */
+.why-pair-col .prose-list { max-width: none; margin: 0; }
 /* A quieter second action beside the CTA band's main button. */
 .cta-compare-link { align-self: center; padding: 10px 0; font-size: 15px; font-weight: 500; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .quote-more { margin-top: 32px; text-align: center; }
