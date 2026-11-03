@@ -2032,6 +2032,9 @@ h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .
 .prose-list li::before { content: ''; position: absolute; left: 4px; top: 0.62em; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); }
 .prose-list p:last-child, .prose-list ul:last-child { margin-bottom: 0; }
 .prose-list ul + p { color: var(--muted); }
+/* Checklist variant: a teal check in place of the dot. */
+.prose-list-check li { padding-left: 30px; }
+.prose-list-check li::before { left: 4px; top: 0.3em; width: 7px; height: 13px; border-radius: 0; background: none; border: solid var(--teal); border-width: 0 2px 2px 0; transform: rotate(45deg); }
 /* Section CTAs under a centred heading block. */
 .section-ctas { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 32px; }
 /* Three-fact proof bar (Why 270 West). */
@@ -2052,10 +2055,6 @@ h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .
 .options-note-h { font-family: var(--font-serif); font-size: clamp(24px, 2.2vw, 28px); font-weight: 400; line-height: 1.2; margin: 0 0 12px; color: var(--ink); text-wrap: balance; }
 .options-note-p { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 0; text-wrap: pretty; }
 .options-note-p + .options-note-p { margin-top: 10px; }
-/* Careers: the hiring note inside Current opportunities, above the listings. Its heading sits one
-   step below the section's H2. */
-.opps-expect { max-width: 640px; margin: 8px auto 48px; text-align: center; }
-.opps-expect-h { font-family: var(--font-serif); font-size: clamp(28px, 2.6vw, 34px); font-weight: 400; line-height: 1.18; letter-spacing: -0.015em; margin: 0 0 14px; color: var(--ink); text-wrap: balance; }
 /* Lists inside a .why-pair column use the column's width, not the centred narrow measure. */
 .why-pair-col .prose-list { max-width: none; margin: 0; }
 /* A quieter second action beside the CTA band's main button. */
