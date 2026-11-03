@@ -2052,6 +2052,10 @@ h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .
 .options-note-h { font-family: var(--font-serif); font-size: clamp(24px, 2.2vw, 28px); font-weight: 400; line-height: 1.2; margin: 0 0 12px; color: var(--ink); text-wrap: balance; }
 .options-note-p { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 0; text-wrap: pretty; }
 .options-note-p + .options-note-p { margin-top: 10px; }
+/* Careers: the hiring note inside Current opportunities, above the listings. Its heading sits one
+   step below the section's H2. */
+.opps-expect { max-width: 640px; margin: 8px auto 48px; text-align: center; }
+.opps-expect-h { font-family: var(--font-serif); font-size: clamp(28px, 2.6vw, 34px); font-weight: 400; line-height: 1.18; letter-spacing: -0.015em; margin: 0 0 14px; color: var(--ink); text-wrap: balance; }
 /* Lists inside a .why-pair column use the column's width, not the centred narrow measure. */
 .why-pair-col .prose-list { max-width: none; margin: 0; }
 /* A quieter second action beside the CTA band's main button. */
