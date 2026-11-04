@@ -33,12 +33,16 @@ function w270_page_paths() {
 		// Advertising landing pages: noindex, no site chrome, never linked from a menu.
 		'vac-claim-help' => '/vac-claim-help/', 'vac-benefits-simplified' => '/vac-benefits-simplified/',
 		'what-to-expect' => '/what-to-expect/',
+		// Testimonial Campaign (Nov 2026): one landing page per ad theme.
+		'vac-decision-review' => '/vac-decision-review/', 'vac-medical-documentation' => '/vac-medical-documentation/',
+		'vac-benefits-where-to-start' => '/vac-benefits-where-to-start/',
 	];
 }
 
 /** Slugs of the advertising landing pages, which the generator marks with "landing": true. */
 function w270_landing_slugs() {
-	return [ 'vac-claim-help', 'vac-benefits-simplified', 'what-to-expect' ];
+	return [ 'vac-claim-help', 'vac-benefits-simplified', 'what-to-expect',
+		'vac-decision-review', 'vac-medical-documentation', 'vac-benefits-where-to-start' ];
 }
 
 /**
@@ -829,7 +833,8 @@ function w270_main( $argv ) {
 	if ( $all || isset( $flags['menus'] ) ) { w270_import_menus(); }
 	if ( $all || isset( $flags['resources'] ) || $refresh || isset( $flags['refresh-templates'] ) ) { w270_import_resources( $refresh ); }
 	// The header/footer exclude the landing pages by ID, which only exist once pages are imported.
-	if ( $all || isset( $flags['templates'] ) || isset( $flags['refresh-templates'] ) ) { w270_refresh_chrome_conditions(); }
+	// --chrome alone re-applies just these exclusions, e.g. after seeding a new landing page with --pages --only=<slug>.
+	if ( $all || isset( $flags['templates'] ) || isset( $flags['refresh-templates'] ) || isset( $flags['chrome'] ) ) { w270_refresh_chrome_conditions(); }
 	if ( $all || isset( $flags['kit'] ) ) { function_exists( 'w270_import_kit' ) && w270_import_kit(); }
 	if ( $all || isset( $flags['settings'] ) ) { w270_import_settings(); }
 	if ( $all || isset( $flags['settings'] ) ) { w270_import_translatepress(); }
