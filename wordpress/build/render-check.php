@@ -89,8 +89,16 @@ try {
 }
 if ( function_exists( 'acf_get_field_groups' ) ) {
 	$n = count( acf_get_field_groups() );
-	printf( "%s acf field groups: %d\n", 6 === $n ? 'OK  ' : 'FAIL', $n );
-	if ( 6 !== $n ) { $fail = true; }
+	printf( "%s acf field groups: %d\n", 7 === $n ? 'OK  ' : 'FAIL', $n );
+	if ( 7 !== $n ) { $fail = true; }
+	// Job postings get the job fields (the post type is registered by the content plugin).
+	$job_groups = wp_list_pluck( acf_get_field_groups( [ 'post_type' => 'job' ] ), 'title' );
+	if ( post_type_exists( 'job' ) && [ 'Job details' ] === $job_groups ) {
+		echo "OK   job field groups: Job details\n";
+	} else {
+		$fail = true;
+		printf( "FAIL job field groups: %s\n", post_type_exists( 'job' ) ? implode( ', ', $job_groups ) : 'job post type missing' );
+	}
 	// A Story must offer the story fields and not the guide fields.
 	$story = get_posts( [ 'post_type' => 'resource', 'numberposts' => 1, 'tax_query' => [ [ 'taxonomy' => 'resource_type', 'field' => 'slug', 'terms' => 'stories' ] ] ] );
 	if ( $story ) {

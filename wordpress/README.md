@@ -38,7 +38,39 @@ means every classed element has the same box, display and typography as the prot
   quiz & consult shells → HTML widget; element with block children → Container; a div of unclassed
   `p`/`h2`/lists → one rich Text Editor.
 - Re-running the importer updates pages in place (keyed by slug) and **overwrites edits made in
-  Elementor**. Once content editing starts in WordPress, stop re-importing those pages.
+  Elementor**. Content editing in WordPress started on 2026-10-26, so the importer is no longer part
+  of a normal deploy — see "Deploying" below.
+
+## Deploying (staging and production)
+
+**Elementor is the source of truth for page content.** Since 2026-10-26 every page, menu and the
+Elementor kit (Site Settings) is edited directly in wp-admin. The prototype HTML and `build/out/*.json`
+are stale by design and must never be re-imported onto a live site. A deploy is therefore *code only*:
+
+    wordpress/build/deploy-godaddy.sh       # GoDaddy staging (production: override W270_GD_USER/HOST/SITE_HOST)
+    wordpress/build/deploy-siteground.sh    # SiteGround staging
+
+Both rsync/push the theme (`theme/270west`), the importer folder and the content plugin, install and
+activate the required plugins, run `render-check.php` and flush caches. They print
+`importer: skipped (code-only deploy)` and leave pages, menus and the kit exactly as wp-admin has them.
+Pushing to GitHub never touches a site; only these scripts do.
+
+The importer runs only on explicit opt-in:
+
+| Flag (`GD` for GoDaddy, `SG` for SiteGround) | What runs | Touches |
+| --- | --- | --- |
+| `W270_GD_IMPORT=1` | `import.php --all` | **Everything** — rewrites all 25 pages, menus, kit, settings. Fresh, empty sites only. Prints a warning first. |
+| `W270_GD_REFRESH_FEEDS=contact,booking` | `--refresh-feeds=…` | Only those forms' Creatio webhook feeds (the forms stay as wp-admin has them). |
+| `W270_GD_REFRESH_FORMS=checker` | `--refresh-forms=…` | Only those Gravity Forms and their feeds. |
+| `W270_GD_REFRESH_TEMPLATES=1` or `=w270-single-story` | `--refresh-templates[=…]` | Only the Pro header/footer/single/loop templates (and archive pages when unnamed). |
+| `W270_GD_REFRESH_RESOURCES=slug-a,slug-b` | `--refresh-resources=…` | Only those resource posts' copy and fields. |
+
+Refresh flags can be combined; none of them touches pages, menus or the kit. If a page ever needs
+re-seeding from the repo, run `import.php --pages --only=<slug>` by hand over SSH, knowing it discards
+that page's Elementor edits (WordPress keeps a revision of the previous Elementor data).
+
+`build/build.sh` is the **Local** one-shot build and still runs `import.php --all` against
+`270-west.local` only; it never reaches a remote host.
 
 ## Resources (custom post types)
 

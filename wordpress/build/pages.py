@@ -20,6 +20,10 @@ PAGES = [
     ('call-request-received.html', 'call-request-received', None),
     # Reached only from the Resources page's story invitation. noindex, not in any menu.
     ('share-your-story.html', 'share-your-story', None),
+    # Oct 26 copy deck: category page, brand page and Careers (under About).
+    ('vac-benefits-support-options.html', 'vac-benefits-support-options', None),
+    ('why-270-west.html', 'why-270-west', None),
+    ('careers.html', 'careers', 'about'),
 ]
 
 # Advertising landing pages. They carry their own header and footer instead of the site nav,
@@ -41,7 +45,9 @@ LANDING_PAGES = [
 # (option w270_hidden_features), which hides the matching menu items, rail boxes and archives.
 #   library: Guides and News, held back until 270 West has reviewed them (Oct 2026).
 #            Remove it from this set and redeploy to bring both sections back.
-HIDDEN_FEATURES = {'library'}
+#   careers-stories:  Careers employee profiles, until real photos and approved quotes arrive.
+#   why-video:        the Why 270 West "Why experience matters" film, until the cut is final.
+HIDDEN_FEATURES = {'library', 'careers-stories', 'why-video'}
 
 TITLE_SUFFIX = ' — 270 West Consulting'
 

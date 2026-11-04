@@ -832,6 +832,10 @@ details:not([open]) .faq-icon::after { content: '+'; }
 .consult-intro { padding: 56px 80px 0; }
 .consult-intro-body { max-width: 760px; }
 .consult-intro-after { padding-top: 0; padding-bottom: 96px; }
+/* The Contact page was merged into this one: What to expect sits beside the phone/email/mail card,
+   and /contact/ redirects to #contact. */
+.consult-intro[id] { scroll-margin-top: 72px; }
+.consult-contact-grid { align-items: center; }
 .consult-scheduler-fallback { display: inline-block; margin-top: 8px; }
 
 
@@ -2008,3 +2012,84 @@ h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .
 .footer-urgent { display: block; margin-top: 14px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
 .footer-urgent a { color: inherit; }
 .quiz-result-urgent { font-size: 13px; opacity: 0.8; margin-top: 10px; }
+/* ══ OCT 26 COPY DECK: Careers, Understanding Your Options, Why 270 West ══ */
+/* Three support routes side by side (Understanding Your Options). */
+.options-grid { list-style: none; margin: 0 auto; padding: 0; max-width: 1240px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.option-card { background: var(--bg); border: 1px solid var(--rule); box-shadow: var(--shadow-sm); padding: 32px 28px; display: flex; flex-direction: column; }
+.option-h { font-family: var(--font-serif); font-size: 28px; font-weight: 400; line-height: 1.2; margin: 0 0 20px; text-wrap: balance; }
+.option-label { font-size: 15px; font-weight: 600; color: var(--ink); margin: 20px 0 6px; }
+.option-label:first-of-type { margin-top: 0; }
+.option-p { font-size: 16px; line-height: 1.6; color: var(--muted); margin: 0; text-wrap: pretty; }
+.option-cost { margin: auto 0 0; padding-top: 20px; border-top: 1px solid var(--rule); font-size: 16px; line-height: 1.5; color: var(--ink); }
+.option-cost-wrap { margin-top: 24px; }
+@media (max-width: 1000px) { .options-grid { grid-template-columns: 1fr; max-width: 640px; } }
+/* Running copy with a bulleted list, edited as one rich text block. Same measure as .sec-p so the
+   text lines up with the centred sections around it. */
+.section-body-narrow.prose-list { max-width: 640px; }
+.prose-list p { font-size: 18px; line-height: 1.6; color: var(--ink); margin: 0 0 16px; text-wrap: pretty; }
+.prose-list ul { margin: 0 0 24px; padding: 0; list-style: none; display: grid; gap: 12px; }
+.prose-list li { position: relative; padding-left: 26px; font-size: 18px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
+.prose-list li::before { content: ''; position: absolute; left: 4px; top: 0.62em; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); }
+.prose-list p:last-child, .prose-list ul:last-child { margin-bottom: 0; }
+.prose-list ul + p { color: var(--muted); }
+/* Checklist variant: a teal check in place of the dot. */
+.prose-list-check li { padding-left: 30px; }
+.prose-list-check li::before { left: 4px; top: 0.3em; width: 7px; height: 13px; border-radius: 0; background: none; border: solid var(--teal); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+/* Section CTAs under a centred heading block. */
+.section-ctas { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 32px; }
+/* Three-fact proof bar (Why 270 West). */
+.proof-bar-grid-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 900px) { .proof-bar-grid-3 { grid-template-columns: 1fr; } .proof-bar-grid-3 .proof-item + .proof-item { padding-left: 0; border-left: none; border-top: 1px solid rgba(29,58,62,0.14); } }
+/* Proof bar labels on the new pages: sentence case at a readable size, not small caps. */
+.proof-bar-grid-3 .proof-label { font-size: 15px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+.proof-bar-grid-3 .proof-item { flex-direction: column; gap: 8px; }
+/* Two related points side by side (Why 270 West), each with its own heading. */
+.why-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; max-width: 1120px; margin: 0 auto; }
+.why-pair-col { border-top: 1px solid var(--rule); padding-top: 32px; }
+.why-pair-h { font-family: var(--font-serif); font-size: clamp(28px, 2.6vw, 34px); font-weight: 400; line-height: 1.18; letter-spacing: -0.015em; margin: 0 0 18px; color: var(--ink); text-wrap: balance; }
+.why-pair-p { font-size: 18px; line-height: 1.6; color: var(--muted); margin: 0; text-wrap: pretty; }
+.why-pair-p + .why-pair-p { margin-top: 14px; }
+@media (max-width: 900px) { .why-pair { grid-template-columns: 1fr; gap: 40px; } }
+/* A short note under the option cards (Your Options): free support is a real choice. */
+.options-note { max-width: 640px; margin: 56px auto 0; text-align: center; }
+.options-note-h { font-family: var(--font-serif); font-size: clamp(24px, 2.2vw, 28px); font-weight: 400; line-height: 1.2; margin: 0 0 12px; color: var(--ink); text-wrap: balance; }
+.options-note-p { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 0; text-wrap: pretty; }
+.options-note-p + .options-note-p { margin-top: 10px; }
+/* Lists inside a .why-pair column use the column's width, not the centred narrow measure. */
+.why-pair-col .prose-list { max-width: none; margin: 0; }
+/* A quieter second action beside the CTA band's main button. */
+.cta-compare-link { align-self: center; padding: 10px 0; font-size: 15px; font-weight: 500; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.quote-more { margin-top: 32px; text-align: center; }
+.quote-more .esg-snapshot-link { margin-top: 0; }
+@media (max-width: 1000px) { .quote-grid { grid-template-columns: 1fr; max-width: 640px; } }
+/* In-page jump targets (#compare, #opportunities) clear the fixed header. */
+.section-pad[id] { scroll-margin-top: 72px; }
+/* Job Postings: open roles on the Careers page ([w270_job_list]) and the single posting. */
+.job-list-intro { margin-bottom: 32px !important; text-align: center; }
+.job-list { list-style: none; margin: 0 auto; padding: 0; max-width: 880px; display: grid; gap: 16px; text-align: left; }
+.job-card-link { display: block; padding: 28px 32px; background: var(--bg); border: 1px solid var(--rule); box-shadow: var(--shadow-sm); color: var(--ink); text-decoration: none; transition: border-color var(--dur) var(--ease); }
+.job-card-link:hover { border-color: var(--teal); }
+.job-card-h { font-family: var(--font-serif); font-size: 28px; font-weight: 400; line-height: 1.2; margin: 0 0 8px; text-wrap: balance; }
+.job-card-meta { font-size: 15px; color: var(--teal); margin: 0 0 12px; }
+.job-card-p { font-size: 16px; line-height: 1.6; color: var(--muted); margin: 0 0 16px; text-wrap: pretty; }
+.job-card-more { font-size: 15px; font-weight: 600; color: var(--accent); }
+.job-empty { margin-top: 8px; text-align: center; }
+.job-back { display: inline-block; margin-bottom: 24px; font-size: 15px; color: var(--teal); text-decoration: none; }
+.job-back:hover { text-decoration: underline; text-underline-offset: 3px; }
+.job-meta { font-size: 18px; color: var(--teal); margin: 16px 0 0; }
+.job-meta-sub { margin-top: 6px; font-size: 16px; color: var(--muted); }
+.job-body h2 { font-family: var(--font-serif); font-size: 32px; font-weight: 400; line-height: 1.2; margin: 40px 0 14px; text-wrap: balance; }
+.job-body h3 { font-family: var(--font-sans); font-size: 19px; font-weight: 600; margin: 28px 0 10px; }
+.job-body > :first-child { margin-top: 0; }
+.job-body a { color: var(--accent); }
+.job-apply { max-width: 720px; }
+@media (max-width: 700px) { .job-card-link { padding: 22px 20px; } .job-card-h { font-size: 24px; } }
+/* Six cards in rows of three (Careers: Who thrives here). */
+.commitments-grid-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 1100px) { .commitments-grid-3 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 700px) { .commitments-grid-3 { grid-template-columns: 1fr; } }
+/* 404 page: the main sections as link cards. */
+.notfound-link { padding: 0; transition: border-color var(--dur) var(--ease); }
+.notfound-link:hover { border-color: var(--teal); }
+.notfound-link a { display: block; height: 100%; padding: 28px 24px 30px; color: inherit; text-decoration: none; }
+.notfound-link .commitment-h { margin-top: 0; }

@@ -256,7 +256,7 @@ const EligibilityQuiz = ({ theme = "navy", compact = false }) => {
             Get my results →
           </button>
           <div style={{ marginTop: 14, fontSize: 11, color: c.muted, fontFamily: "ui-monospace, monospace", letterSpacing: "0.06em" }}>
-            🔒 Confidential. We never share your info.
+            🔒 Confidential. We share your information only with your consent or where the law requires it.
           </div>
         </div>
       )}

@@ -204,7 +204,7 @@ function w270_ui_strings() {
 		"quiz.method.2" => "Email",
 		"quiz.sending" => "Sending…",
 		"quiz.submit" => "Submit",
-		"quiz.privacy" => "Confidential. We never share your info.",
+		"quiz.privacy" => "Confidential. We share your information only with your consent or where the law requires it.",
 		"quiz.done.label" => "Answers received",
 		"quiz.done.h.named" => "Thank you, {name}.",
 		"quiz.done.h" => "Thank you.",
