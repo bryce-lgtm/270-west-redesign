@@ -34,7 +34,9 @@ $duration = w270_field( 'duration' );
 		<h1 class="page-hero-h1"><?php echo esc_html( w270_field( 'seo_h1' ) ?: get_the_title() ); ?></h1>
 	</section>
 	<section class="story-single">
-		<?php if ( $video ) : ?>
+		<?php if ( $video && function_exists( 'w270_story_video_html' ) && w270_is_video_file( $video ) ) : ?>
+			<?php echo w270_story_video_html( get_the_ID() ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inside ?>
+		<?php elseif ( $video ) : ?>
 			<div class="story-single-video">
 				<iframe src="<?php echo esc_url( add_query_arg( [ 'enablejsapi' => 1, 'rel' => 0, 'origin' => home_url() ], $video ), [ 'https' ] ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>"
 					loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
