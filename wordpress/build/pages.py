@@ -29,6 +29,10 @@ LANDING_PAGES = [
     ('lp-claims.html', 'vac-claim-help'),
     ('lp-awareness.html', 'vac-benefits-simplified'),
     ('lp-what-to-expect.html', 'what-to-expect'),
+    # Testimonial Campaign (Nov 2026): one page per ad theme.
+    ('lp-decision.html', 'vac-decision-review'),
+    ('lp-medical.html', 'vac-medical-documentation'),
+    ('lp-start.html', 'vac-benefits-where-to-start'),
 ]
 
 # Site sections switched off for now. Prototype elements marked data-feature="<name>" are left out of
