@@ -144,13 +144,37 @@ add_shortcode( 'w270_rail_links', function ( $atts ) {
 	return '<div class="story-rail-box"><h3 class="story-rail-h">' . esc_html( $a['title'] ) . '</h3><div class="story-rail-links">' . $links . '</div></div>';
 } );
 
-// [w270_story_media] → the 16:9 band: the video embed when a URL is set, else the featured photo.
-add_shortcode( 'w270_story_media', function ( $atts ) {
-	$id    = w270_sc_id( $atts );
-	$video = w270_embed_url( w270_field( 'video_url', $id ) );
-	if ( $video ) {
-		return '<div class="story-single-video"><iframe src="' . esc_url( $video, [ 'https' ] ) . '" title="' . esc_attr( get_the_title( $id ) ) . '" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>';
+if ( ! function_exists( 'w270_is_video_file' ) ) {
+	/** True for a self-hosted video file (a Media Library .mp4/.webm URL) rather than a YouTube/Vimeo page. */
+	function w270_is_video_file( $url ) {
+		return (bool) preg_match( '~\.(mp4|m4v|webm|mov)(\?.*)?$~i', (string) $url );
 	}
+}
+
+if ( ! function_exists( 'w270_story_video_html' ) ) {
+	/**
+	 * The story film: a native <video> for a self-hosted file (the featured photo is its poster),
+	 * else the YouTube/Vimeo iframe. Empty when the story has no video.
+	 */
+	function w270_story_video_html( $id ) {
+		$video = w270_embed_url( w270_field( 'video_url', $id ) );
+		if ( ! $video ) { return ''; }
+		$title = get_the_title( $id );
+		if ( w270_is_video_file( $video ) ) {
+			$poster = get_the_post_thumbnail_url( $id, 'large' );
+			return '<div class="story-single-video"><video src="' . esc_url( $video, [ 'https' ] ) . '"'
+				. ( $poster ? ' poster="' . esc_url( $poster ) . '"' : '' )
+				. ' controls playsinline preload="metadata" aria-label="' . esc_attr( $title ) . '"></video></div>';
+		}
+		return '<div class="story-single-video"><iframe src="' . esc_url( $video, [ 'https' ] ) . '" title="' . esc_attr( $title ) . '" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>';
+	}
+}
+
+// [w270_story_media] → the 16:9 band: the video (file or embed) when a URL is set, else the featured photo.
+add_shortcode( 'w270_story_media', function ( $atts ) {
+	$id   = w270_sc_id( $atts );
+	$html = w270_story_video_html( $id );
+	if ( $html ) { return $html; }
 	return has_post_thumbnail( $id ) ? '<div class="photo story-single-photo">' . get_the_post_thumbnail( $id, 'large' ) . '</div>' : '';
 } );
 

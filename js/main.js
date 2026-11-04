@@ -574,8 +574,26 @@ function watchYouTube(iframe, meta) {
     } } });
   });
 }
-// Story pages render their film as a plain iframe; it reports the same watch events.
+// Self-hosted films (<video>) report the same watch events from the media element itself.
+function watchVideoFile(video, meta) {
+  let started = false, done = false;
+  const hit = {};
+  video.addEventListener('play', () => { if (!started) { started = true; track('video_start', meta); } });
+  video.addEventListener('timeupdate', () => {
+    const d = video.duration;
+    if (!d || !isFinite(d)) return;
+    const pct = Math.floor(video.currentTime / d * 100);
+    [25, 50, 75].forEach(m => { if (pct >= m && !hit[m]) { hit[m] = true; track('video_progress', Object.assign({ video_percent: m }, meta)); } });
+  });
+  video.addEventListener('ended', () => { if (!done) { done = true; track('video_complete', Object.assign({ video_percent: 100 }, meta)); } });
+}
+// Story pages render their film as a plain iframe (YouTube) or a <video> (Media Library file);
+// both report the same watch events.
 function initStoryVideoTracking() {
+  document.querySelectorAll('.story-single-video video').forEach(video => {
+    const src = video.currentSrc || video.getAttribute('src') || '';
+    watchVideoFile(video, { video_title: document.title, video_provider: 'file', video_id: src.split('/').pop(), video_placement: 'story' });
+  });
   document.querySelectorAll('.story-single-video iframe[src*="youtube.com/embed/"]').forEach(iframe => {
     const ytId = (iframe.src.match(/embed\/([\w-]{11})/) || [])[1] || '';
     if (!/enablejsapi=1/.test(iframe.src)) iframe.src = ytEmbedSrc(iframe.src);
