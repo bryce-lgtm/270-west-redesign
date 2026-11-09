@@ -59,10 +59,10 @@ function w270_job_meta( $id ) {
 add_shortcode( 'w270_job_list', function () {
 	$jobs = w270_open_jobs();
 	if ( ! $jobs ) {
-		return '<div class="job-empty"><p class="sec-p">There are no open roles at the moment. If you would like to work with us, we would still be glad to hear from you.</p>'
+		return '<div class="job-empty"><p class="sec-p">We do not have an opportunity that matches every background today. Check back as our team continues to grow.</p>'
 			. '<div class="section-ctas"><a href="' . esc_url( home_url( '/book-a-consult/#contact' ) ) . '" class="btn-accent">Contact our team →</a></div></div>';
 	}
-	$out = '<p class="sec-p job-list-intro">Explore current openings below to learn more about the role, what the work involves and how to apply.</p><ul class="job-list">';
+	$out = '<p class="sec-p job-list-intro">Explore current opportunities to learn about the role, the work and what to expect when you apply.</p><ul class="job-list">';
 	foreach ( $jobs as $id ) {
 		$out .= '<li class="job-card"><a class="job-card-link" href="' . esc_url( get_permalink( $id ) ) . '">'
 			. '<h3 class="job-card-h">' . esc_html( get_the_title( $id ) ) . '</h3>'
