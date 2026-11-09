@@ -14,6 +14,8 @@
 #   W270_GD_REFRESH_FEEDS=contact,booking wordpress/build/deploy-godaddy.sh   # sync + only that targeted
 #                                                            # --refresh-* (feeds, forms, templates, resources)
 #   W270_GD_PRO_PLUGINS=/folder/with/elementor-pro,acf-pro   # also upload the licensed plugins from here
+#   W270_GA4_API_SECRET=… wordpress/build/deploy-godaddy.sh  # also write LG_GA4_API_SECRET into wp-config.php
+#   W270_GA4_DEBUG=1|0 wordpress/build/deploy-godaddy.sh      # also turn GA4 DebugView mode on/off (LG_GA4_DEBUG)
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 GD_USER="${W270_GD_USER:-git_deployer_82b7f03cfd_1292707}"
@@ -34,6 +36,9 @@ $RS --delete --exclude 'tests' --exclude '__pycache__' --exclude '*.py' --exclud
 # acf-json is excluded from --delete: ACF writes field-group edits made in wp-admin back into it.
 $RS --delete --exclude 'acf-json' "$ROOT/wordpress/plugins/270west-content/" "$GD_USER@$GD_HOST:$GD_PATH/wp-content/plugins/270west-content/"
 $RS "$ROOT/wordpress/plugins/270west-content/acf-json/" "$GD_USER@$GD_HOST:$GD_PATH/wp-content/plugins/270west-content/acf-json/"
+# Must-use plugins: one file at a time, never --delete (GoDaddy keeps its own system plugin in mu-plugins).
+$SSH "mkdir -p '$GD_PATH/wp-content/mu-plugins'"
+$RS "$ROOT/wordpress/mu-plugins/270west-ga4-server-events.php" "$GD_USER@$GD_HOST:$GD_PATH/wp-content/mu-plugins/"
 
 # 3. Licensed plugins (Elementor Pro, ACF Pro) are not on wordpress.org: upload them from a local
 # copy when W270_GD_PRO_PLUGINS points at a folder holding elementor-pro/ and advanced-custom-fields-pro/.
@@ -79,6 +84,15 @@ $SSH "cd '$GD_PATH' && \
   W270_SITE='$GD_PATH' W270_HOST='$GD_SITE_HOST' php wp-content/themes/270west/build/render-check.php && \
   wp cache flush >/dev/null && echo 'object cache flushed' && \
   { wp eval 'do_action("wp_update_nav_menu", 0);' >/dev/null 2>&1 || true; } && echo 'page cache ban requested (GoDaddy gateway)'"
+# GA4 server events (mu-plugin): the API secret lives only in wp-config.php. It is read from stdin on the
+# server so it never appears in a command line.
+if [ -n "${W270_GA4_API_SECRET:-}" ]; then
+  printf '%s' "$W270_GA4_API_SECRET" | $SSH "cd '$GD_PATH' && wp config set LG_GA4_API_SECRET \"\$(cat)\" --type=constant --quiet" && echo 'GA4 API secret set in wp-config.php'
+fi
+if [ -n "${W270_GA4_DEBUG:-}" ]; then
+  GA4_DEBUG_VAL=false; [ "$W270_GA4_DEBUG" = "1" ] && GA4_DEBUG_VAL=true
+  $SSH "cd '$GD_PATH' && wp config set LG_GA4_DEBUG $GA4_DEBUG_VAL --raw --type=constant --quiet" && echo "LG_GA4_DEBUG = $GA4_DEBUG_VAL"
+fi
 # The gateway (page) cache has no WP-CLI command; the system plugin bans it on the nav-menu hook.
 # (switch_theme would also ban it, but Elementor hooks that action with a 3-argument callback and fatals.)
 echo "GODADDY DEPLOY OK — https://$GD_SITE_HOST/"

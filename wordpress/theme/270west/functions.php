@@ -46,6 +46,8 @@ add_action( 'wp_enqueue_scripts', function () {
 	}
 	wp_enqueue_script( 'w270-main', W270_ASSETS . '/js/main.js', [], filemtime( $dir . '/assets/js/main.js' ), true );
 	$w270 = [ 'assets' => W270_ASSETS, 'gfFields' => w270_gf_attribution_map() ];
+	// GA4 stream for main.js to find the _ga_<STREAM> session cookie (mu-plugin 270west-ga4-server-events).
+	if ( defined( 'LG_GA4_MEASUREMENT_ID' ) ) { $w270['ga4'] = LG_GA4_MEASUREMENT_ID; }
 	// The status checker posts to the theme endpoint only once its Gravity Form exists.
 	if ( function_exists( 'w270_checker_form_id' ) && w270_checker_form_id() ) {
 		$w270['checker']        = esc_url_raw( rest_url( 'w270/v1/checker' ) );

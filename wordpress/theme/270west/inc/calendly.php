@@ -93,7 +93,13 @@ function w270_calendly_receive( WP_REST_Request $req ) {
 			$values[ $k ] = $field->defaultValue;
 		}
 	}
+	// This request comes from Calendly, not the visitor, so there are no GA cookies: hand the GA4
+	// server-event mu-plugin the IDs main.js sent through Calendly instead (none = unattributed).
+	$ga_ids    = w270_calendly_ga_ids( $payload );
+	$ga_filter = fn() => $ga_ids;
+	add_filter( 'lg_ga4_ids', $ga_filter );
 	$result = GFAPI::submit_form( $form_id, $values );
+	remove_filter( 'lg_ga4_ids', $ga_filter );
 	if ( is_wp_error( $result ) || empty( $result['is_valid'] ) ) {
 		w270_calendly_log( 'invitee.created', 'failed: form submission error' );
 		error_log( 'w270 calendly: submit_form failed: ' . ( is_wp_error( $result ) ? $result->get_error_message() : wp_json_encode( $result['validation_messages'] ?? [] ) ) );
@@ -102,6 +108,18 @@ function w270_calendly_receive( WP_REST_Request $req ) {
 	if ( '' !== $uri ) { set_transient( $seen, 1, 14 * DAY_IN_SECONDS ); }
 	w270_calendly_log( 'invitee.created', 'saved as entry #' . (int) ( $result['entry_id'] ?? 0 ) . ' and sent to the Creatio feed' );
 	return [ 'ok' => true ];
+}
+
+/**
+ * GA4 client and session IDs from the booking's tracking.salesforce_uuid, which main.js sets to
+ * "ga.<client_id>.<session_id>" (client_id is itself "<random>.<timestamp>"; the session part is optional).
+ */
+function w270_calendly_ga_ids( array $p ) {
+	$raw = (string) ( $p['tracking']['salesforce_uuid'] ?? '' );
+	if ( ! preg_match( '/^ga\.(\d+\.\d+)(?:\.(\d+))?$/', $raw, $m ) ) {
+		return [ 'client_id' => null, 'session_id' => null ];
+	}
+	return [ 'client_id' => $m[1], 'session_id' => $m[2] ?? null ];
 }
 
 /** Map a Calendly invitee payload onto the "Calendly Booking" form's inputs. */

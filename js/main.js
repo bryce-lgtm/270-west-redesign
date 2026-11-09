@@ -645,9 +645,37 @@ function initLeadTracking() {
       Object.entries(data).forEach(([k, v]) => { if (v && /^utm_|^gclid$|^msclkid$/.test(k)) u.searchParams.set(k, v); });
       a.href = u.toString();
     } catch (e) {}
+    // The GA cookies may only appear after this runs, so stamp them when the link is used.
+    const stamp = () => { try { a.href = withGaIds(a.href); } catch (e) {} };
+    a.addEventListener('pointerdown', stamp);
+    a.addEventListener('click', stamp);
   });
   fillGravityFormFields(data);
   return data;
+}
+
+// ── GA4 visitor IDs for Calendly ──
+// Calendly bookings reach WordPress from Calendly's server, without the visitor's cookies, so the
+// server-side generate_lead event (mu-plugin 270west-ga4-server-events) cannot see the GA session.
+// Calendly hands back salesforce_uuid in the booking webhook's "tracking"; carry the GA client and
+// session IDs in it as "ga.<client_id>.<session_id>" (inc/calendly.php reads them back).
+function gaIds() {
+  const get = name => { const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; };
+  const ga = get('_ga').split('.');
+  if (ga.length < 4 || !/^\d+$/.test(ga[2]) || !/^\d+$/.test(ga[3])) return null;
+  const stream = ((window.W270 && window.W270.ga4) || '').replace(/^G-/, '');
+  const raw = stream ? get('_ga_' + stream) : '';
+  let session = '';
+  if (raw.startsWith('GS2.')) { const m = raw.match(/\.s(\d+)/); session = m ? m[1] : ''; }
+  else { const p = raw.split('.'); session = /^\d+$/.test(p[2] || '') ? p[2] : ''; }
+  return { client: ga[2] + '.' + ga[3], session };
+}
+function withGaIds(url) {
+  const ids = gaIds();
+  if (!ids) return url;
+  const u = new URL(url);
+  u.searchParams.set('salesforce_uuid', 'ga.' + ids.client + (ids.session ? '.' + ids.session : ''));
+  return u.toString();
 }
 
 // WordPress renders the team's Gravity Forms, whose hidden fields are named input_<form>_<id>.
@@ -685,7 +713,7 @@ function initScheduler(lead) {
   if (/calendly\.com/.test(u.hostname)) {
     const div = document.createElement('div');
     div.className = 'calendly-inline-widget';
-    div.dataset.url = u.toString();
+    div.dataset.url = withGaIds(u.toString());
     div.style.minWidth = '320px';
     div.style.height = (host.dataset.schedulerHeight || 720) + 'px';
     host.appendChild(div);
@@ -706,7 +734,15 @@ function initScheduler(lead) {
     };
     js.onerror = fallback;
     setTimeout(fallback, 8000);
-    document.body.appendChild(js);
+    // On a first visit straight to this page the GA tag may not have set its cookies yet: give it up
+    // to 1.5s so the booking carries the visitor's GA IDs, then load the widget either way.
+    let waited = 0;
+    const load = () => {
+      if (!gaIds() && waited < 1500) { waited += 250; setTimeout(load, 250); return; }
+      div.dataset.url = withGaIds(u.toString());
+      document.body.appendChild(js);
+    };
+    load();
   } else {
     const frame = document.createElement('iframe');
     frame.src = u.toString();

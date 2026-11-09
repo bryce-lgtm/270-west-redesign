@@ -44,6 +44,10 @@ mkdir -p "$PDEST"
 # this folder, and those belong to the client. New group files are still copied up.
 rsync -a --delete --exclude 'acf-json' "$ROOT/wordpress/plugins/270west-content/" "$PDEST/"
 rsync -a "$ROOT/wordpress/plugins/270west-content/acf-json/" "$PDEST/acf-json/"
+# Must-use plugins: copied file by file, so anything else in mu-plugins stays as the host has it.
+mkdir -p "$CLONE/wp-content/mu-plugins"
+cp "$ROOT/wordpress/mu-plugins/270west-ga4-server-events.php" "$CLONE/wp-content/mu-plugins/"
+git -C "$CLONE" add wp-content/mu-plugins/270west-ga4-server-events.php
 git -C "$CLONE" add -A wp-content/plugins/270west-content
 git -C "$CLONE" add -A wp-content/themes/270west
 if git -C "$CLONE" diff --cached --quiet; then echo "theme unchanged on SiteGround"; else
@@ -85,4 +89,12 @@ $SSH "cd '$SG_PATH' && \
   W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/activate-theme.php && \
   ${IMPORT_STEP}\
   W270_SITE='$SG_PATH' W270_HOST='$SG_SITE_HOST' php wp-content/themes/270west/build/render-check.php"
+# GA4 server events (mu-plugin): the API secret lives only in wp-config.php, read from stdin on the server.
+if [ -n "${W270_GA4_API_SECRET:-}" ]; then
+  printf '%s' "$W270_GA4_API_SECRET" | $SSH "cd '$SG_PATH' && wp config set LG_GA4_API_SECRET \"\$(cat)\" --type=constant --quiet" && echo 'GA4 API secret set in wp-config.php'
+fi
+if [ -n "${W270_GA4_DEBUG:-}" ]; then
+  GA4_DEBUG_VAL=false; [ "$W270_GA4_DEBUG" = "1" ] && GA4_DEBUG_VAL=true
+  $SSH "cd '$SG_PATH' && wp config set LG_GA4_DEBUG $GA4_DEBUG_VAL --raw --type=constant --quiet" && echo "LG_GA4_DEBUG = $GA4_DEBUG_VAL"
+fi
 echo "SITEGROUND DEPLOY OK — https://$SG_SITE_HOST/"
