@@ -2023,6 +2023,30 @@ h1, h2, h3, .sec-h2, .display-lg, .display-xl, .page-hero-h1, .page-hero-lead, .
 .option-cost { margin: auto 0 0; padding-top: 20px; border-top: 1px solid var(--rule); font-size: 16px; line-height: 1.5; color: var(--ink); }
 .option-cost-wrap { margin-top: 24px; }
 @media (max-width: 1000px) { .options-grid { grid-template-columns: 1fr; max-width: 640px; } }
+/* Comparison table (Your Options, Nov 10 2026 draft): questions down the side, the three routes
+   across, the 270 West column set apart. On a phone each question is a block with the three
+   answers stacked, each labelled from its data-col. */
+.cmp-table { width: 100%; max-width: 1240px; margin: 0 auto; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+.cmp-table col.c-row { width: 19%; }
+.cmp-table th, .cmp-table td { text-align: left; vertical-align: top; padding: 24px 26px; }
+.cmp-table thead th { font-family: var(--font-serif); font-size: 27px; font-weight: 400; line-height: 1.2; color: var(--ink); border-bottom: 1px solid var(--ink); vertical-align: bottom; text-wrap: balance; }
+.cmp-table tbody th { font-size: 17px; font-weight: 600; line-height: 1.4; color: var(--ink); padding-left: 0; border-bottom: 1px solid var(--rule); }
+.cmp-table td { font-size: 16px; line-height: 1.6; color: var(--muted); border-bottom: 1px solid var(--rule); text-wrap: pretty; }
+.cmp-table thead th.is-270 { background: var(--ink); color: var(--bg); border-bottom-color: var(--ink); }
+.cmp-table td.is-270 { background: #FBFAF8; color: var(--ink); border-left: 1px solid var(--ink); border-right: 1px solid var(--ink); }
+.cmp-table tbody tr:last-child td.is-270 { border-bottom: 1px solid var(--ink); }
+.cmp-table tbody tr:last-child th, .cmp-table tbody tr:last-child td:not(.is-270) { border-bottom: 0; }
+@media (max-width: 900px) {
+  .cmp-table, .cmp-table tbody, .cmp-table tr, .cmp-table th, .cmp-table td { display: block; width: auto; }
+  .cmp-table colgroup, .cmp-table thead { display: none; }
+  .cmp-table tbody tr { padding: 0 0 28px; }
+  .cmp-table tbody th { font-family: var(--font-serif); font-size: 26px; font-weight: 400; line-height: 1.2; padding: 0 0 12px; border-bottom: 1px solid var(--ink); }
+  .cmp-table td { padding: 16px 0; }
+  .cmp-table td::before { content: attr(data-col); display: block; font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .cmp-table td.is-270 { padding: 16px 18px; border: 1px solid var(--ink); margin-top: 8px; }
+  .cmp-table tbody tr:last-child td:not(.is-270) { border-bottom: 1px solid var(--rule); }
+}
+.cmp-fee b { font-weight: 600; color: inherit; }
 /* Running copy with a bulleted list, edited as one rich text block. Same measure as .sec-p so the
    text lines up with the centred sections around it. */
 .section-body-narrow.prose-list { max-width: 640px; }
