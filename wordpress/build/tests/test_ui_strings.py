@@ -11,7 +11,7 @@ class UiStringsTests(unittest.TestCase):
         php = open(os.path.join(ROOT, 'wordpress', 'theme', '270west', 'inc', 'checker.php'), encoding='utf-8').read()
         block = php[php.index('function w270_ui_strings'):php.index('add_action', php.index('function w270_ui_strings'))]
         theme = {k: v for k, v in re.findall(r'"([a-z0-9._]+)" => "((?:[^"\\]|\\.)*)"', block)}
-        wanted = {k: v.replace("\\'", "'") for k, v in re.findall(r"t\('([a-z0-9._]+)',\s*'((?:[^'\\]|\\.)*)'", js)}
+        wanted = {k: v.replace("\\'", "'") for k, v in re.findall(r"(?<![\w$])t\('([a-z0-9._]+)',\s*'((?:[^'\\]|\\.)*)'", js)}
         for qid, q, opts in re.findall(r"\{ id:'(\w+)', q:'([^']*)', options:\[([^\]]*)\] \}", js):
             wanted[f'quiz.{qid}.q'] = q
             for i, o in enumerate(re.findall(r"'([^']*)'", opts)):
