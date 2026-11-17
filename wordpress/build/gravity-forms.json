@@ -7074,7 +7074,7 @@
      "subject": "New application: {Role:7}",
      "message": "{all_fields}",
      "toType": "email",
-     "to": "{admin_email}",
+     "to": "recruitment@270westconsulting.ca",
      "event": "form_submission",
      "name": "Application",
      "service": "wordpress",

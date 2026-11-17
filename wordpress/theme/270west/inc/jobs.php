@@ -4,11 +4,12 @@
  * single posting (single-job.php), its Google for Jobs data, and the Job Application form.
  *
  * The post type and its ACF fields belong to the 270 West Content plugin (inc/jobs.php there).
- * Applications go to the address set on each posting, never to Creatio: the form has no webhook
- * feed, and its "Application" notification is re-addressed per posting below.
+ * Applications for every posting go to W270_JOBS_RECIPIENT (client, 2026-11-17), never to Creatio:
+ * the form has no webhook feed, and its "Application" notification is addressed below.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
+const W270_JOBS_RECIPIENT = 'recruitment@270westconsulting.ca';
 const W270_JOB_TYPES = [ 'FULL_TIME' => 'Full-time', 'PART_TIME' => 'Part-time', 'CONTRACTOR' => 'Contract', 'TEMPORARY' => 'Temporary' ];
 const W270_JOB_ARRANGEMENTS = [ 'onsite' => 'On-site', 'hybrid' => 'Hybrid', 'remote' => 'Remote' ];
 
@@ -161,15 +162,13 @@ add_filter( 'gform_validation', function ( $result ) {
 	return $result;
 } );
 
-// Address the "Application" email to the posting's own recipient. The resume is attached.
+// Every posting's "Application" email (resume attached) goes to the recruitment inbox, whatever the
+// notification's saved To says, so a form edit in wp-admin cannot send applications elsewhere.
 add_filter( 'gform_notification', function ( $notification, $form, $entry ) {
 	if ( (int) $form['id'] !== w270_job_form_id() || 'Application' !== ( $notification['name'] ?? '' ) ) { return $notification; }
-	$post = get_post( (int) rgar( $entry, (string) w270_job_form_field( $form, 'job_id' ) ) );
-	$to   = $post && 'job' === $post->post_type ? (string) w270_field( 'applications_email', $post->ID ) : '';
-	if ( is_email( $to ) ) {
-		$notification['toType'] = 'email';
-		$notification['to']     = $to;
-	}
+	$notification['toType'] = 'email';
+	$notification['to']     = W270_JOBS_RECIPIENT;
+	$notification['routing'] = null;
 	return $notification;
 }, 10, 3 );
 
