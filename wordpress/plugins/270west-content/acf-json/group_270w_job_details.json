@@ -23,9 +23,7 @@
    "instructions": "Optional pay range. Some provinces require a range in public job postings."},
   {"key": "field_270w_job_salary_max", "label": "Pay to", "name": "salary_max", "type": "number", "min": 0, "prepend": "$", "wrapper": {"width": "33"}},
   {"key": "field_270w_job_salary_unit", "label": "Pay period", "name": "salary_unit", "type": "select",
-   "choices": {"YEAR": "Per year", "HOUR": "Per hour"}, "default_value": "YEAR", "return_format": "value", "wrapper": {"width": "33"}},
-  {"key": "field_270w_job_applications_email", "label": "Send applications to", "name": "applications_email", "type": "email", "required": 1,
-   "instructions": "Applications for this role, with the resume attached, are emailed here."}
+   "choices": {"YEAR": "Per year", "HOUR": "Per hour"}, "default_value": "YEAR", "return_format": "value", "wrapper": {"width": "33"}}
  ],
  "location": [[{"param": "post_type", "operator": "==", "value": "job"}]],
  "position": "acf_after_title",
