@@ -259,7 +259,7 @@
      "type": "select",
      "id": 8,
      "formId": 1,
-     "label": "Province of Residence",
+     "label": "Province of residence",
      "adminLabel": "",
      "isRequired": true,
      "size": "large",
@@ -525,7 +525,7 @@
      "type": "select",
      "id": 15,
      "formId": 1,
-     "label": "Have You Submitted Claims Before?",
+     "label": "Have you submitted claims before?",
      "adminLabel": "",
      "isRequired": false,
      "size": "large",
@@ -592,7 +592,7 @@
      "type": "textarea",
      "id": 20,
      "formId": 1,
-     "label": "Tell Us More About Your Story",
+     "label": "Tell us more about your story.",
      "adminLabel": "",
      "isRequired": false,
      "errorMessage": "",
@@ -652,13 +652,13 @@
      "inputs": null,
      "choices": [
       {
-       "text": "Phone Call",
+       "text": "Phone call",
        "value": "6a3fb10c-67cc-df11-9b2a-001d60e938c6",
        "isSelected": false,
        "price": ""
       },
       {
-       "text": "Text/SMS",
+       "text": "Text message",
        "value": "ab539895-d57c-43ca-b42f-7a4807e7a36d",
        "isSelected": false,
        "price": ""
@@ -1470,7 +1470,7 @@
      "type": "select",
      "id": 8,
      "formId": 2,
-     "label": "Province of Residence",
+     "label": "Province of residence",
      "adminLabel": "",
      "isRequired": true,
      "size": "large",
@@ -1742,13 +1742,13 @@
      "inputs": null,
      "choices": [
       {
-       "text": "Phone Call",
+       "text": "Phone call",
        "value": "6a3fb10c-67cc-df11-9b2a-001d60e938c6",
        "isSelected": false,
        "price": ""
       },
       {
-       "text": "Text/SMS",
+       "text": "Text message",
        "value": "ab539895-d57c-43ca-b42f-7a4807e7a36d",
        "isSelected": false,
        "price": ""
@@ -4749,7 +4749,7 @@
      "type": "select",
      "id": 8,
      "formId": 2,
-     "label": "Province of Residence",
+     "label": "Province of residence",
      "adminLabel": "",
      "isRequired": true,
      "size": "large",
@@ -5021,13 +5021,13 @@
      "inputs": null,
      "choices": [
       {
-       "text": "Phone Call",
+       "text": "Phone call",
        "value": "6a3fb10c-67cc-df11-9b2a-001d60e938c6",
        "isSelected": false,
        "price": ""
       },
       {
-       "text": "Text/SMS",
+       "text": "Text message",
        "value": "ab539895-d57c-43ca-b42f-7a4807e7a36d",
        "isSelected": false,
        "price": ""
@@ -5983,13 +5983,13 @@
      "inputs": null,
      "choices": [
       {
-       "text": "Phone Call",
+       "text": "Phone call",
        "value": "6a3fb10c-67cc-df11-9b2a-001d60e938c6",
        "isSelected": false,
        "price": ""
       },
       {
-       "text": "Text/SMS",
+       "text": "Text message",
        "value": "ab539895-d57c-43ca-b42f-7a4807e7a36d",
        "isSelected": false,
        "price": ""
