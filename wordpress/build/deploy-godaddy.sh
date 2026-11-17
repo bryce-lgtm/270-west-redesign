@@ -16,6 +16,9 @@
 #   W270_GD_PRO_PLUGINS=/folder/with/elementor-pro,acf-pro   # also upload the licensed plugins from here
 #   W270_GA4_API_SECRET=… wordpress/build/deploy-godaddy.sh  # also write LG_GA4_API_SECRET into wp-config.php
 #   W270_GA4_DEBUG=1|0 wordpress/build/deploy-godaddy.sh      # also turn GA4 DebugView mode on/off (LG_GA4_DEBUG)
+#   W270_META_CAPI_TOKEN=… wordpress/build/deploy-godaddy.sh # also write LG_META_CAPI_TOKEN into wp-config.php
+#   W270_META_TEST_CODE=TEST… | W270_META_TEST_CODE=         # set / clear the Meta test event code
+#   W270_META_CONTACT=1|0  W270_META_DEBUG=1|0               # hashed contact details on/off, Meta debug on/off
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 GD_USER="${W270_GD_USER:-git_deployer_82b7f03cfd_1292707}"
@@ -39,6 +42,7 @@ $RS "$ROOT/wordpress/plugins/270west-content/acf-json/" "$GD_USER@$GD_HOST:$GD_P
 # Must-use plugins: one file at a time, never --delete (GoDaddy keeps its own system plugin in mu-plugins).
 $SSH "mkdir -p '$GD_PATH/wp-content/mu-plugins'"
 $RS "$ROOT/wordpress/mu-plugins/270west-ga4-server-events.php" "$GD_USER@$GD_HOST:$GD_PATH/wp-content/mu-plugins/"
+$RS "$ROOT/wordpress/mu-plugins/270west-meta-capi.php" "$GD_USER@$GD_HOST:$GD_PATH/wp-content/mu-plugins/"
 
 # 3. Licensed plugins (Elementor Pro, ACF Pro) are not on wordpress.org: upload them from a local
 # copy when W270_GD_PRO_PLUGINS points at a folder holding elementor-pro/ and advanced-custom-fields-pro/.
@@ -93,6 +97,21 @@ if [ -n "${W270_GA4_DEBUG:-}" ]; then
   GA4_DEBUG_VAL=false; [ "$W270_GA4_DEBUG" = "1" ] && GA4_DEBUG_VAL=true
   $SSH "cd '$GD_PATH' && wp config set LG_GA4_DEBUG $GA4_DEBUG_VAL --raw --type=constant --quiet" && echo "LG_GA4_DEBUG = $GA4_DEBUG_VAL"
 fi
+# Meta Conversions API (mu-plugin): the access token lives only in wp-config.php, read from stdin on the server.
+if [ -n "${W270_META_CAPI_TOKEN:-}" ]; then
+  printf '%s' "$W270_META_CAPI_TOKEN" | $SSH "cd '$GD_PATH' && wp config set LG_META_CAPI_TOKEN \"\$(cat)\" --type=constant --quiet" && echo 'Meta CAPI token set in wp-config.php'
+fi
+# Test event code: set it for testing, pass an empty value (W270_META_TEST_CODE=) to clear it.
+if [ -n "${W270_META_TEST_CODE+x}" ]; then
+  printf '%s' "$W270_META_TEST_CODE" | $SSH "cd '$GD_PATH' && wp config set LG_META_TEST_EVENT_CODE \"\$(cat)\" --type=constant --quiet" && echo "LG_META_TEST_EVENT_CODE $([ -n "$W270_META_TEST_CODE" ] && echo set || echo cleared)"
+fi
+for PAIR in "W270_META_CONTACT:LG_META_SEND_CONTACT" "W270_META_DEBUG:LG_META_DEBUG"; do
+  VAR="${PAIR%%:*}"; CONST="${PAIR##*:}"; VAL="${!VAR:-}"
+  if [ -n "$VAL" ]; then
+    BOOL=false; [ "$VAL" = "1" ] && BOOL=true
+    $SSH "cd '$GD_PATH' && wp config set $CONST $BOOL --raw --type=constant --quiet" && echo "$CONST = $BOOL"
+  fi
+done
 # The gateway (page) cache has no WP-CLI command; the system plugin bans it on the nav-menu hook.
 # (switch_theme would also ban it, but Elementor hooks that action with a 3-argument callback and fatals.)
 echo "GODADDY DEPLOY OK — https://$GD_SITE_HOST/"

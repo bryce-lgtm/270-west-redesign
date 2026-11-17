@@ -47,7 +47,8 @@ rsync -a "$ROOT/wordpress/plugins/270west-content/acf-json/" "$PDEST/acf-json/"
 # Must-use plugins: copied file by file, so anything else in mu-plugins stays as the host has it.
 mkdir -p "$CLONE/wp-content/mu-plugins"
 cp "$ROOT/wordpress/mu-plugins/270west-ga4-server-events.php" "$CLONE/wp-content/mu-plugins/"
-git -C "$CLONE" add wp-content/mu-plugins/270west-ga4-server-events.php
+cp "$ROOT/wordpress/mu-plugins/270west-meta-capi.php" "$CLONE/wp-content/mu-plugins/"
+git -C "$CLONE" add wp-content/mu-plugins/270west-ga4-server-events.php wp-content/mu-plugins/270west-meta-capi.php
 git -C "$CLONE" add -A wp-content/plugins/270west-content
 git -C "$CLONE" add -A wp-content/themes/270west
 if git -C "$CLONE" diff --cached --quiet; then echo "theme unchanged on SiteGround"; else
@@ -97,4 +98,19 @@ if [ -n "${W270_GA4_DEBUG:-}" ]; then
   GA4_DEBUG_VAL=false; [ "$W270_GA4_DEBUG" = "1" ] && GA4_DEBUG_VAL=true
   $SSH "cd '$SG_PATH' && wp config set LG_GA4_DEBUG $GA4_DEBUG_VAL --raw --type=constant --quiet" && echo "LG_GA4_DEBUG = $GA4_DEBUG_VAL"
 fi
+# Meta Conversions API (mu-plugin): the access token lives only in wp-config.php, read from stdin on the server.
+if [ -n "${W270_META_CAPI_TOKEN:-}" ]; then
+  printf '%s' "$W270_META_CAPI_TOKEN" | $SSH "cd '$SG_PATH' && wp config set LG_META_CAPI_TOKEN \"\$(cat)\" --type=constant --quiet" && echo 'Meta CAPI token set in wp-config.php'
+fi
+# Test event code: set it for testing, pass an empty value (W270_META_TEST_CODE=) to clear it.
+if [ -n "${W270_META_TEST_CODE+x}" ]; then
+  printf '%s' "$W270_META_TEST_CODE" | $SSH "cd '$SG_PATH' && wp config set LG_META_TEST_EVENT_CODE \"\$(cat)\" --type=constant --quiet" && echo "LG_META_TEST_EVENT_CODE $([ -n "$W270_META_TEST_CODE" ] && echo set || echo cleared)"
+fi
+for PAIR in "W270_META_CONTACT:LG_META_SEND_CONTACT" "W270_META_DEBUG:LG_META_DEBUG"; do
+  VAR="${PAIR%%:*}"; CONST="${PAIR##*:}"; VAL="${!VAR:-}"
+  if [ -n "$VAL" ]; then
+    BOOL=false; [ "$VAL" = "1" ] && BOOL=true
+    $SSH "cd '$SG_PATH' && wp config set $CONST $BOOL --raw --type=constant --quiet" && echo "$CONST = $BOOL"
+  fi
+done
 echo "SITEGROUND DEPLOY OK — https://$SG_SITE_HOST/"
